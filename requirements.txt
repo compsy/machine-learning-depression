@@ -6,4 +6,5 @@ pybrain
 nose
 savReaderWriter
 rpy2
+matplotlib
 

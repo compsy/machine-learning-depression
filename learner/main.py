@@ -1,9 +1,14 @@
 from dataInput import SpssReader
 from factories.QuestionnaireFactory import QuestionnaireFactory
+from machineLearningModels import LinearRegressionModel, AsyncModelRunner, SupportVectorMachineModel, RegressionTreeModel
 from models import Participant
 from models.questionnaires import IDSQuestionnaire, FourDKLQuestionnaire
 from outputFileCreators.SingleOutputFrameCreator import SingleOutputFrameCreator
 import pickle
+import numpy as np
+
+from collections import deque
+
 
 # Dataset    Description
 # N1_x100    DOB, age, gender, nationality and education of respondents
@@ -60,17 +65,43 @@ def write_cache(header, data, cache_name):
         pickle.dump(header, output, pickle.HIGHEST_PROTOCOL)
         pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
 
+def printHeaders(header):
+    print('Available headers:')
+    for col in header:
+        print('\t' + col)
+    print()
+
 if __name__ == '__main__':
     spss_reader = SpssReader.SpssReader()
+
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
     single_output_frame_creator = SingleOutputFrameCreator()
-    questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
 
     print('Converting data to single dataframe...')
+    # questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
     #data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
     #write_cache(header,data, 'cache.pkl')
     header, data = read_cache('cache.pkl')
-    print(header)
+    printHeaders(header)
+
+    x = np.array(['ademo-gender', 'ademo-age', 'aids-somScore'])
+    y = np.array(['cids-followup-somScore'])
 
 
+    # Add the header to the numpy array
+    #data = map(lambda x: tuple(x), data)
+    #data = np.array(deque(data), [(n, 'float64') for n in header])
+    #print(data.dtype.names)
+    models = [
+        LinearRegressionModel.LinearRegressionModel,
+        SupportVectorMachineModel.SupportVectorMachineModel,
+        RegressionTreeModel.RegressionTreeModel
+    ]
+
+    async_model_runner = AsyncModelRunner.AsyncModelRunner(models)
+    result_queue = async_model_runner.runCalculations(data, header, x, y)
+
+    for i in range(0, result_queue.qsize()):
+        model, prediction = result_queue.get()
+        model.plot(prediction)

@@ -72,27 +72,31 @@ def printHeaders(header):
     print()
 
 if __name__ == '__main__':
-    spss_reader = SpssReader.SpssReader()
+    with_cache = False
 
+    spss_reader = SpssReader.SpssReader()
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
     single_output_frame_creator = SingleOutputFrameCreator()
 
+    header, data = (None, None)
     print('Converting data to single dataframe...')
-    # questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
-    #data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
-    #write_cache(header,data, 'cache.pkl')
-    header, data = read_cache('cache.pkl')
-    printHeaders(header)
+    if with_cache:
+        header, data = read_cache('cache.pkl')
+        printHeaders(header)
+    else:
+        questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
+        data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
+        write_cache(header,data, 'cache.pkl')
 
     x = np.array(['ademo-gender', 'ademo-age', 'aids-somScore'])
     y = np.array(['cids-followup-somScore'])
 
 
-    # Add the header to the numpy array
+    # Add the header to the numpy array, won't work now
     #data = map(lambda x: tuple(x), data)
     #data = np.array(deque(data), [(n, 'float64') for n in header])
-    #print(data.dtype.names)
+
     models = [
         LinearRegressionModel.LinearRegressionModel,
         SupportVectorMachineModel.SupportVectorMachineModel,

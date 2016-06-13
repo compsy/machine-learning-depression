@@ -39,7 +39,7 @@ def printHeaders(header):
     print()
 
 if __name__ == '__main__':
-    with_cache = True
+    with_cache = False
 
     spss_reader = SpssReader.SpssReader()
 
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # - A = the time of the measurement, a = intake, c = followup
     # - B = the name of the questionnaire (check QuestionnaireFactory for the correct names)
     # - C = the name of the variable. Check the name used in the <Questionnairename>Questionnaire.py
-    x = np.array(['pident',
+    X = np.array(['pident',
                   'ademo-gender', 'ademo-age', 'aids-somScore',
                   'amasq-positiveAffectScore', 'amasq-negativeAffectScore', 'amasq-somatizationScore',
                   'abai-totalScore', 'abai-subjectiveScaleScore', 'abai-severityScore', 'abai-somaticScaleScore',
@@ -74,9 +74,9 @@ if __name__ == '__main__':
                   'acidi-anxiety-socialfobiaInLifetime', 'acidi-anxiety-panicWithAgorafobiaInLifetime', 'acidi-anxiety-panicWithoutAgorafobiaInLifetime'
                   ])
 
-    y = np.array(['cids-followup-somScore'])
+    Y = np.array(['cids-followup-somScore'])
 
-    selected_header = np.append(x,y)
+    selected_header = np.append(X,Y)
 
     used_data = outputDataFrameCleaner.clean(data, selected_header, header)
     CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
@@ -91,8 +91,8 @@ if __name__ == '__main__':
         RegressionTreeModel.RegressionTreeModel
     ]
 
-    async_model_runner = AsyncModelRunner.AsyncModelRunner(models, workers=1)
-    result_queue = async_model_runner.runCalculations(used_data, selected_header, x, y)
+    async_model_runner = AsyncModelRunner.AsyncModelRunner(models, workers=8)
+    result_queue = async_model_runner.runCalculations(used_data, selected_header, X, Y)
 
     for i in range(0, result_queue.qsize()):
         model, prediction = result_queue.get()

@@ -1,19 +1,16 @@
 import numpy as np
 
+
 class OutputDataFrameCleaner:
 
     def clean(self, data, selected_variables, all_names):
         variable_indices = self.getVariableIndices(all_names, selected_variables)
-
         used_data = data[:, variable_indices]
-
-        incorrect_rows = []
         incorrect_indices = []
         index = 0  # TODO this can probably be done in one statement
         for row in used_data:
             # If a row contains NA's, add the pident to a list
             if np.any(np.isnan(row)):
-                incorrect_rows.append(row[0])
                 incorrect_indices.append(index)
             index += 1
 

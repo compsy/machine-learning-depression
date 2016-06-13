@@ -1,5 +1,5 @@
 from models.questionnaires import IDSQuestionnaire, FourDKLQuestionnaire, DemographicQuestionnaire, BAIQuestionnaire, \
-    MASQQuestionnaire
+    MASQQuestionnaire, CIDIDepressionDerived
 
 
 # Dataset    Description
@@ -65,9 +65,16 @@ class QuestionnaireFactory:
 
             # N1_x226    MASQ - Mood and Anxiety Scoring Questionnaire
             ## !! Only derived is available !!
-            MASQQuestionnaire.MASQQuestionnaire(name="masq", filename='N1_A226', measurement_moment='a',
+            MASQQuestionnaire.MASQQuestionnaire(name="masq", filename='N1_A226D.sav', measurement_moment='a',
                                               reader=reader),
-            MASQQuestionnaire.MASQQuestionnaire(name="masq-followup", filename='N1_C226', measurement_moment='c',
+            MASQQuestionnaire.MASQQuestionnaire(name="masq-followup", filename='N1_C226D.sav', measurement_moment='c',
                                               reader=reader)
+
+            # N1_x257    CIDI - depression (derived diagnosis variables)
+            ## We will be using the derived file here
+            CIDIDepressionDerived.CIDIDepressionDerived(name="cidi-depression", filename='N1_A257D.sav', measurement_moment='a',
+                                                reader=reader),
+            MASQQuestionnaire.MASQQuestionnaire(name="cidi-depression-followup", filename='N1_C257D.sav', measurement_moment='c',
+                                                reader=reader)
         ]
         return questionnaires

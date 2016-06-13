@@ -26,9 +26,10 @@ class MachineLearningModel:
         return self.data[:, variable_indices]
 
     def train_test_data(self):
-        x_train, x_test, y_train, y_test = train_test_split(
-            self.x, self.y, test_size=0.33,
-            random_state=42)
+        x_train, x_test, y_train, y_test = train_test_split(self.x,
+                                                            self.y,
+                                                            test_size=0.33,
+                                                            random_state=42)
         return (x_train, x_test, y_train, y_test)
 
     def train(self):

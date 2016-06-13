@@ -1,2 +1,2 @@
 #!/bin/bash
-yapf
+yapf -r -i learner

@@ -1,7 +1,9 @@
 import numpy as np
 import collections
 
+
 class SingleOutputFrameCreator:
+
     def create_single_frame(self, questionnaires, participants):
         dataFrame = collections.namedtuple('DataFrame', ['data', 'header'])
         rows = len(participants)

@@ -2,6 +2,7 @@ from models.Questionnaire import Questionnaire
 
 
 class CIDIDepressionDerived(Questionnaire):
+
     def __init__(self, name, filename, measurement_moment, reader):
         function_mapping = {
             'minorDepressionPastMonth': self.minorDepressionPastMonth,
@@ -13,15 +14,19 @@ class CIDIDepressionDerived(Questionnaire):
             'dysthymiaPastSixMonths': self.dysthymiaPastSixMonths,
             'dysthymiaPastYear': self.dysthymiaPastYear,
             'dysthymiaLifetime': self.dysthymiaLifetime,
-            'numberOfCurrentDepressionDiagnoses': self.numberOfCurrentDepressionDiagnoses,
-            'hasLifetimeDepressionDiagnoses': self.hasLifetimeDepressionDiagnoses,
-            'categoriesForLifetimeDepressionDiagnoses': self.categoriesForLifetimeDepressionDiagnoses,
-            'numberOfMajorDepressionEpisodes': self.numberOfMajorDepressionEpisodes,
+            'numberOfCurrentDepressionDiagnoses':
+            self.numberOfCurrentDepressionDiagnoses,
+            'hasLifetimeDepressionDiagnoses':
+            self.hasLifetimeDepressionDiagnoses,
+            'categoriesForLifetimeDepressionDiagnoses':
+            self.categoriesForLifetimeDepressionDiagnoses,
+            'numberOfMajorDepressionEpisodes':
+            self.numberOfMajorDepressionEpisodes,
             'majorDepressionType': self.majorDepressionType
         }
 
-        super().__init__(name,filename,measurement_moment,reader, function_mapping)
-
+        super().__init__(name, filename, measurement_moment, reader,
+                         function_mapping)
 
     # Depression
     def minorDepressionPastMonth(self, participant):
@@ -39,7 +44,6 @@ class CIDIDepressionDerived(Questionnaire):
     def majorDepressionLifetime(self, participant):
         return self.getField(participant, 'cidep09')
 
-
     # Dysthymia
     def dysthymiaPastmonth(self, participant):
         return self.getField(participant, 'cidep02')
@@ -53,7 +57,6 @@ class CIDIDepressionDerived(Questionnaire):
     def dysthymiaLifetime(self, participant):
         return self.getField(participant, 'cidep08')
 
-
     # number of current depression diagnoses (past 6 months)
     def numberOfCurrentDepressionDiagnoses(self, participant):
         return self.getField(participant, 'cidep10')
@@ -64,11 +67,9 @@ class CIDIDepressionDerived(Questionnaire):
     def categoriesForLifetimeDepressionDiagnoses(self, participant):
         return self.getField(participant, 'cidep12')
 
-
     # of MDD episodes
     def numberOfMajorDepressionEpisodes(self, participant):
         return self.getField(participant, 'cidep13')
 
     def majorDepressionType(self, participant):
         return self.getField(participant, 'cidep14')
-

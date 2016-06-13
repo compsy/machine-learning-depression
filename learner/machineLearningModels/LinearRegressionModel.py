@@ -5,7 +5,9 @@ from sklearn import datasets
 from sklearn.cross_validation import cross_val_predict
 from sklearn import linear_model
 
+
 class LinearRegressionModel(MachineLearningModel):
+
     def train(self):
         lr = linear_model.LinearRegression()
 

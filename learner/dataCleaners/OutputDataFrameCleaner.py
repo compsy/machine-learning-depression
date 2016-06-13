@@ -4,7 +4,8 @@ import numpy as np
 class OutputDataFrameCleaner:
 
     def clean(self, data, selected_variables, all_names):
-        variable_indices = self.getVariableIndices(all_names, selected_variables)
+        variable_indices = self.getVariableIndices(all_names,
+                                                   selected_variables)
         used_data = data[:, variable_indices]
         incorrect_indices = []
         index = 0  # TODO this can probably be done in one statement
@@ -15,7 +16,6 @@ class OutputDataFrameCleaner:
             index += 1
 
         return np.delete(used_data, incorrect_indices, axis=0)
-
 
     def getVariableIndices(self, all_names, selected_names):
         variable_indices = []

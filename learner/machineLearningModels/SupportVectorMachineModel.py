@@ -1,5 +1,6 @@
 from machineLearningModels.MachineLearningModel import MachineLearningModel
 
+
 class SupportVectorMachineModel(MachineLearningModel):
 
     def train(self):

@@ -2,39 +2,46 @@ from models.Questionnaire import Questionnaire
 
 
 class CIDIAnxietyDerived(Questionnaire):
+
     def __init__(self, name, filename, measurement_moment, reader):
         function_mapping = {
             'socialFobiaPastMonth': self.socialFobiaPastMonth,
             'socialfobiaPastSixMonths': self.socialfobiaPastSixMonths,
             'socialFobiaPastYear': self.socialFobiaPastYear,
             'socialfobiaInLifetime': self.socialfobiaInLifetime,
-
             'panicWithAgorafobiaPastMonth': self.panicWithAgorafobiaPastMonth,
-            'panicWithAgorafobiaPastSixMonths': self.panicWithAgorafobiaPastSixMonths,
+            'panicWithAgorafobiaPastSixMonths':
+            self.panicWithAgorafobiaPastSixMonths,
             'panicWithAgorafobiaPastYear': self.panicWithAgorafobiaPastYear,
             'panicWithAgorafobiaInLifetime': self.panicWithAgorafobiaInLifetime,
-
-            'panicWithoutAgorafobiaPastSixMonths': self.panicWithoutAgorafobiaPastSixMonths,
-            'panicWithoutAgorafobiaPastMonth': self.panicWithoutAgorafobiaPastMonth,
-            'panicWithoutAgorafobiaPastYear': self.panicWithoutAgorafobiaPastYear,
-            'panicWithoutAgorafobiaInLifetime': self.panicWithoutAgorafobiaInLifetime,
-
+            'panicWithoutAgorafobiaPastSixMonths':
+            self.panicWithoutAgorafobiaPastSixMonths,
+            'panicWithoutAgorafobiaPastMonth':
+            self.panicWithoutAgorafobiaPastMonth,
+            'panicWithoutAgorafobiaPastYear':
+            self.panicWithoutAgorafobiaPastYear,
+            'panicWithoutAgorafobiaInLifetime':
+            self.panicWithoutAgorafobiaInLifetime,
             'agorafobiaPastMonth': self.agorafobiaPastMonth,
             'agorafobiaPastSixMonths': self.agorafobiaPastSixMonths,
             'agorafobiaPastYear': self.agorafobiaPastYear,
             'agorafobiaInLifetime': self.agorafobiaInLifetime,
-
-            'generalAnxietyDisorderPastMonth': self.generalAnxietyDisorderPastMonth,
-            'generalAnxietyDisorderPastSixMonths': self.generalAnxietyDisorderPastSixMonths,
-            'generalAnxietyDisorderPastYear': self.generalAnxietyDisorderPastYear,
-            'generalAnxietyDisorderInLifetime': self.generalAnxietyDisorderInLifetime,
-
-            'numberOfCurrentAnxietyDiagnoses': self.numberOfCurrentAnxietyDiagnoses,
-            'lifetimeAnxietyDiagnosesPresent': self.lifetimeAnxietyDiagnosesPresent
+            'generalAnxietyDisorderPastMonth':
+            self.generalAnxietyDisorderPastMonth,
+            'generalAnxietyDisorderPastSixMonths':
+            self.generalAnxietyDisorderPastSixMonths,
+            'generalAnxietyDisorderPastYear':
+            self.generalAnxietyDisorderPastYear,
+            'generalAnxietyDisorderInLifetime':
+            self.generalAnxietyDisorderInLifetime,
+            'numberOfCurrentAnxietyDiagnoses':
+            self.numberOfCurrentAnxietyDiagnoses,
+            'lifetimeAnxietyDiagnosesPresent':
+            self.lifetimeAnxietyDiagnosesPresent
         }
 
-        super().__init__(name,filename,measurement_moment,reader, function_mapping)
-
+        super().__init__(name, filename, measurement_moment, reader,
+                         function_mapping)
 
     # Social fobia
     def socialFobiaPastMonth(self, participant):
@@ -88,7 +95,6 @@ class CIDIAnxietyDerived(Questionnaire):
     def agorafobiaInLifetime(self, participant):
         return self.getField(participant, 'anxy19')
 
-
     # Panic with General Anxiety Disorder
     def generalAnxietyDisorderPastMonth(self, participant):
         return self.getField(participant, 'anxy05')
@@ -102,7 +108,6 @@ class CIDIAnxietyDerived(Questionnaire):
     def generalAnxietyDisorderInLifetime(self, participant):
         return self.getField(participant, 'anxy20')
 
-
     # Number of current anxiety disorders (pastSixMonths)
     def numberOfCurrentAnxietyDiagnoses(self, participant):
         return self.getField(participant, 'anxy21')
@@ -110,4 +115,3 @@ class CIDIAnxietyDerived(Questionnaire):
     # Lifetime Anxiety D
     def lifetimeAnxietyDiagnosesPresent(self, participant):
         return self.getField(participant, 'anxy22')
-

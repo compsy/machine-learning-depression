@@ -1,5 +1,7 @@
 class Questionnaire:
-    def __init__(self, name, filename, measurement_moment, reader, function_mapping):
+
+    def __init__(self, name, filename, measurement_moment, reader,
+                 function_mapping):
         self.name = name
         self.filename = filename
         self.measurement_moment = measurement_moment
@@ -20,7 +22,8 @@ class Questionnaire:
 
     def getHeader(self):
         col_names = self.function_mapping.keys()
-        return map(lambda name: self.variableName(self.name+'-'+name), col_names)
+        return map(lambda name: self.variableName(self.name + '-' + name),
+                   col_names)
 
     def variableName(self, variable):
         return self.measurement_moment + variable

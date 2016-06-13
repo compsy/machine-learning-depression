@@ -1,4 +1,6 @@
+from dataCleaners.OutputDataFrameCleaner import OutputDataFrameCleaner
 from dataInput import SpssReader
+from dataOutput.CsvExporter import CsvExporter
 from factories.QuestionnaireFactory import QuestionnaireFactory
 from machineLearningModels import LinearRegressionModel, AsyncModelRunner, SupportVectorMachineModel, RegressionTreeModel
 from models import Participant
@@ -46,6 +48,7 @@ if __name__ == '__main__':
     participants = create_participants(N1_A100R)
 
     single_output_frame_creator = SingleOutputFrameCreator()
+    outputDataFrameCleaner = OutputDataFrameCleaner()
 
     header, data = (None, None)
     print('Converting data to single dataframe...')
@@ -62,7 +65,8 @@ if __name__ == '__main__':
     # - A = the time of the measurement, a = intake, c = followup
     # - B = the name of the questionnaire (check QuestionnaireFactory for the correct names)
     # - C = the name of the variable. Check the name used in the <Questionnairename>Questionnaire.py
-    x = np.array(['ademo-gender', 'ademo-age', 'aids-somScore',
+    x = np.array(['pident',
+                  'ademo-gender', 'ademo-age', 'aids-somScore',
                   'amasq-positiveAffectScore', 'amasq-negativeAffectScore', 'amasq-somatizationScore',
                   'abai-totalScore', 'abai-subjectiveScaleScore', 'abai-severityScore', 'abai-somaticScaleScore',
                   'a4dkl-somScore', 'a4dkl-severity',
@@ -72,6 +76,10 @@ if __name__ == '__main__':
 
     y = np.array(['cids-followup-somScore'])
 
+    selected_header = np.append(x,y)
+
+    used_data = outputDataFrameCleaner.clean(data, selected_header, header)
+    CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
 
     # Add the header to the numpy array, won't work now
     #data = map(lambda x: tuple(x), data)
@@ -83,9 +91,9 @@ if __name__ == '__main__':
         RegressionTreeModel.RegressionTreeModel
     ]
 
-    async_model_runner = AsyncModelRunner.AsyncModelRunner(models)
-    result_queue = async_model_runner.runCalculations(data, header, x, y)
+    async_model_runner = AsyncModelRunner.AsyncModelRunner(models, workers=1)
+    result_queue = async_model_runner.runCalculations(used_data, selected_header, x, y)
 
     for i in range(0, result_queue.qsize()):
         model, prediction = result_queue.get()
-        model.plot(prediction)
+        #model.plot(prediction)

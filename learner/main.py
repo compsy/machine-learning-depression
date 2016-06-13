@@ -37,11 +37,14 @@ def printHeaders(header):
     print()
 
 if __name__ == '__main__':
-    with_cache = False
+    with_cache = True
 
     spss_reader = SpssReader.SpssReader()
+
+    # First read demographic data
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
+
     single_output_frame_creator = SingleOutputFrameCreator()
 
     header, data = (None, None)
@@ -54,6 +57,11 @@ if __name__ == '__main__':
         data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
         write_cache(header,data, 'cache.pkl')
 
+    # Here we select the variables to use in the prediction. The format is:
+    # AB-C:
+    # - A = the time of the measurement, a = intake, c = followup
+    # - B = the name of the questionnaire (check QuestionnaireFactory for the correct names)
+    # - C = the name of the variable. Check the name used in the <Questionnairename>Questionnaire.py
     x = np.array(['ademo-gender', 'ademo-age', 'aids-somScore',
                   'amasq-positiveAffectScore', 'amasq-negativeAffectScore', 'amasq-somatizationScore',
                   'abai-totalScore', 'abai-subjectiveScaleScore', 'abai-severityScore', 'abai-somaticScaleScore',

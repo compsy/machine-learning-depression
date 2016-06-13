@@ -40,6 +40,11 @@ class Questionnaire:
 
         return res
 
+    def getField(self, participant, field):
+        dat = self.getRow(participant)
+        q_name = self.variableName(field)
+        return dat[q_name]
+
     ### Abstract methods
     def somScore(self, participant):
         raise 'Method should be implemented by subclass'

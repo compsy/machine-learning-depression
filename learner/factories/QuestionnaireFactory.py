@@ -1,5 +1,5 @@
 from models.questionnaires import IDSQuestionnaire, FourDKLQuestionnaire, DemographicQuestionnaire, BAIQuestionnaire, \
-    MASQQuestionnaire, CIDIDepressionDerived
+    MASQQuestionnaire, CIDIDepressionDerived, CIDIAnxietyDerived
 
 
 # Dataset    Description
@@ -68,13 +68,22 @@ class QuestionnaireFactory:
             MASQQuestionnaire.MASQQuestionnaire(name="masq", filename='N1_A226D.sav', measurement_moment='a',
                                               reader=reader),
             MASQQuestionnaire.MASQQuestionnaire(name="masq-followup", filename='N1_C226D.sav', measurement_moment='c',
-                                              reader=reader)
+                                              reader=reader),
 
             # N1_x257    CIDI - depression (derived diagnosis variables)
             ## We will be using the derived file here
             CIDIDepressionDerived.CIDIDepressionDerived(name="cidi-depression", filename='N1_A257D.sav', measurement_moment='a',
                                                 reader=reader),
-            MASQQuestionnaire.MASQQuestionnaire(name="cidi-depression-followup", filename='N1_C257D.sav', measurement_moment='c',
+            CIDIDepressionDerived.CIDIDepressionDerived(name="cidi-depression-followup", filename='N1_C257D.sav', measurement_moment='c',
+                                                reader=reader),
+
+            # N1_x259    CIDI - anxiety (derived diagnoses variables)
+            ## We will be using the derived file here
+            CIDIAnxietyDerived.CIDIAnxietyDerived(name="cidi-anxiety", filename='N1_A259D.sav',
+                                                        measurement_moment='a',
+                                                        reader=reader),
+            CIDIAnxietyDerived.CIDIAnxietyDerived(name="cidi-anxiety-followup", filename='N1_C259D.sav',
+                                                measurement_moment='c',
                                                 reader=reader)
         ]
         return questionnaires

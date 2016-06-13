@@ -1,7 +1,7 @@
 from models.Questionnaire import Questionnaire
 
 
-class BAIQuestionnaire(Questionnaire):
+class CIDIDepressionDerived(Questionnaire):
     def __init__(self, name, filename, measurement_moment, reader):
         function_mapping = {
             'minorDepressionPastMonth': self.minorDepressionPastMonth,

@@ -12,10 +12,10 @@ class MASQQuestionnaire(Questionnaire):
         super().__init__(name,filename,measurement_moment,reader, function_mapping)
 
     def positiveAffectScore(self, participant):
-        return self.getField(self, participant, 'masqpa')
+        return self.getField(participant, 'masqpa')
 
     def negativeAffectScore(self, participant):
-        return self.getField(self, participant, 'masqna')
+        return self.getField(participant, 'masqna')
 
     def somatizationScore(self, participant):
-        return self.getField(self, participant, 'masqsa')
+        return self.getField(participant, 'masqsa')

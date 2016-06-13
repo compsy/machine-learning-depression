@@ -13,13 +13,13 @@ class BAIQuestionnaire(Questionnaire):
         super().__init__(name,filename,measurement_moment,reader, function_mapping)
 
     def totalScore(self, participant):
-        return self.getField(self, participant, 'baiscal')
+        return self.getField(participant, 'baiscal')
 
     def subjectiveScaleScore(self, participant):
-        return self.getField(self, participant, 'baisub')
+        return self.getField(participant, 'baisub')
 
     def severityScore(self, participant):
-        return self.getField(self, participant, 'baisev')
+        return self.getField(participant, 'baisev')
 
     def somaticScaleScore(self, participant):
-        return self.getField(self, participant, 'baisom')
+        return self.getField(participant, 'baisom')

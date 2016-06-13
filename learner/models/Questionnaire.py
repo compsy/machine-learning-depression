@@ -8,8 +8,14 @@ class Questionnaire:
 
     def createDataHash(self, data):
         data_hashed = {}
+
+        # Some files have a capitalized version of Pident.
+        key = 'pident'
+        if key not in data:
+            key = 'Pident'
+
         for index, entry in data.iterrows():
-            data_hashed[int(entry['pident'])] = entry
+            data_hashed[int(entry[key])] = entry
         return data_hashed
 
     def getHeader(self):
@@ -43,7 +49,9 @@ class Questionnaire:
     def getField(self, participant, field):
         dat = self.getRow(participant)
         q_name = self.variableName(field)
-        return dat[q_name]
+        if q_name in dat:
+            return dat[q_name]
+        return None
 
     ### Abstract methods
     def somScore(self, participant):

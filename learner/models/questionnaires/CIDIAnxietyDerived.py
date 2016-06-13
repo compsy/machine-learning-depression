@@ -38,76 +38,76 @@ class CIDIAnxietyDerived(Questionnaire):
 
     # Social fobia
     def socialFobiaPastMonth(self, participant):
-        return self.getField(self, participant, 'aanxy01')
+        return self.getField(participant, 'anxy01')
 
     def socialfobiaPastSixMonths(self, participant):
-        return self.getField(self, participant, 'aanxy06')
+        return self.getField(participant, 'anxy06')
 
     def socialFobiaPastYear(self, participant):
-        return self.getField(self, participant, 'aanxy11')
+        return self.getField(participant, 'anxy11')
 
     def socialfobiaInLifetime(self, participant):
-        return self.getField(self, participant, 'aanxy16')
+        return self.getField(participant, 'anxy16')
 
     # Panic with AgoraFobia
     def panicWithAgorafobiaPastMonth(self, participant):
-        return self.getField(self, participant, 'aanxy02')
+        return self.getField(participant, 'anxy02')
 
     def panicWithAgorafobiaPastSixMonths(self, participant):
-        return self.getField(self, participant, 'aanxy07')
+        return self.getField(participant, 'anxy07')
 
     def panicWithAgorafobiaPastYear(self, participant):
-        return self.getField(self, participant, 'aanxy12')
+        return self.getField(participant, 'anxy12')
 
     def panicWithAgorafobiaInLifetime(self, participant):
-        return self.getField(self, participant, 'aanxy17')
+        return self.getField(participant, 'anxy17')
 
     # Panic without AgoraFobia
     def panicWithoutAgorafobiaPastSixMonths(self, participant):
-        return self.getField(self, participant, 'aanxy08')
+        return self.getField(participant, 'anxy08')
 
     def panicWithoutAgorafobiaPastMonth(self, participant):
-        return self.getField(self, participant, 'aanxy03')
+        return self.getField(participant, 'anxy03')
 
     def panicWithoutAgorafobiaPastYear(self, participant):
-        return self.getField(self, participant, 'aanxy13')
+        return self.getField(participant, 'anxy13')
 
     def panicWithoutAgorafobiaInLifetime(self, participant):
-        return self.getField(self, participant, 'aanxy18')
+        return self.getField(participant, 'anxy18')
 
     # AgoraFobia
     def agorafobiaPastMonth(self, participant):
-        return self.getField(self, participant, 'aanxy04')
+        return self.getField(participant, 'anxy04')
 
     def agorafobiaPastSixMonths(self, participant):
-        return self.getField(self, participant, 'aanxy09')
+        return self.getField(participant, 'anxy09')
 
     def agorafobiaPastYear(self, participant):
-        return self.getField(self, participant, 'aanxy14')
+        return self.getField(participant, 'anxy14')
 
     def agorafobiaInLifetime(self, participant):
-        return self.getField(self, participant, 'aanxy19')
+        return self.getField(participant, 'anxy19')
 
 
     # Panic with General Anxiety Disorder
     def generalAnxietyDisorderPastMonth(self, participant):
-        return self.getField(self, participant, 'aanxy05')
+        return self.getField(participant, 'anxy05')
 
     def generalAnxietyDisorderPastSixMonths(self, participant):
-        return self.getField(self, participant, 'aanxy10')
+        return self.getField(participant, 'anxy10')
 
     def generalAnxietyDisorderPastYear(self, participant):
-        return self.getField(self, participant, 'aanxy15')
+        return self.getField(participant, 'anxy15')
 
     def generalAnxietyDisorderInLifetime(self, participant):
-        return self.getField(self, participant, 'aanxy20')
+        return self.getField(participant, 'anxy20')
 
 
     # Number of current anxiety disorders (pastSixMonths)
     def numberOfCurrentAnxietyDiagnoses(self, participant):
-        return self.getField(self, participant, 'aanxy21')
+        return self.getField(participant, 'anxy21')
 
     # Lifetime Anxiety D
     def lifetimeAnxietyDiagnosesPresent(self, participant):
-        return self.getField(self, participant, 'aanxy22')
+        return self.getField(participant, 'anxy22')
 

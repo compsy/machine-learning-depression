@@ -25,50 +25,50 @@ class CIDIDepressionDerived(Questionnaire):
 
     # Depression
     def minorDepressionPastMonth(self, participant):
-        return self.getField(self, participant, 'acidep01')
+        return self.getField(participant, 'cidep01')
 
     def majorDepressionPastMonth(self, participant):
-        return self.getField(self, participant, 'acidep03')
+        return self.getField(participant, 'cidep03')
 
     def majorDepressionPastSixMonths(self, participant):
-        return self.getField(self, participant, 'acidep05')
+        return self.getField(participant, 'cidep05')
 
     def majorDepressionPastYear(self, participant):
-        return self.getField(self, participant, 'acidep07')
+        return self.getField(participant, 'cidep07')
 
     def majorDepressionLifetime(self, participant):
-        return self.getField(self, participant, 'acidep09')
+        return self.getField(participant, 'cidep09')
 
 
     # Dysthymia
     def dysthymiaPastmonth(self, participant):
-        return self.getField(self, participant, 'acidep02')
+        return self.getField(participant, 'cidep02')
 
     def dysthymiaPastSixMonths(self, participant):
-        return self.getField(self, participant, 'acidep04')
+        return self.getField(participant, 'cidep04')
 
     def dysthymiaPastYear(self, participant):
-        return self.getField(self, participant, 'acidep06')
+        return self.getField(participant, 'cidep06')
 
     def dysthymiaLifetime(self, participant):
-        return self.getField(self, participant, 'acidep08')
+        return self.getField(participant, 'cidep08')
 
 
     # number of current depression diagnoses (past 6 months)
     def numberOfCurrentDepressionDiagnoses(self, participant):
-        return self.getField(self, participant, 'acidep10')
+        return self.getField(participant, 'cidep10')
 
     def hasLifetimeDepressionDiagnoses(self, participant):
-        return self.getField(self, participant, 'acidep11')
+        return self.getField(participant, 'cidep11')
 
     def categoriesForLifetimeDepressionDiagnoses(self, participant):
-        return self.getField(self, participant, 'acidep12')
+        return self.getField(participant, 'cidep12')
 
 
     # of MDD episodes
     def numberOfMajorDepressionEpisodes(self, participant):
-        return self.getField(self, participant, 'acidep13')
+        return self.getField(participant, 'cidep13')
 
     def majorDepressionType(self, participant):
-        return self.getField(self, participant, 'acidep14')
+        return self.getField(participant, 'cidep14')
 

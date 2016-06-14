@@ -3,6 +3,9 @@ machine:
     Europe/Amsterdam
   python:
     version: 3.5.0
+checkout:
+  post:
+    - pip install -U pip setuptools virtualenv
 dependencies:
   override:
     - pip install -r requirements.txt -q

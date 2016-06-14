@@ -31,4 +31,4 @@ class SupportVectorMachineModel(MachineLearningModel):
 	svm = svm.SVR()
 	grid_search_out = GridSearchCV(estimator = svm, param_grid = param_grid)	
         best_params = grid_search_out.best_params
-        return cross_val_predict(estimator = svm, X = self.x, y = self.y, cv=10, fit_params = best_params)
+        return cross_val_predict(estimator = svm, X = self.x, y = self.y, cv=10, fit_params = )

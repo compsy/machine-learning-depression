@@ -1,0 +1,32 @@
+from machineLearningModels.MachineLearningModel import MachineLearningModel
+from sklearn import cross_validation
+
+from sklearn import datasets
+from sklearn.cross_validation import cross_val_predict
+from sklearn import linear_model
+
+#Parameters:	
+#
+#fit_intercept : boolean, optional
+#
+#    whether to calculate the intercept for this model. If set to false, no intercept will be used in calculations (e.g. data is expected to be already centered).
+#
+#normalize : boolean, optional, default False
+#
+#    If True, the regressors X will be normalized before regression.
+#
+#copy_X : boolean, optional, default True
+#
+#    If True, X will be copied; else, it may be overwritten.
+#
+#n_jobs : int, optional, default 1
+#
+#    The number of jobs to use for the computation. If -1 all CPUs are used. This will only provide speedup for n_targets > 1 and sufficient large problems.
+
+class LinearRegressionModel(MachineLearningModel):
+    def train(self):
+        lr = linear_model.LinearRegression()
+
+        # cross_val_predict returns an array of the same size as `y` where each entry
+        # is a prediction obtained by cross validated:
+        return cross_val_predict(lr, self.x, self.y, cv=10)

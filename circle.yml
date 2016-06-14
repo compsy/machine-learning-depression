@@ -8,8 +8,8 @@ checkout:
     - pip install -U pip setuptools virtualenv
 dependencies:
   override:
-    - pip install -r requirements.txt -q
-    - pip install -r test-requirements.txt -q
+    - pip install -U -r requirements.txt
+    - pip install -U -r test-requirements.txt
 test:
     override:
           - ./test.sh

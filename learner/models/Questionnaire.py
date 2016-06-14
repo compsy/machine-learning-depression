@@ -1,5 +1,7 @@
 class Questionnaire:
-    def __init__(self, name, filename, measurement_moment, reader, function_mapping):
+
+    def __init__(self, name, filename, measurement_moment, reader,
+                 function_mapping):
         self.name = name
         self.filename = filename
         self.measurement_moment = measurement_moment
@@ -8,13 +10,20 @@ class Questionnaire:
 
     def createDataHash(self, data):
         data_hashed = {}
+
+        # Some files have a capitalized version of Pident.
+        key = 'pident'
+        if key not in data:
+            key = 'Pident'
+
         for index, entry in data.iterrows():
-            data_hashed[int(entry['pident'])] = entry
+            data_hashed[int(entry[key])] = entry
         return data_hashed
 
     def getHeader(self):
         col_names = self.function_mapping.keys()
-        return map(lambda name: self.variableName(self.name+'-'+name), col_names)
+        return map(lambda name: self.variableName(self.name + '-' + name),
+                   col_names)
 
     def variableName(self, variable):
         return self.measurement_moment + variable
@@ -39,6 +48,13 @@ class Questionnaire:
                 res[index] = self.function_mapping[field](participant)
 
         return res
+
+    def getField(self, participant, field):
+        dat = self.getRow(participant)
+        q_name = self.variableName(field)
+        if q_name in dat:
+            return dat[q_name]
+        return None
 
     ### Abstract methods
     def somScore(self, participant):

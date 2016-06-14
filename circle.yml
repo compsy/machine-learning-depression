@@ -11,5 +11,5 @@ dependencies:
     - pip install -U -r requirements.txt
     - pip install -U -r test-requirements.txt
 test:
-    override:
-          - ./test.sh
+  override:
+    - ./test.sh

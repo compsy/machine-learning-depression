@@ -1,4 +1,4 @@
-from ..machineLearningModels.MachineLearningModel import MachineLearningModel
+from machineLearningModels.MachineLearningModel import MachineLearningModel
 from sklearn import cross_validation
 
 from sklearn import datasets

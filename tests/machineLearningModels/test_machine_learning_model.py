@@ -24,7 +24,7 @@ class TestMachineLearningModel:
         expected = self.data[:, 0]
         self.x = np.array(['input'])
         self.y = np.array(['output'])
-    self.header = np.append(self.x, self.y)
+        self.header = np.append(self.x, self.y)
         self.model = MachineLearningModel.MachineLearningModel(
             self.data, self.header, self.x, self.y)
         with pytest.raises(NotImplementedError):

@@ -1,7 +1,9 @@
 #!/bin/bash
 echo 'Running yapf'
 yapf -r -i learner
-DIFF=$(git diff)
+yapf -r -i tests
+
+DIFF=$(git diff --name-only | grep '\.py')
 if [ "$DIFF" != "" ]
 then
   # Something was wrong

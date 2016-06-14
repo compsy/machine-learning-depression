@@ -1,4 +1,5 @@
 #!/bin/bash
+echo 'Running yapf'
 yapf -r -i learner
 DIFF=$(git diff)
 if [ "$DIFF" != "" ]
@@ -9,3 +10,6 @@ then
   exit 1
 fi
 echo 'Yapf ran succesfully'
+
+echo 'Running TOX'
+tox

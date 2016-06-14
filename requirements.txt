@@ -1,9 +1,8 @@
 pandas
 numpy
-scikit-learn
 scipy
+scikit-learn
 pybrain
-nose
 savReaderWriter
 rpy2
 matplotlib

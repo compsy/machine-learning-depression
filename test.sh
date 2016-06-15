@@ -15,5 +15,7 @@ then
 fi
 echo 'Yapf ran succesfully'
 
-echo 'Running TOX'
-tox
+#echo 'Running TOX'
+#tox
+echo 'Running py.test'
+py.test tests

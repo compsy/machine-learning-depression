@@ -8,7 +8,7 @@ checkout:
     - pip install -U pip setuptools virtualenv
 dependencies:
   override:
-    - pip install -U -v -r requirements.txt:
+    - pip install -U -r requirements.txt:
         timeout: 1800
     - pip install -U -r test-requirements.txt
 test:

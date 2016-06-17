@@ -1,5 +1,5 @@
 import numpy as np
-from learner.machineLearningModels import LinearRegressionModel
+from learner.machineLearningModels import linear_regression_model
 
 
 class TestLinearRegressionModel:
@@ -12,8 +12,8 @@ class TestLinearRegressionModel:
         header = np.append(x_names, y_names)
 
         # Here we retrieve the fitted model, and see whether it works
-        model = LinearRegressionModel.LinearRegressionModel(data, header,
-                                                            x_names, y_names)
+        model = linear_regression_model.LinearRegressionModel(data, header,
+                                                              x_names, y_names)
         model = model.train()
 
         for (input_data, expected) in data:

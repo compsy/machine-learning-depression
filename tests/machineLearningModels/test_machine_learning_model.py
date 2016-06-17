@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from learner.machineLearningModels import MachineLearningModel
+from learner.machineLearningModels import machine_learning_model
 
 
 class TestMachineLearningModel:
@@ -12,7 +12,7 @@ class TestMachineLearningModel:
         self.x = np.array(['input'])
         self.y = np.array(['output'])
         self.header = np.append(self.x, self.y)
-        self.model = MachineLearningModel.MachineLearningModel(
+        self.model = machine_learning_model.MachineLearningModel(
             self.data, self.header, self.x, self.y)
         result = self.model.split_data(['input'])
         assert result is not None
@@ -25,7 +25,7 @@ class TestMachineLearningModel:
         self.x = np.array(['input'])
         self.y = np.array(['output'])
         self.header = np.append(self.x, self.y)
-        self.model = MachineLearningModel.MachineLearningModel(
+        self.model = machine_learning_model.MachineLearningModel(
             self.data, self.header, self.x, self.y)
         with pytest.raises(NotImplementedError):
             self.model.train()

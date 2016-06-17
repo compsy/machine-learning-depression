@@ -1,4 +1,4 @@
-from models.Questionnaire import Questionnaire
+from models.questionnaire import Questionnaire
 
 
 class IDSQuestionnaire(Questionnaire):

@@ -44,6 +44,7 @@ class MachineLearningModel:
         # is a prediction obtained by cross validated:
         return cross_val_predict(self.skmodel, self.x_train, self.y_train, cv=8)
 
+
     def plot(self, actual, predicted):
         if predicted is None:
             return False

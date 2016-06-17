@@ -1,11 +1,11 @@
 from data_transformers import output_data_cleaner, output_data_splitter
-from dataInput import spss_reader
-from dataOutput.csv_exporter import CsvExporter
+from data_input import spss_reader
+from data_output.csv_exporter import CsvExporter
 from factories.questionnaire_factory import QuestionnaireFactory
-from machineLearningModels import linear_regression_model, sync_model_runner, support_vector_machine_model, regression_tree_model
+from machine_learning_models import linear_regression_model, sync_model_runner, support_vector_machine_model, regression_tree_model
 from models import participant
 from models.questionnaires import IDSQuestionnaire, FourDKLQuestionnaire
-from outputFileCreators.single_output_frame_creator import SingleOutputFrameCreator
+from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 import pickle
 import numpy as np
 
@@ -118,7 +118,7 @@ if __name__ == '__main__':
 
     models = [
         linear_regression_model.LinearRegressionModel,
-        support_vector_machine_model.SupportVectorMachineModel,
+        #support_vector_machine_model.SupportVectorMachineModel,
         regression_tree_model.RegressionTreeModel
     ]
 

@@ -1,4 +1,4 @@
-from machineLearningModels.machine_learning_model import MachineLearningModel
+from machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn.cross_validation import cross_val_predict
 from sklearn.tree import DecisionTreeRegressor
 

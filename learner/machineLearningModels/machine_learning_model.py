@@ -12,8 +12,8 @@ class MachineLearningModel:
         self.y = y
         self.x_names = x_names
         self.y_names = y_names
-        self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
-
+        self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data(
+        )
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
@@ -29,7 +29,8 @@ class MachineLearningModel:
 
     def print_accuracy(self):
         scores = self.validate()
-        print("%s - Accuracy: %0.2f (+/- %0.2f)" % (self.given_name(), scores.mean(), scores.std() * 2))
+        print("%s - Accuracy: %0.2f (+/- %0.2f)" %
+              (self.given_name(), scores.mean(), scores.std() * 2))
 
     def validate(self):
         self.train()
@@ -59,10 +60,8 @@ class MachineLearningModel:
         ax.set_ylabel('Predicted')
         plt.show()
 
-
     def given_name(self):
         return type(self).__name__
-
 
     def train(self):
         raise NotImplementedError

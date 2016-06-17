@@ -4,6 +4,7 @@ from .machine_learning_model import MachineLearningModel
 from sklearn import svm
 from numpy import logspace
 
+
 class SupportVectorMachineModel(MachineLearningModel):
 
     def train(self):
@@ -39,12 +40,8 @@ class SupportVectorMachineModel(MachineLearningModel):
 
         param_grid = [linear_grid]
         skmodel = svm.SVR()
-        skmodel = GridSearchCV(estimator=skmodel, param_grid=param_grid, n_jobs=-1, verbose=1)
+        skmodel = GridSearchCV(estimator=skmodel,
+                               param_grid=param_grid,
+                               n_jobs=-1,
+                               verbose=1)
         return skmodel
-
-
-
-
-
-
-

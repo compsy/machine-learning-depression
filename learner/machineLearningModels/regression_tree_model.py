@@ -6,7 +6,7 @@ from sklearn.tree import DecisionTreeRegressor
 class RegressionTreeModel(MachineLearningModel):
 
     def train(self):
-        if(self.skmodel is not None):
+        if (self.skmodel is not None):
             return self
 
         self.skmodel = DecisionTreeRegressor(max_depth=1000)

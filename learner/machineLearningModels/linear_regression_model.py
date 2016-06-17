@@ -5,7 +5,7 @@ from sklearn import linear_model
 class LinearRegressionModel(MachineLearningModel):
 
     def train(self):
-        if(self.skmodel is not None):
+        if (self.skmodel is not None):
             return self
 
         self.skmodel = linear_model.LinearRegression(fit_intercept=True,

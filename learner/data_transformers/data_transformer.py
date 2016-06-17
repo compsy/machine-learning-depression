@@ -1,4 +1,6 @@
 import numpy as np
+
+
 class DataTransformer:
 
     def getVariableIndices(self, all_names, selected_names):

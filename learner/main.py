@@ -73,15 +73,16 @@ if __name__ == '__main__':
     # - B = the name of the questionnaire (check QuestionnaireFactory for the correct names)
     # - C = the name of the variable. Check the name used in the <Questionnairename>questionnaire.py
     X_NAMES = np.array(['pident', 'ademo-gender', 'ademo-age', 'aids-somScore',
-                  'amasq-positiveAffectScore', 'amasq-negativeAffectScore',
-                  'amasq-somatizationScore', 'abai-totalScore',
-                  'abai-subjectiveScaleScore', 'abai-severityScore',
-                  'abai-somaticScaleScore', 'a4dkl-somScore', 'a4dkl-severity',
-                  'acidi-depression-majorDepressionLifetime',
-                  'acidi-depression-dysthymiaLifetime',
-                  'acidi-anxiety-socialfobiaInLifetime',
-                  'acidi-anxiety-panicWithAgorafobiaInLifetime',
-                  'acidi-anxiety-panicWithoutAgorafobiaInLifetime'])
+                        'amasq-positiveAffectScore',
+                        'amasq-negativeAffectScore', 'amasq-somatizationScore',
+                        'abai-totalScore', 'abai-subjectiveScaleScore',
+                        'abai-severityScore', 'abai-somaticScaleScore',
+                        'a4dkl-somScore', 'a4dkl-severity',
+                        'acidi-depression-majorDepressionLifetime',
+                        'acidi-depression-dysthymiaLifetime',
+                        'acidi-anxiety-socialfobiaInLifetime',
+                        'acidi-anxiety-panicWithAgorafobiaInLifetime',
+                        'acidi-anxiety-panicWithoutAgorafobiaInLifetime'])
 
     Y_NAMES = np.array(['cids-followup-somScore'])
     selected_header = np.append(X_NAMES, Y_NAMES)
@@ -96,8 +97,10 @@ if __name__ == '__main__':
     used_data = output_data_cleaner.clean(used_data, incorrect_rows)
 
     # Split the dataframe into a x and y dataset.
-    x_data = output_data_cleaner.clean(output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
-    y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
+    x_data = output_data_cleaner.clean(
+        output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
+    y_data = output_data_cleaner.clean(
+        output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
     # Convert ydata 2d matrix (x * 1) to 1d array (x)
     y_data = np.ravel(y_data)
@@ -106,7 +109,8 @@ if __name__ == '__main__':
     print(np.shape(y_data))
     # Export all used data to a CSV file
 
-    CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
+    CsvExporter.export('../exports/merged_dataframe.csv', used_data,
+                       selected_header)
 
     # Add the header to the numpy array, won't work now
     #data = map(lambda x: tuple(x), data)
@@ -119,10 +123,10 @@ if __name__ == '__main__':
     ]
 
     sync_model_runner = sync_model_runner.SyncModelRunner(models)
-    result_queue = sync_model_runner.runCalculations(x_data, y_data, X_NAMES, Y_NAMES)
+    result_queue = sync_model_runner.runCalculations(x_data, y_data, X_NAMES,
+                                                     Y_NAMES)
 
     for i in range(0, result_queue.qsize()):
         model, prediction = result_queue.get()
         model.plot(model.y_train, prediction)
         model.print_accuracy()
-

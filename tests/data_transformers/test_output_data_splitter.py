@@ -12,7 +12,7 @@ class TestOutputDataSplitter:
         header = np.append(x_names, y_names)
         subject = output_data_splitter.OutputDataSplitter()
         result = subject.split(data, header, x_names)
-        expected = data[:,[0]]
+        expected = data[:, [0]]
         assert np.array_equal(result, expected)
 
         result = subject.split(data, header, y_names)

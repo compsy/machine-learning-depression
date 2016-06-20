@@ -1,5 +1,5 @@
-from models.questionnaires import IDSQuestionnaire, FourDKLQuestionnaire, DemographicQuestionnaire, BAIQuestionnaire, \
-    MASQQuestionnaire, CIDIDepressionDerived, CIDIAnxietyDerived
+from models.questionnaires import ids_questionnaire, four_dkl_questionnaire, demographic_questionnaire, bai_questionnaire, \
+    masq_questionnaire, cidi_depression_derived, cidi_anxiety_derived
 
 # Dataset    Description
 # N1_x100    DOB, age, gender, nationality and education of respondents
@@ -42,61 +42,61 @@ class QuestionnaireFactory:
     @staticmethod
     def construct_questionnaires(reader):
         questionnaires = [
-            DemographicQuestionnaire.DemographicQuestionnaire(
+            demographic_questionnaire.DemographicQuestionnaire(
                 name="demo",
                 filename="N1_A100R.sav",
                 measurement_moment='a',
                 reader=reader),
 
             # N1_x235    IDS (Inventory Depressive Symptomatology)
-            IDSQuestionnaire.IDSQuestionnaire(name="ids",
-                                              filename="N1_A235R.sav",
-                                              measurement_moment='a',
-                                              reader=reader),
-            IDSQuestionnaire.IDSQuestionnaire(name="ids-followup",
-                                              filename="N1_C235R.sav",
-                                              measurement_moment='c',
-                                              reader=reader),
+            ids_questionnaire.IDSQuestionnaire(name="ids",
+                                               filename="N1_A235R.sav",
+                                               measurement_moment='a',
+                                               reader=reader),
+            ids_questionnaire.IDSQuestionnaire(name="ids-followup",
+                                               filename="N1_C235R.sav",
+                                               measurement_moment='c',
+                                               reader=reader),
 
             # N1_x255    4DKL (physical complaints)
-            FourDKLQuestionnaire.FourDKLQuestionnaire(name="4dkl",
-                                                      filename="N1_A232R.sav",
-                                                      measurement_moment='a',
-                                                      reader=reader),
-            FourDKLQuestionnaire.FourDKLQuestionnaire(name="4dkl-followup",
-                                                      filename="N1_C232R.sav",
-                                                      measurement_moment='c',
-                                                      reader=reader),
+            four_dkl_questionnaire.FourDKLQuestionnaire(name="4dkl",
+                                                        filename="N1_A232R.sav",
+                                                        measurement_moment='a',
+                                                        reader=reader),
+            four_dkl_questionnaire.FourDKLQuestionnaire(name="4dkl-followup",
+                                                        filename="N1_C232R.sav",
+                                                        measurement_moment='c',
+                                                        reader=reader),
 
             # N1_x236    BAI (Beck Anxiety Inventory)
             ## !! Only derived is available !!
-            BAIQuestionnaire.BAIQuestionnaire(name="bai",
-                                              filename='N1_A236D.sav',
-                                              measurement_moment='a',
-                                              reader=reader),
-            BAIQuestionnaire.BAIQuestionnaire(name="bai-followup",
-                                              filename='N1_C236D.sav',
-                                              measurement_moment='c',
-                                              reader=reader),
+            bai_questionnaire.BAIQuestionnaire(name="bai",
+                                               filename='N1_A236D.sav',
+                                               measurement_moment='a',
+                                               reader=reader),
+            bai_questionnaire.BAIQuestionnaire(name="bai-followup",
+                                               filename='N1_C236D.sav',
+                                               measurement_moment='c',
+                                               reader=reader),
 
             # N1_x226    MASQ - Mood and Anxiety Scoring Questionnaire
             ## !! Only derived is available !!
-            MASQQuestionnaire.MASQQuestionnaire(name="masq",
-                                                filename='N1_A226D.sav',
-                                                measurement_moment='a',
-                                                reader=reader),
-            MASQQuestionnaire.MASQQuestionnaire(name="masq-followup",
-                                                filename='N1_C226D.sav',
-                                                measurement_moment='c',
-                                                reader=reader),
+            masq_questionnaire.MASQQuestionnaire(name="masq",
+                                                 filename='N1_A226D.sav',
+                                                 measurement_moment='a',
+                                                 reader=reader),
+            masq_questionnaire.MASQQuestionnaire(name="masq-followup",
+                                                 filename='N1_C226D.sav',
+                                                 measurement_moment='c',
+                                                 reader=reader),
 
             # N1_x257    CIDI - depression (derived diagnosis variables)
             ## We will be using the derived file here
-            CIDIDepressionDerived.CIDIDepressionDerived(name="cidi-depression",
-                                                        filename='N1_A257D.sav',
-                                                        measurement_moment='a',
-                                                        reader=reader),
-            CIDIDepressionDerived.CIDIDepressionDerived(
+            cidi_depression_derived.CIDIDepressionDerived(name="cidi-depression",
+                                                          filename='N1_A257D.sav',
+                                                          measurement_moment='a',
+                                                          reader=reader),
+            cidi_depression_derived.CIDIDepressionDerived(
                 name="cidi-depression-followup",
                 filename='N1_C257D.sav',
                 measurement_moment='c',
@@ -104,13 +104,13 @@ class QuestionnaireFactory:
 
             # N1_x259    CIDI - anxiety (derived diagnoses variables)
             ## We will be using the derived file here
-            CIDIAnxietyDerived.CIDIAnxietyDerived(name="cidi-anxiety",
-                                                  filename='N1_A259D.sav',
-                                                  measurement_moment='a',
-                                                  reader=reader),
-            CIDIAnxietyDerived.CIDIAnxietyDerived(name="cidi-anxiety-followup",
-                                                  filename='N1_C259D.sav',
-                                                  measurement_moment='c',
-                                                  reader=reader)
+            cidi_anxiety_derived.CIDIAnxietyDerived(name="cidi-anxiety",
+                                                    filename='N1_A259D.sav',
+                                                    measurement_moment='a',
+                                                    reader=reader),
+            cidi_anxiety_derived.CIDIAnxietyDerived(name="cidi-anxiety-followup",
+                                                    filename='N1_C259D.sav',
+                                                    measurement_moment='c',
+                                                    reader=reader)
         ]
         return questionnaires

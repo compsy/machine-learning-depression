@@ -4,7 +4,7 @@ from data_output.csv_exporter import CsvExporter
 from factories.questionnaire_factory import QuestionnaireFactory
 from machine_learning_models import linear_regression_model, sync_model_runner, support_vector_machine_model, regression_tree_model
 from models import participant
-from models.questionnaires import IDSQuestionnaire, FourDKLQuestionnaire
+import os.path
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 import pickle
 import numpy as np
@@ -41,31 +41,31 @@ def print_header(header):
         print('\t' + col)
     print()
 
+def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
+    header, data = (None, None)
+    print('Converting data to single dataframe...')
+    if not force_to_not_use_cache and os.path.isfile(file_name) :
+        header, data = read_cache(file_name)
+        print_header(header)
+    else:
+        questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
+        data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
+        write_cache(header, data, file_name)
+    return (header, data)
 
 if __name__ == '__main__':
-    with_cache = True
-
     spss_reader = spss_reader.SpssReader()
+    single_output_frame_creator = SingleOutputFrameCreator()
+    output_data_cleaner = output_data_cleaner.OutputDataCleaner()
+    output_data_splitter = output_data_splitter.OutputDataSplitter()
 
     # First read demographic data
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
 
-    single_output_frame_creator = SingleOutputFrameCreator()
-    output_data_cleaner = output_data_cleaner.OutputDataCleaner()
-    output_data_splitter = output_data_splitter.OutputDataSplitter()
 
-    header, data = (None, None)
-    print('Converting data to single dataframe...')
-    if with_cache:
-        header, data = read_cache('cache.pkl')
-        print_header(header)
-    else:
-        questionnaires = QuestionnaireFactory.construct_questionnaires(
-            spss_reader)
-        data, header = (single_output_frame_creator.create_single_frame(
-            questionnaires, participants))
-        write_cache(header, data, 'cache.pkl')
+    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=False)
+
 
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
@@ -84,7 +84,9 @@ if __name__ == '__main__':
                         'acidi-anxiety-panicWithAgorafobiaInLifetime',
                         'acidi-anxiety-panicWithoutAgorafobiaInLifetime'])
 
+    # Output columns
     Y_NAMES = np.array(['cids-followup-somScore'])
+
     selected_header = np.append(X_NAMES, Y_NAMES)
 
     # Select the data we will use in the present experiment
@@ -97,10 +99,8 @@ if __name__ == '__main__':
     used_data = output_data_cleaner.clean(used_data, incorrect_rows)
 
     # Split the dataframe into a x and y dataset.
-    x_data = output_data_cleaner.clean(
-        output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
-    y_data = output_data_cleaner.clean(
-        output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
+    x_data = output_data_cleaner.clean(output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
+    y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
     # Convert ydata 2d matrix (x * 1) to 1d array (x)
     y_data = np.ravel(y_data)

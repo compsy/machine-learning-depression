@@ -26,60 +26,60 @@ class CIDIDepressionDerived(Questionnaire):
 
     # Depression
     def minorDepressionPastMonth(self, participant):
-        val = self.getField(participant, 'cidep01')
+        val = self.get_field(participant, 'cidep01')
         return val if val is not None and val >= 0 else np.nan
 
     def majorDepressionPastMonth(self, participant):
-        val = self.getField(participant, 'cidep03')
+        val = self.get_field(participant, 'cidep03')
         return val if val is not None and val >= 0 else np.nan
 
     def majorDepressionPastSixMonths(self, participant):
-        val = self.getField(participant, 'cidep05')
+        val = self.get_field(participant, 'cidep05')
         return val if val is not None and val >= 0 else np.nan
 
     def majorDepressionPastYear(self, participant):
-        val = self.getField(participant, 'cidep07')
+        val = self.get_field(participant, 'cidep07')
         return val if val is not None and val >= 0 else np.nan
 
     def majorDepressionLifetime(self, participant):
-        val = self.getField(participant, 'cidep09')
+        val = self.get_field(participant, 'cidep09')
         return val if val is not None and val >= 0 else np.nan
 
     # Dysthymia
     def dysthymiaPastmonth(self, participant):
-        val = self.getField(participant, 'cidep02')
+        val = self.get_field(participant, 'cidep02')
         return val if val is not None and val >= 0 else np.nan
 
     def dysthymiaPastSixMonths(self, participant):
-        val = self.getField(participant, 'cidep04')
+        val = self.get_field(participant, 'cidep04')
         return val if val is not None and val >= 0 else np.nan
 
     def dysthymiaPastYear(self, participant):
-        val = self.getField(participant, 'cidep06')
+        val = self.get_field(participant, 'cidep06')
         return val if val is not None and val >= 0 else np.nan
 
     def dysthymiaLifetime(self, participant):
-        val = self.getField(participant, 'cidep08')
+        val = self.get_field(participant, 'cidep08')
         return val if val is not None and val >= 0 else np.nan
 
     # number of current depression diagnoses (past 6 months)
     def numberOfCurrentDepressionDiagnoses(self, participant):
-        val = self.getField(participant, 'cidep10')
+        val = self.get_field(participant, 'cidep10')
         return val if val is not None and val >= 0 else np.nan
 
     def hasLifetimeDepressionDiagnoses(self, participant):
-        val = self.getField(participant, 'cidep11')
+        val = self.get_field(participant, 'cidep11')
         return val if val is not None and val >= 0 else np.nan
 
     def categoriesForLifetimeDepressionDiagnoses(self, participant):
-        val = self.getField(participant, 'cidep12')
+        val = self.get_field(participant, 'cidep12')
         return val if val is not None and val >= 0 else np.nan
 
     # of MDD episodes
     def numberOfMajorDepressionEpisodes(self, participant):
-        val = self.getField(participant, 'cidep13')
+        val = self.get_field(participant, 'cidep13')
         return val if val is not None and val >= 0 else np.nan
 
     def majorDepressionType(self, participant):
-        val = self.getField(participant, 'cidep14')
+        val = self.get_field(participant, 'cidep14')
         return val if val is not None and val >= 0 else np.nan

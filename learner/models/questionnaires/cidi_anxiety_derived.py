@@ -33,95 +33,95 @@ class CIDIAnxietyDerived(Questionnaire):
 
     # Social fobia
     def socialFobiaPastMonth(self, participant):
-        val = self.getField(participant, 'anxy01')
+        val = self.get_field(participant, 'anxy01')
         return val if val is not None and val >= 0 else np.nan
 
     def socialfobiaPastSixMonths(self, participant):
-        val = self.getField(participant, 'anxy06')
+        val = self.get_field(participant, 'anxy06')
         return val if val is not None and val >= 0 else np.nan
 
     def socialFobiaPastYear(self, participant):
-        val = self.getField(participant, 'anxy11')
+        val = self.get_field(participant, 'anxy11')
         return val if val is not None and val >= 0 else np.nan
 
     def socialfobiaInLifetime(self, participant):
-        val = self.getField(participant, 'anxy16')
+        val = self.get_field(participant, 'anxy16')
         return val if val is not None and val >= 0 else np.nan
 
     # Panic with AgoraFobia
     def panicWithAgorafobiaPastMonth(self, participant):
-        val = self.getField(participant, 'anxy02')
+        val = self.get_field(participant, 'anxy02')
         return val if val is not None and val >= 0 else np.nan
 
     def panicWithAgorafobiaPastSixMonths(self, participant):
-        val = self.getField(participant, 'anxy07')
+        val = self.get_field(participant, 'anxy07')
         return val if val is not None and val >= 0 else np.nan
 
     def panicWithAgorafobiaPastYear(self, participant):
-        val = self.getField(participant, 'anxy12')
+        val = self.get_field(participant, 'anxy12')
         return val if val is not None and val >= 0 else np.nan
 
     def panicWithAgorafobiaInLifetime(self, participant):
-        val = self.getField(participant, 'anxy17')
+        val = self.get_field(participant, 'anxy17')
         return val if val is not None and val >= 0 else np.nan
 
     # Panic without AgoraFobia
     def panicWithoutAgorafobiaPastSixMonths(self, participant):
-        val = self.getField(participant, 'anxy08')
+        val = self.get_field(participant, 'anxy08')
         return val if val is not None and val >= 0 else np.nan
 
     def panicWithoutAgorafobiaPastMonth(self, participant):
-        val = self.getField(participant, 'anxy03')
+        val = self.get_field(participant, 'anxy03')
         return val if val is not None and val >= 0 else np.nan
 
     def panicWithoutAgorafobiaPastYear(self, participant):
-        val = self.getField(participant, 'anxy13')
+        val = self.get_field(participant, 'anxy13')
         return val if val is not None and val >= 0 else np.nan
 
     def panicWithoutAgorafobiaInLifetime(self, participant):
-        val = self.getField(participant, 'anxy18')
+        val = self.get_field(participant, 'anxy18')
         return val if val is not None and val >= 0 else np.nan
 
     # AgoraFobia
     def agorafobiaPastMonth(self, participant):
-        val = self.getField(participant, 'anxy04')
+        val = self.get_field(participant, 'anxy04')
         return val if val is not None and val >= 0 else np.nan
 
     def agorafobiaPastSixMonths(self, participant):
-        val = self.getField(participant, 'anxy09')
+        val = self.get_field(participant, 'anxy09')
         return val if val is not None and val >= 0 else np.nan
 
     def agorafobiaPastYear(self, participant):
-        val = self.getField(participant, 'anxy14')
+        val = self.get_field(participant, 'anxy14')
         return val if val is not None and val >= 0 else np.nan
 
     def agorafobiaInLifetime(self, participant):
-        val = self.getField(participant, 'anxy19')
+        val = self.get_field(participant, 'anxy19')
         return val if val is not None and val >= 0 else np.nan
 
     # Panic with General Anxiety Disorder
     def generalAnxietyDisorderPastMonth(self, participant):
-        val = self.getField(participant, 'anxy05')
+        val = self.get_field(participant, 'anxy05')
         return val if val is not None and val >= 0 else np.nan
 
     def generalAnxietyDisorderPastSixMonths(self, participant):
-        val = self.getField(participant, 'anxy10')
+        val = self.get_field(participant, 'anxy10')
         return val if val is not None and val >= 0 else np.nan
 
     def generalAnxietyDisorderPastYear(self, participant):
-        val = self.getField(participant, 'anxy15')
+        val = self.get_field(participant, 'anxy15')
         return val if val is not None and val >= 0 else np.nan
 
     def generalAnxietyDisorderInLifetime(self, participant):
-        val = self.getField(participant, 'anxy20')
+        val = self.get_field(participant, 'anxy20')
         return val if val is not None and val >= 0 else np.nan
 
     # Number of current anxiety disorders (pastSixMonths)
     def numberOfCurrentAnxietyDiagnoses(self, participant):
-        val = self.getField(participant, 'anxy21')
+        val = self.get_field(participant, 'anxy21')
         return val if val is not None and val >= 0 else np.nan
 
     # Lifetime Anxiety D
     def lifetimeAnxietyDiagnosesPresent(self, participant):
-        val = self.getField(participant, 'anxy22')
+        val = self.get_field(participant, 'anxy22')
         return val if val is not None and val >= 0 else np.nan

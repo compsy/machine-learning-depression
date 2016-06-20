@@ -19,17 +19,17 @@ class Questionnaire:
             data_hashed[int(entry[key])] = entry
         return data_hashed
 
-    def getHeader(self):
+    def get_header(self):
         col_names = self.function_mapping.keys()
-        return map(lambda name: self.variableName(self.name + '-' + name), col_names)
+        return map(lambda name: self.variable_name(self.name + '-' + name), col_names)
 
-    def variableName(self, variable):
+    def variable_name(self, variable):
         return self.measurement_moment + variable
 
-    def numberOfVariables(self):
+    def number_of_variables(self):
         return len(self.function_mapping.keys())
 
-    def getRow(self, participant):
+    def get_row(self, participant):
         key = participant.pident
         dat = []
         if key in self.data:
@@ -37,9 +37,9 @@ class Questionnaire:
 
         return dat
 
-    def getData(self, participant):
+    def get_data(self, participant):
         key = participant.pident
-        res = [None] * self.numberOfVariables()
+        res = [None] * self.number_of_variables()
 
         if key in self.data:
             for index, field in enumerate(self.function_mapping.keys()):
@@ -47,13 +47,14 @@ class Questionnaire:
 
         return res
 
-    def getField(self, participant, field):
-        dat = self.getRow(participant)
-        q_name = self.variableName(field)
+    def get_field(self, participant, field):
+        dat = self.get_row(participant)
+        q_name = self.variable_name(field)
+        print(q_name)
         if q_name in dat:
             return dat[q_name]
         return None
 
     ### Abstract methods
-    def somScore(self, participant):
-        raise 'Method should be implemented by subclass'
+    def som_score(self, participant):
+        raise NotImplementedError

@@ -13,13 +13,13 @@ class MASQQuestionnaire(Questionnaire):
         super().__init__(name, filename, measurement_moment, reader, function_mapping)
 
     def positiveAffectScore(self, participant):
-        val = self.getField(participant, 'masqpa')
+        val = self.get_field(participant, 'masqpa')
         return val if val is not None and val >= 0 else np.nan
 
     def negativeAffectScore(self, participant):
-        val = self.getField(participant, 'masqna')
+        val = self.get_field(participant, 'masqna')
         return val if val is not None and val >= 0 else np.nan
 
     def somatizationScore(self, participant):
-        val = self.getField(participant, 'masqsa')
+        val = self.get_field(participant, 'masqsa')
         return val if val is not None and val >= 0 else np.nan

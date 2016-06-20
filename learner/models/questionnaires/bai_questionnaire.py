@@ -1,6 +1,7 @@
 from models.questionnaire import Questionnaire
 import numpy as np
 
+
 class BAIQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
@@ -14,17 +15,17 @@ class BAIQuestionnaire(Questionnaire):
         super().__init__(name, filename, measurement_moment, reader, function_mapping)
 
     def totalScore(self, participant):
-        val = self.getField(participant, 'baiscal')
+        val = self.get_field(participant, 'baiscal')
         return val if val is not None and val >= 0 else np.nan
 
     def subjectiveScaleScore(self, participant):
-        val = self.getField(participant, 'baisub')
+        val = self.get_field(participant, 'baisub')
         return val if val is not None and val >= 0 else np.nan
 
     def severityScore(self, participant):
-        val = self.getField(participant, 'baisev')
+        val = self.get_field(participant, 'baisev')
         return val if val is not None and val >= 0 else np.nan
 
     def somaticScaleScore(self, participant):
-        val = self.getField(participant, 'baisom')
+        val = self.get_field(participant, 'baisom')
         return val if val is not None and val >= 0 else np.nan

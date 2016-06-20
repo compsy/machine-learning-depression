@@ -15,4 +15,4 @@ class DemographicQuestionnaire(Questionnaire):
         return participant.age
 
     def levelOfEducation(self, participant):
-        return self.getField(participant, 'dulvl')
+        return self.get_field(participant, 'dulvl')

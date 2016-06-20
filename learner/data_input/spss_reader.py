@@ -10,9 +10,7 @@ class SpssReader:
     def read_file(self, filename):
         rpackages.importr('foreign')
         read_spss = robjects.r['read.spss']
-        data = read_spss("../data/" + filename,
-                         to_data_frame=True,
-                         use_value_labels=False)
+        data = read_spss("../data/" + filename, to_data_frame=True, use_value_labels=False)
         data = robjects.DataFrame(data)
         data = pandas2ri.ri2py(data)
         return data

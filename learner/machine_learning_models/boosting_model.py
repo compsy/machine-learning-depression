@@ -1,4 +1,4 @@
-from machineLearningModels.MachineLearningModel import MachineLearningModel
+from machine_learning_models.machine_learning_model import MachineLearningModel
 import numpy as np
 from sklearn import ensemble
 from sklearn import datasets

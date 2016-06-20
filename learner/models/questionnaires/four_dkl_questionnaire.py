@@ -1,20 +1,15 @@
-from models.Questionnaire import Questionnaire
+from models.questionnaire import Questionnaire
 
 
 class FourDKLQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
-        function_mapping = {
-            'somScore': self.somScore,
-            'severity': self.severity
-        }
+        function_mapping = {'somScore': self.somScore, 'severity': self.severity}
 
-        super().__init__(name, filename, measurement_moment, reader,
-                         function_mapping)
+        super().__init__(name, filename, measurement_moment, reader, function_mapping)
         self.variables_for_som_score = [
-            '4dkld01', '4dkld02', '4dkld03', '4dkld04', '4dkld05', '4dkld06',
-            '4dkld07', '4dkld08', '4dkld09', '4dkld10', '4dkld11', '4dkld12',
-            '4dkld13', '4dkld14', '4dkld15', '4dkld16'
+            '4dkld01', '4dkld02', '4dkld03', '4dkld04', '4dkld05', '4dkld06', '4dkld07', '4dkld08', '4dkld09',
+            '4dkld10', '4dkld11', '4dkld12', '4dkld13', '4dkld14', '4dkld15', '4dkld16'
         ]
 
     def somScore(self, participant):

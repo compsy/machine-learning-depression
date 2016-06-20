@@ -1,4 +1,4 @@
-from models.Questionnaire import Questionnaire
+from models.questionnaire import Questionnaire
 
 
 class DemographicQuestionnaire(Questionnaire):
@@ -6,8 +6,7 @@ class DemographicQuestionnaire(Questionnaire):
     def __init__(self, name, filename, measurement_moment, reader):
         function_mapping = {'gender': self.gender, 'age': self.age}
 
-        super().__init__(name, filename, measurement_moment, reader,
-                         function_mapping)
+        super().__init__(name, filename, measurement_moment, reader, function_mapping)
 
     def gender(self, participant):
         return participant.gender

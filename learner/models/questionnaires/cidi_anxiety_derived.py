@@ -1,4 +1,4 @@
-from models.Questionnaire import Questionnaire
+from models.questionnaire import Questionnaire
 
 
 class CIDIAnxietyDerived(Questionnaire):
@@ -10,38 +10,26 @@ class CIDIAnxietyDerived(Questionnaire):
             'socialFobiaPastYear': self.socialFobiaPastYear,
             'socialfobiaInLifetime': self.socialfobiaInLifetime,
             'panicWithAgorafobiaPastMonth': self.panicWithAgorafobiaPastMonth,
-            'panicWithAgorafobiaPastSixMonths':
-            self.panicWithAgorafobiaPastSixMonths,
+            'panicWithAgorafobiaPastSixMonths': self.panicWithAgorafobiaPastSixMonths,
             'panicWithAgorafobiaPastYear': self.panicWithAgorafobiaPastYear,
             'panicWithAgorafobiaInLifetime': self.panicWithAgorafobiaInLifetime,
-            'panicWithoutAgorafobiaPastSixMonths':
-            self.panicWithoutAgorafobiaPastSixMonths,
-            'panicWithoutAgorafobiaPastMonth':
-            self.panicWithoutAgorafobiaPastMonth,
-            'panicWithoutAgorafobiaPastYear':
-            self.panicWithoutAgorafobiaPastYear,
-            'panicWithoutAgorafobiaInLifetime':
-            self.panicWithoutAgorafobiaInLifetime,
+            'panicWithoutAgorafobiaPastSixMonths': self.panicWithoutAgorafobiaPastSixMonths,
+            'panicWithoutAgorafobiaPastMonth': self.panicWithoutAgorafobiaPastMonth,
+            'panicWithoutAgorafobiaPastYear': self.panicWithoutAgorafobiaPastYear,
+            'panicWithoutAgorafobiaInLifetime': self.panicWithoutAgorafobiaInLifetime,
             'agorafobiaPastMonth': self.agorafobiaPastMonth,
             'agorafobiaPastSixMonths': self.agorafobiaPastSixMonths,
             'agorafobiaPastYear': self.agorafobiaPastYear,
             'agorafobiaInLifetime': self.agorafobiaInLifetime,
-            'generalAnxietyDisorderPastMonth':
-            self.generalAnxietyDisorderPastMonth,
-            'generalAnxietyDisorderPastSixMonths':
-            self.generalAnxietyDisorderPastSixMonths,
-            'generalAnxietyDisorderPastYear':
-            self.generalAnxietyDisorderPastYear,
-            'generalAnxietyDisorderInLifetime':
-            self.generalAnxietyDisorderInLifetime,
-            'numberOfCurrentAnxietyDiagnoses':
-            self.numberOfCurrentAnxietyDiagnoses,
-            'lifetimeAnxietyDiagnosesPresent':
-            self.lifetimeAnxietyDiagnosesPresent
+            'generalAnxietyDisorderPastMonth': self.generalAnxietyDisorderPastMonth,
+            'generalAnxietyDisorderPastSixMonths': self.generalAnxietyDisorderPastSixMonths,
+            'generalAnxietyDisorderPastYear': self.generalAnxietyDisorderPastYear,
+            'generalAnxietyDisorderInLifetime': self.generalAnxietyDisorderInLifetime,
+            'numberOfCurrentAnxietyDiagnoses': self.numberOfCurrentAnxietyDiagnoses,
+            'lifetimeAnxietyDiagnosesPresent': self.lifetimeAnxietyDiagnosesPresent
         }
 
-        super().__init__(name, filename, measurement_moment, reader,
-                         function_mapping)
+        super().__init__(name, filename, measurement_moment, reader, function_mapping)
 
     # Social fobia
     def socialFobiaPastMonth(self, participant):

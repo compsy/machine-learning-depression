@@ -5,14 +5,14 @@ import pandas as pd
 import pytest
 
 
-
 class TestQuestionnaire:
+
     def test_get_header(self):
         True
 
     @pytest.fixture()
     def mock_reader(self):
-        returnvalue = pd.DataFrame([[1,1.5], [2,2.5]], columns=['pident', 'avalue'])
+        returnvalue = pd.DataFrame([[1, 1.5], [2, 2.5]], columns=['pident', 'avalue'])
         mock_reader = spss_reader.SpssReader()
         mock_reader.read_file = MagicMock(return_value=returnvalue)
         return mock_reader
@@ -42,7 +42,6 @@ class TestQuestionnaire:
         assert len(result) == 1
         assert result[0] == 'aname-value'
 
-
     def test_variable_name(self, subject):
         variable_name = 'test'
         result = subject.variable_name(variable_name)
@@ -55,7 +54,7 @@ class TestQuestionnaire:
         assert result == expected
 
     def test_get_row(self, subject, mock_participant):
-        expected  = [1, 1.5]
+        expected = [1, 1.5]
         result = subject.get_row(mock_participant)
         assert result['pident'] == expected[0]
         assert result['avalue'] == expected[1]

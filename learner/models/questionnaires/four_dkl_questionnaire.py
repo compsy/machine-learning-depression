@@ -1,6 +1,7 @@
 from models.questionnaire import Questionnaire
 import numpy as np
 
+
 class FourDKLQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
@@ -20,4 +21,3 @@ class FourDKLQuestionnaire(Questionnaire):
             if q_name in dat and dat[q_name] >= 0:
                 tot += dat[q_name]
         return tot if tot > 0 else np.nan
-

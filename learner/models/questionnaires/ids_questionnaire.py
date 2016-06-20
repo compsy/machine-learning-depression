@@ -1,6 +1,7 @@
 from models.questionnaire import Questionnaire
 import numpy as np
 
+
 class IDSQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
@@ -26,7 +27,7 @@ class IDSQuestionnaire(Questionnaire):
         score = self.som_score(participant)
         if np.isnan(score):
             return np.nan
-        elif score<= 13:
+        elif score <= 13:
             return 0
         elif score <= 25:
             return 1

@@ -1,6 +1,7 @@
 from models.questionnaire import Questionnaire
 import numpy as np
 
+
 class CIDIAnxietyDerived(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):

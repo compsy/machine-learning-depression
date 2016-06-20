@@ -75,9 +75,8 @@ if __name__ == '__main__':
     X_NAMES = np.array(['pident', 'ademo-gender', 'ademo-age', 'aids-somScore', 'amasq-positiveAffectScore',
                         'amasq-negativeAffectScore', 'amasq-somatizationScore', 'abai-totalScore',
                         'abai-subjectiveScaleScore', 'abai-severityScore', 'abai-somaticScaleScore', 'a4dkl-somScore',
-                        'acidi-depression-majorDepressionLifetime',
-                        'acidi-depression-dysthymiaLifetime', 'acidi-anxiety-socialfobiaInLifetime',
-                        'acidi-anxiety-panicWithAgorafobiaInLifetime',
+                        'acidi-depression-majorDepressionLifetime', 'acidi-depression-dysthymiaLifetime',
+                        'acidi-anxiety-socialfobiaInLifetime', 'acidi-anxiety-panicWithAgorafobiaInLifetime',
                         'acidi-anxiety-panicWithoutAgorafobiaInLifetime'])
 
     # Output columns

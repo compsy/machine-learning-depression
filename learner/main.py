@@ -41,17 +41,21 @@ def print_header(header):
         print('\t' + col)
     print()
 
+
 def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
     header, data = (None, None)
     print('Converting data to single dataframe...')
-    if not force_to_not_use_cache and os.path.isfile(file_name) :
+    if not force_to_not_use_cache and os.path.isfile(file_name):
         header, data = read_cache(file_name)
         print_header(header)
     else:
-        questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
-        data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
+        questionnaires = QuestionnaireFactory.construct_questionnaires(
+            spss_reader)
+        data, header = (single_output_frame_creator.create_single_frame(
+            questionnaires, participants))
         write_cache(header, data, file_name)
     return (header, data)
+
 
 if __name__ == '__main__':
     spss_reader = spss_reader.SpssReader()
@@ -63,9 +67,9 @@ if __name__ == '__main__':
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
 
-
-    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=False)
-
+    header, data = get_file_data('cache.pkl',
+                                 spss_reader=spss_reader,
+                                 force_to_not_use_cache=False)
 
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
@@ -99,8 +103,10 @@ if __name__ == '__main__':
     used_data = output_data_cleaner.clean(used_data, incorrect_rows)
 
     # Split the dataframe into a x and y dataset.
-    x_data = output_data_cleaner.clean(output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
-    y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
+    x_data = output_data_cleaner.clean(
+        output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
+    y_data = output_data_cleaner.clean(
+        output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
     # Convert ydata 2d matrix (x * 1) to 1d array (x)
     y_data = np.ravel(y_data)

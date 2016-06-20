@@ -92,10 +92,11 @@ class QuestionnaireFactory:
 
             # N1_x257    CIDI - depression (derived diagnosis variables)
             ## We will be using the derived file here
-            cidi_depression_derived.CIDIDepressionDerived(name="cidi-depression",
-                                                          filename='N1_A257D.sav',
-                                                          measurement_moment='a',
-                                                          reader=reader),
+            cidi_depression_derived.CIDIDepressionDerived(
+                name="cidi-depression",
+                filename='N1_A257D.sav',
+                measurement_moment='a',
+                reader=reader),
             cidi_depression_derived.CIDIDepressionDerived(
                 name="cidi-depression-followup",
                 filename='N1_C257D.sav',
@@ -108,9 +109,10 @@ class QuestionnaireFactory:
                                                     filename='N1_A259D.sav',
                                                     measurement_moment='a',
                                                     reader=reader),
-            cidi_anxiety_derived.CIDIAnxietyDerived(name="cidi-anxiety-followup",
-                                                    filename='N1_C259D.sav',
-                                                    measurement_moment='c',
-                                                    reader=reader)
+            cidi_anxiety_derived.CIDIAnxietyDerived(
+                name="cidi-anxiety-followup",
+                filename='N1_C259D.sav',
+                measurement_moment='c',
+                reader=reader)
         ]
         return questionnaires

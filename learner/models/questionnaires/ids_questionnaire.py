@@ -1,5 +1,5 @@
 from models.questionnaire import Questionnaire
-
+import numpy as np
 
 class IDSQuestionnaire(Questionnaire):
 
@@ -20,12 +20,13 @@ class IDSQuestionnaire(Questionnaire):
             q_name = self.variableName(name)
             if q_name in dat and dat[q_name] >= 0:
                 tot += dat[q_name]
-
-        return tot
+        return tot if tot > 0 else np.nan
 
     def severity(self, participant):
         score = self.somScore(participant)
-        if score <= 13:
+        if np.isnan(score):
+            return np.nan
+        elif score<= 13:
             return 0
         elif score <= 25:
             return 1

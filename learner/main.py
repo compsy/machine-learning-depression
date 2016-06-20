@@ -2,7 +2,8 @@ from data_transformers import output_data_cleaner, output_data_splitter
 from data_input import spss_reader
 from data_output.csv_exporter import CsvExporter
 from factories.questionnaire_factory import QuestionnaireFactory
-from machine_learning_models import linear_regression_model, sync_model_runner, support_vector_machine_model, regression_tree_model
+from machine_learning_models import linear_regression_model, sync_model_runner, support_vector_machine_model, \
+    regression_tree_model
 from models import participant
 import os.path
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
@@ -15,8 +16,7 @@ from collections import deque
 def create_participants(data):
     participants = {}
     for index, entry in data.iterrows():
-        p = participant.Participant(entry['pident'], entry['Sexe'],
-                                    entry['Age'])
+        p = participant.Participant(entry['pident'], entry['Sexe'], entry['Age'])
         participants[p.pident] = p
 
     return participants
@@ -49,10 +49,8 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
         header, data = read_cache(file_name)
         print_header(header)
     else:
-        questionnaires = QuestionnaireFactory.construct_questionnaires(
-            spss_reader)
-        data, header = (single_output_frame_creator.create_single_frame(
-            questionnaires, participants))
+        questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
+        data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
         write_cache(header, data, file_name)
     return (header, data)
 
@@ -67,24 +65,18 @@ if __name__ == '__main__':
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
 
-    header, data = get_file_data('cache.pkl',
-                                 spss_reader=spss_reader,
-                                 force_to_not_use_cache=False)
+    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=False)
 
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
     # - A = the time of the measurement, a = intake, c = followup
     # - B = the name of the questionnaire (check QuestionnaireFactory for the correct names)
     # - C = the name of the variable. Check the name used in the <Questionnairename>questionnaire.py
-    X_NAMES = np.array(['pident', 'ademo-gender', 'ademo-age', 'aids-somScore',
-                        'amasq-positiveAffectScore',
-                        'amasq-negativeAffectScore', 'amasq-somatizationScore',
-                        'abai-totalScore', 'abai-subjectiveScaleScore',
-                        'abai-severityScore', 'abai-somaticScaleScore',
-                        'a4dkl-somScore', 'a4dkl-severity',
-                        'acidi-depression-majorDepressionLifetime',
-                        'acidi-depression-dysthymiaLifetime',
-                        'acidi-anxiety-socialfobiaInLifetime',
+    X_NAMES = np.array(['pident', 'ademo-gender', 'ademo-age', 'aids-somScore', 'amasq-positiveAffectScore',
+                        'amasq-negativeAffectScore', 'amasq-somatizationScore', 'abai-totalScore',
+                        'abai-subjectiveScaleScore', 'abai-severityScore', 'abai-somaticScaleScore', 'a4dkl-somScore',
+                        'a4dkl-severity', 'acidi-depression-majorDepressionLifetime',
+                        'acidi-depression-dysthymiaLifetime', 'acidi-anxiety-socialfobiaInLifetime',
                         'acidi-anxiety-panicWithAgorafobiaInLifetime',
                         'acidi-anxiety-panicWithoutAgorafobiaInLifetime'])
 
@@ -103,10 +95,8 @@ if __name__ == '__main__':
     used_data = output_data_cleaner.clean(used_data, incorrect_rows)
 
     # Split the dataframe into a x and y dataset.
-    x_data = output_data_cleaner.clean(
-        output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
-    y_data = output_data_cleaner.clean(
-        output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
+    x_data = output_data_cleaner.clean(output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
+    y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
     # Convert ydata 2d matrix (x * 1) to 1d array (x)
     y_data = np.ravel(y_data)
@@ -115,8 +105,7 @@ if __name__ == '__main__':
     print(np.shape(y_data))
     # Export all used data to a CSV file
 
-    CsvExporter.export('../exports/merged_dataframe.csv', used_data,
-                       selected_header)
+    CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
 
     # Add the header to the numpy array, won't work now
     #data = map(lambda x: tuple(x), data)
@@ -129,8 +118,7 @@ if __name__ == '__main__':
     ]
 
     sync_model_runner = sync_model_runner.SyncModelRunner(models)
-    result_queue = sync_model_runner.runCalculations(x_data, y_data, X_NAMES,
-                                                     Y_NAMES)
+    result_queue = sync_model_runner.runCalculations(x_data, y_data, X_NAMES, Y_NAMES)
 
     for i in range(0, result_queue.qsize()):
         model, prediction = result_queue.get()

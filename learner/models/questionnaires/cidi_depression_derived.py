@@ -14,19 +14,14 @@ class CIDIDepressionDerived(Questionnaire):
             'dysthymiaPastSixMonths': self.dysthymiaPastSixMonths,
             'dysthymiaPastYear': self.dysthymiaPastYear,
             'dysthymiaLifetime': self.dysthymiaLifetime,
-            'numberOfCurrentDepressionDiagnoses':
-            self.numberOfCurrentDepressionDiagnoses,
-            'hasLifetimeDepressionDiagnoses':
-            self.hasLifetimeDepressionDiagnoses,
-            'categoriesForLifetimeDepressionDiagnoses':
-            self.categoriesForLifetimeDepressionDiagnoses,
-            'numberOfMajorDepressionEpisodes':
-            self.numberOfMajorDepressionEpisodes,
+            'numberOfCurrentDepressionDiagnoses': self.numberOfCurrentDepressionDiagnoses,
+            'hasLifetimeDepressionDiagnoses': self.hasLifetimeDepressionDiagnoses,
+            'categoriesForLifetimeDepressionDiagnoses': self.categoriesForLifetimeDepressionDiagnoses,
+            'numberOfMajorDepressionEpisodes': self.numberOfMajorDepressionEpisodes,
             'majorDepressionType': self.majorDepressionType
         }
 
-        super().__init__(name, filename, measurement_moment, reader,
-                         function_mapping)
+        super().__init__(name, filename, measurement_moment, reader, function_mapping)
 
     # Depression
     def minorDepressionPastMonth(self, participant):

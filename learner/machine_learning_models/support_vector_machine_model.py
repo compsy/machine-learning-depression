@@ -27,9 +27,7 @@ class SupportVectorMachineModel(MachineLearningModel):
         #              'gamma': logspace(0, 1, 5)}
 
         # Linear function grid
-        linear_grid = {'kernel': ['linear'],
-                       'C': [1, 10, 100, 1000],
-                       'epsilon': logspace(0, 1, 5)}
+        linear_grid = {'kernel': ['linear'], 'C': [1, 10, 100, 1000], 'epsilon': logspace(0, 1, 5)}
 
         # Sigmoid function grid
         # sigmoid_grid = {'kernel': ['sigmoid'],
@@ -40,8 +38,5 @@ class SupportVectorMachineModel(MachineLearningModel):
 
         param_grid = [linear_grid]
         skmodel = svm.SVR()
-        skmodel = GridSearchCV(estimator=skmodel,
-                               param_grid=param_grid,
-                               n_jobs=-1,
-                               verbose=1)
+        skmodel = GridSearchCV(estimator=skmodel, param_grid=param_grid, n_jobs=-1, verbose=1)
         return skmodel

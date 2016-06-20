@@ -8,9 +8,6 @@ class LinearRegressionModel(MachineLearningModel):
         if (self.skmodel is not None):
             return self
 
-        self.skmodel = linear_model.LinearRegression(fit_intercept=True,
-                                                     normalize=True,
-                                                     copy_X=False,
-                                                     n_jobs=-1)
+        self.skmodel = linear_model.LinearRegression(fit_intercept=True, normalize=True, copy_X=False, n_jobs=-1)
         self.skmodel = self.skmodel.fit(self.x, self.y)
         return self

@@ -18,8 +18,7 @@ class AsyncModelRunner:
         workers = min([self.workers, self.queue.qsize()])
         print('Starting calculation of models with %s workers.' % workers)
         for i in range(workers):
-            t = Thread(target=self.work,
-                       args=(np.copy(x), np.copy(y), x_names, y_names))
+            t = Thread(target=self.work, args=(np.copy(x), np.copy(y), x_names, y_names))
             t.daemon = True
             t.start()
 

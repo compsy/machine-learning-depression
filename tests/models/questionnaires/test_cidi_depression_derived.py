@@ -12,7 +12,6 @@ class TestCidiDepressionDerived:
 
     @pytest.fixture()
     def subject(self, mock_reader):
-        print('hoi!!!!')
         subject = CIDIDepressionDerived(name=self.name,
                                         filename=self.filename,
                                         measurement_moment=self.measurement_moment,

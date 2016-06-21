@@ -1,4 +1,4 @@
-from models.questionnaire import Questionnaire
+from ..questionnaire import Questionnaire
 import numpy as np
 
 

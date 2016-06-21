@@ -1,9 +1,8 @@
-from models.questionnaire import Questionnaire
+from ..questionnaire import Questionnaire
 import numpy as np
 
 
 class IDSQuestionnaire(Questionnaire):
-
     def __init__(self, name, filename, measurement_moment, reader):
         function_mapping = {'somScore': self.som_score, 'severity': self.severity}
 
@@ -38,4 +37,4 @@ class IDSQuestionnaire(Questionnaire):
         elif score <= 84:
             return 4
 
-        return None
+        return 4

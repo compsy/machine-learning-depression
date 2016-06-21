@@ -1,4 +1,4 @@
-from models.questionnaire import Questionnaire
+from ..questionnaire import Questionnaire
 import numpy as np
 
 
@@ -6,80 +6,80 @@ class CIDIDepressionDerived(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
         function_mapping = {
-            'minorDepressionPastMonth': self.minorDepressionPastMonth,
-            'majorDepressionPastMonth': self.majorDepressionPastMonth,
-            'majorDepressionPastSixMonths': self.majorDepressionPastSixMonths,
-            'majorDepressionPastYear': self.majorDepressionPastYear,
-            'majorDepressionLifetime': self.majorDepressionLifetime,
-            'dysthymiaPastmonth': self.dysthymiaPastmonth,
-            'dysthymiaPastSixMonths': self.dysthymiaPastSixMonths,
-            'dysthymiaPastYear': self.dysthymiaPastYear,
-            'dysthymiaLifetime': self.dysthymiaLifetime,
-            'numberOfCurrentDepressionDiagnoses': self.numberOfCurrentDepressionDiagnoses,
-            'hasLifetimeDepressionDiagnoses': self.hasLifetimeDepressionDiagnoses,
-            'categoriesForLifetimeDepressionDiagnoses': self.categoriesForLifetimeDepressionDiagnoses,
-            'numberOfMajorDepressionEpisodes': self.numberOfMajorDepressionEpisodes,
-            'majorDepressionType': self.majorDepressionType
+            'minorDepressionPastMonth': self.minor_depression_past_month,
+            'majorDepressionPastMonth': self.major_depression_past_month,
+            'majorDepressionPastSixMonths': self.major_depression_past_six_months,
+            'majorDepressionPastYear': self.major_depression_past_year,
+            'majorDepressionLifetime': self.major_depression_lifetime,
+            'dysthymiaPastmonth': self.dysthymia_past_month,
+            'dysthymiaPastSixMonths': self.dysthymia_past_six_months,
+            'dysthymiaPastYear': self.dysthymia_past_year,
+            'dysthymiaLifetime': self.dysthymia_lifetime,
+            'numberOfCurrentDepressionDiagnoses': self.number_of_current_depression_diagnoses,
+            'hasLifetimeDepressionDiagnoses': self.has_lifetime_depression_diagnoses,
+            'categoriesForLifetimeDepressionDiagnoses': self.categories_for_lifetime_depression_diagnoses,
+            'numberOfMajorDepressionEpisodes': self.number_of_major_depression_episodes,
+            'majorDepressionType': self.major_depression_type
         }
 
         super().__init__(name, filename, measurement_moment, reader, function_mapping)
 
     # Depression
-    def minorDepressionPastMonth(self, participant):
+    def minor_depression_past_month(self, participant):
         val = self.get_field(participant, 'cidep01')
         return val if val is not None and val >= 0 else np.nan
 
-    def majorDepressionPastMonth(self, participant):
+    def major_depression_past_month(self, participant):
         val = self.get_field(participant, 'cidep03')
         return val if val is not None and val >= 0 else np.nan
 
-    def majorDepressionPastSixMonths(self, participant):
+    def major_depression_past_six_months(self, participant):
         val = self.get_field(participant, 'cidep05')
         return val if val is not None and val >= 0 else np.nan
 
-    def majorDepressionPastYear(self, participant):
+    def major_depression_past_year(self, participant):
         val = self.get_field(participant, 'cidep07')
         return val if val is not None and val >= 0 else np.nan
 
-    def majorDepressionLifetime(self, participant):
+    def major_depression_lifetime(self, participant):
         val = self.get_field(participant, 'cidep09')
         return val if val is not None and val >= 0 else np.nan
 
     # Dysthymia
-    def dysthymiaPastmonth(self, participant):
+    def dysthymia_past_month(self, participant):
         val = self.get_field(participant, 'cidep02')
         return val if val is not None and val >= 0 else np.nan
 
-    def dysthymiaPastSixMonths(self, participant):
+    def dysthymia_past_six_months(self, participant):
         val = self.get_field(participant, 'cidep04')
         return val if val is not None and val >= 0 else np.nan
 
-    def dysthymiaPastYear(self, participant):
+    def dysthymia_past_year(self, participant):
         val = self.get_field(participant, 'cidep06')
         return val if val is not None and val >= 0 else np.nan
 
-    def dysthymiaLifetime(self, participant):
+    def dysthymia_lifetime(self, participant):
         val = self.get_field(participant, 'cidep08')
         return val if val is not None and val >= 0 else np.nan
 
     # number of current depression diagnoses (past 6 months)
-    def numberOfCurrentDepressionDiagnoses(self, participant):
+    def number_of_current_depression_diagnoses(self, participant):
         val = self.get_field(participant, 'cidep10')
         return val if val is not None and val >= 0 else np.nan
 
-    def hasLifetimeDepressionDiagnoses(self, participant):
+    def has_lifetime_depression_diagnoses(self, participant):
         val = self.get_field(participant, 'cidep11')
         return val if val is not None and val >= 0 else np.nan
 
-    def categoriesForLifetimeDepressionDiagnoses(self, participant):
+    def categories_for_lifetime_depression_diagnoses(self, participant):
         val = self.get_field(participant, 'cidep12')
         return val if val is not None and val >= 0 else np.nan
 
     # of MDD episodes
-    def numberOfMajorDepressionEpisodes(self, participant):
+    def number_of_major_depression_episodes(self, participant):
         val = self.get_field(participant, 'cidep13')
         return val if val is not None and val >= 0 else np.nan
 
-    def majorDepressionType(self, participant):
+    def major_depression_type(self, participant):
         val = self.get_field(participant, 'cidep14')
         return val if val is not None and val >= 0 else np.nan

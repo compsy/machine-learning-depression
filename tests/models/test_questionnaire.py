@@ -1,23 +1,8 @@
 from learner.models import questionnaire, participant
-from unittest.mock import MagicMock, Mock
 import pandas as pd
 import pytest
 
-
 class TestQuestionnaire:
-
-    file_data = pd.DataFrame([[1, 1.5], [2, 2.5]], columns=['pident', 'avalue'])
-
-    @pytest.fixture()
-    def mock_reader(self):
-        mock_reader = Mock()
-        mock_reader.read_file = MagicMock(return_value=self.file_data)
-        return mock_reader
-
-    @pytest.fixture()
-    def mock_participant(self):
-        mock_participant = participant.Participant(pident=1, sexe=1, age=1)
-        return mock_participant
 
     @pytest.fixture()
     def subject(self, mock_reader):
@@ -30,7 +15,8 @@ class TestQuestionnaire:
         return subject
 
     def test_create_data_hash(self, subject):
-        result = subject.create_data_hash(self.file_data)
+        file_data = pd.DataFrame([[1, 1.5], [2, 2.5]], columns=['pident', 'avalue'])
+        result = subject.create_data_hash(file_data)
         assert isinstance(result, dict)
         assert 'pident' in result[1]
         assert result[1]['pident'] == 1

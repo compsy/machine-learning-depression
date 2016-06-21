@@ -1,6 +1,5 @@
 from learner.models import questionnaire, participant
-from learner.data_input import spss_reader
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 import pandas as pd
 import pytest
 
@@ -13,7 +12,7 @@ class TestQuestionnaire:
     @pytest.fixture()
     def mock_reader(self):
         returnvalue = pd.DataFrame([[1, 1.5], [2, 2.5]], columns=['pident', 'avalue'])
-        mock_reader = spss_reader.SpssReader()
+        mock_reader = Mock()
         mock_reader.read_file = MagicMock(return_value=returnvalue)
         return mock_reader
 

@@ -2,6 +2,7 @@ from learner.models import questionnaire, participant
 import pandas as pd
 import pytest
 
+
 class TestQuestionnaire:
 
     @pytest.fixture()

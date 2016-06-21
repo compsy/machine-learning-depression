@@ -59,42 +59,77 @@ class TestFourDKLQuestionnaire:
     # Depression #
     ##############
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep01', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep01', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep01', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep01',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep01',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep01',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_minor_depression_past_month(self, mock_get_field, expected, subject):
         self.check_func(subject.minor_depression_past_month('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep03', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep03', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep03', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep03',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep03',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep03',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_major_depression_past_month(self, mock_get_field, expected, subject):
         self.check_func(subject.major_depression_past_month('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep05', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep05', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep05', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep05',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep05',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep05',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_major_depression_past_six_months(self, mock_get_field, expected, subject):
         self.check_func(subject.major_depression_past_six_months('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep07', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep07', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep07', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep07',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep07',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep07',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_major_depression_past_year(self, mock_get_field, expected, subject):
         self.check_func(subject.major_depression_past_year('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep09', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep09', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep09', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep09',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep09',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep09',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_major_depression_lifetime(self, mock_get_field, expected, subject):
         self.check_func(subject.major_depression_lifetime('participant'), expected)
 
@@ -102,34 +137,62 @@ class TestFourDKLQuestionnaire:
     # Dysthymia #
     ##############
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep02', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep02', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep02', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep02',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep02',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep02',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_dysthymia_past_month(self, mock_get_field, expected, subject):
         self.check_func(subject.dysthymia_past_month('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep04', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep04', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep04', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep04',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep04',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep04',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_dysthymia_past_six_months(self, mock_get_field, expected, subject):
         self.check_func(subject.dysthymia_past_six_months('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep06', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep06', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep06', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep06',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep06',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep06',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_dysthymia_past_year(self, mock_get_field, expected, subject):
         self.check_func(subject.dysthymia_past_year('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep08', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep08', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep08', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep08',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep08',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep08',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_dysthymia_lifetime(self, mock_get_field, expected, subject):
         self.check_func(subject.dysthymia_lifetime('participant'), expected)
 
@@ -137,41 +200,76 @@ class TestFourDKLQuestionnaire:
     # Number of current depression diagnoses (past 6 months) #
     ##########################################################
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep10', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep10', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep10', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep10',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep10',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep10',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_number_of_current_depression_diagnoses(self, mock_get_field, expected, subject):
         self.check_func(subject.number_of_current_depression_diagnoses('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep11', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep11', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep11', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep11',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep11',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep11',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_has_lifetime_depression_diagnoses(self, mock_get_field, expected, subject):
         self.check_func(subject.has_lifetime_depression_diagnoses('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep12', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep12', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep12', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep12',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep12',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep12',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_categories_for_lifetime_depression_diagnoses(self, mock_get_field, expected, subject):
         self.check_func(subject.categories_for_lifetime_depression_diagnoses('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep13', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep13', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep13', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep13',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep13',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep13',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_number_of_major_depression_episodes(self, mock_get_field, expected, subject):
         self.check_func(subject.number_of_major_depression_episodes('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
-        ({'participant': 'participant', 'field': 'cidep14', 'value': 0}, 0),
-        ({'participant': 'participant', 'field': 'cidep14', 'value': 1}, 1),
-        ({'participant': 'participant', 'field': 'cidep14', 'value': -1}, np.nan),
-    ], indirect=True)
+        ({'participant': 'participant',
+          'field': 'cidep14',
+          'value': 0}, 0),
+        ({'participant': 'participant',
+          'field': 'cidep14',
+          'value': 1}, 1),
+        ({'participant': 'participant',
+          'field': 'cidep14',
+          'value': -1}, np.nan),
+    ],
+                             indirect=True)
     def test_major_depression_type(self, mock_get_field, expected, subject):
         self.check_func(subject.major_depression_type('participant'), expected)

@@ -71,5 +71,3 @@ class TestFourDKLQuestionnaire:
         monkeypatch.setattr(subject, 'get_row', fake_get_row)
         result = subject.som_score(mock_participant)
         assert np.isnan(result)
-
-

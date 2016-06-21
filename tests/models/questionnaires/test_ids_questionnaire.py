@@ -4,6 +4,7 @@ from learner.models.questionnaires.ids_questionnaire import IDSQuestionnaire
 import pytest
 import numpy as np
 
+
 class TestIDSQuestionnaire:
     name = 'ids'
     filename = 'ids.csv'
@@ -11,10 +12,10 @@ class TestIDSQuestionnaire:
 
     @pytest.fixture()
     def subject(self, mock_reader):
-        subject = IDSQuestionnaire(name= self.name,
-                                  filename= self.filename,
-                                  measurement_moment= self.measurement_moment,
-                                  reader=mock_reader)
+        subject = IDSQuestionnaire(name=self.name,
+                                   filename=self.filename,
+                                   measurement_moment=self.measurement_moment,
+                                   reader=mock_reader)
         return subject
 
     def test_init(self, subject):
@@ -50,7 +51,7 @@ class TestIDSQuestionnaire:
         for key in subject.variables_for_som_score:
             fake_data[subject.variable_name(key)] = index
             total += index
-            index+=1
+            index += 1
 
         def fake_get_row(participant):
             return fake_data

@@ -4,6 +4,7 @@ from learner.models.questionnaires.masq_questionnaire import MASQQuestionnaire
 import pytest
 import numpy as np
 
+
 class TestFourDKLQuestionnaire:
     name = '4dkl'
     filename = '4dkl.csv'
@@ -11,10 +12,10 @@ class TestFourDKLQuestionnaire:
 
     @pytest.fixture()
     def subject(self, mock_reader):
-        subject = MASQQuestionnaire(name= self.name,
-                                  filename= self.filename,
-                                  measurement_moment= self.measurement_moment,
-                                  reader=mock_reader)
+        subject = MASQQuestionnaire(name=self.name,
+                                    filename=self.filename,
+                                    measurement_moment=self.measurement_moment,
+                                    reader=mock_reader)
         return subject
 
     def test_init(self, subject):
@@ -35,6 +36,7 @@ class TestFourDKLQuestionnaire:
             assert current in all_functions
 
     def test_positive_affect_score(self, subject, monkeypatch, mock_participant):
+
         def fake_get_field(participant, field_name):
             assert field_name == 'masqpa'
             assert participant == mock_participant
@@ -56,6 +58,7 @@ class TestFourDKLQuestionnaire:
         assert np.isnan(result)
 
     def test_negative_affect_score(self, subject, monkeypatch, mock_participant):
+
         def fake_get_field(participant, field_name):
             assert field_name == 'masqna'
             assert participant == mock_participant
@@ -77,6 +80,7 @@ class TestFourDKLQuestionnaire:
         assert np.isnan(result)
 
     def test_somatization_score(self, subject, monkeypatch, mock_participant):
+
         def fake_get_field(participant, field_name):
             assert field_name == 'masqsa'
             assert participant == mock_participant

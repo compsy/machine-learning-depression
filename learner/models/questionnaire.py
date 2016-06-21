@@ -4,10 +4,10 @@ class Questionnaire:
         self.name = name
         self.filename = filename
         self.measurement_moment = measurement_moment
-        self.data = self.createDataHash(reader.read_file(filename))
+        self.data = self.create_data_hash(reader.read_file(filename))
         self.function_mapping = function_mapping
 
-    def createDataHash(self, data):
+    def create_data_hash(self, data):
         data_hashed = {}
 
         # Some files have a capitalized version of Pident.
@@ -50,7 +50,6 @@ class Questionnaire:
     def get_field(self, participant, field):
         dat = self.get_row(participant)
         q_name = self.variable_name(field)
-        print(q_name)
         if q_name in dat:
             return dat[q_name]
         return None

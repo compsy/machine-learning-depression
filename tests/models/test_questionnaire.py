@@ -6,14 +6,12 @@ import pytest
 
 class TestQuestionnaire:
 
-    def test_get_header(self):
-        True
+    file_data = pd.DataFrame([[1, 1.5], [2, 2.5]], columns=['pident', 'avalue'])
 
     @pytest.fixture()
     def mock_reader(self):
-        returnvalue = pd.DataFrame([[1, 1.5], [2, 2.5]], columns=['pident', 'avalue'])
         mock_reader = Mock()
-        mock_reader.read_file = MagicMock(return_value=returnvalue)
+        mock_reader.read_file = MagicMock(return_value=self.file_data)
         return mock_reader
 
     @pytest.fixture()
@@ -30,6 +28,19 @@ class TestQuestionnaire:
                                               reader=mock_reader,
                                               function_mapping=function_mapping)
         return subject
+
+    def test_create_data_hash(self, subject):
+        result = subject.create_data_hash(self.file_data)
+        assert isinstance(result, dict)
+        assert 'pident' in result[1]
+        assert result[1]['pident'] == 1
+        assert 'pident' in result[2]
+        assert result[2]['pident'] == 2
+
+        assert 'avalue' in result[1]
+        assert result[1]['avalue'] == 1.5
+        assert 'avalue' in result[2]
+        assert result[2]['avalue'] == 2.5
 
     def test_get_field(self, subject, mock_participant):
         result = subject.get_field(mock_participant, 'value')

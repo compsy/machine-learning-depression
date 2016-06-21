@@ -58,7 +58,8 @@ class TestBAIQuestionnaire:
         ({'participant': 'participant',
           'field': 'baiscal',
           'value': -1}, np.nan),
-    ],indirect=True)
+    ],
+                             indirect=True)
     def test_total_score(self, mock_get_field, expected, assert_with_nan, subject):
         assert_with_nan(subject.total_score('participant'), expected)
 
@@ -72,7 +73,8 @@ class TestBAIQuestionnaire:
         ({'participant': 'participant',
           'field': 'baisub',
           'value': -1}, np.nan),
-    ], indirect=True)
+    ],
+                             indirect=True)
     def test_subjective_scale_score(self, mock_get_field, expected, assert_with_nan, subject):
         assert_with_nan(subject.subjective_scale_score('participant'), expected)
 
@@ -86,7 +88,8 @@ class TestBAIQuestionnaire:
         ({'participant': 'participant',
           'field': 'baisev',
           'value': -1}, np.nan),
-    ], indirect=True)
+    ],
+                             indirect=True)
     def test_severity_score(self, mock_get_field, expected, assert_with_nan, subject):
         assert_with_nan(subject.severity_score('participant'), expected)
 
@@ -100,6 +103,7 @@ class TestBAIQuestionnaire:
         ({'participant': 'participant',
           'field': 'baisom',
           'value': -1}, np.nan),
-    ], indirect=True)
+    ],
+                             indirect=True)
     def test_somatic_scale_score(self, mock_get_field, expected, assert_with_nan, subject):
         assert_with_nan(subject.somatic_scale_score('participant'), expected)

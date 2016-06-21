@@ -1,8 +1,8 @@
 from unittest.mock import MagicMock, Mock
 import pytest
 import pandas as pd
-
 from learner.models.participant import Participant
+import numpy as np
 
 
 @pytest.fixture()
@@ -22,3 +22,17 @@ def mock_participant():
 @pytest.fixture()
 def expected(request):
     return request.param
+
+
+@pytest.fixture()
+def assert_with_nan():
+
+    def assertion(result, expected):
+        if (np.isnan(expected)):
+            assert np.isnan(result)
+        elif expected is None:
+            assert result is expected
+        else:
+            assert result == expected
+
+    return assertion

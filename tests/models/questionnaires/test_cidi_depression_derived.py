@@ -5,7 +5,7 @@ import pytest
 import numpy as np
 
 
-class TestFourDKLQuestionnaire:
+class TestCidiDepressionDerived:
     name = 'cidi_derived'
     filename = 'cidi.csv'
     measurement_moment = 'b'
@@ -31,12 +31,6 @@ class TestFourDKLQuestionnaire:
             return val
 
         monkeypatch.setattr(subject, 'get_field', fake_get_field)
-
-    def check_func(self, result, expected):
-        if (np.isnan(expected)):
-            assert np.isnan(result)
-        else:
-            assert result == expected
 
     def test_init(self, subject):
         # Test if the super class is called with the correct parameters
@@ -70,8 +64,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_minor_depression_past_month(self, mock_get_field, expected, subject):
-        self.check_func(subject.minor_depression_past_month('participant'), expected)
+    def test_minor_depression_past_month(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.minor_depression_past_month('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -85,8 +79,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_major_depression_past_month(self, mock_get_field, expected, subject):
-        self.check_func(subject.major_depression_past_month('participant'), expected)
+    def test_major_depression_past_month(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.major_depression_past_month('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -100,8 +94,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_major_depression_past_six_months(self, mock_get_field, expected, subject):
-        self.check_func(subject.major_depression_past_six_months('participant'), expected)
+    def test_major_depression_past_six_months(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.major_depression_past_six_months('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -115,8 +109,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_major_depression_past_year(self, mock_get_field, expected, subject):
-        self.check_func(subject.major_depression_past_year('participant'), expected)
+    def test_major_depression_past_year(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.major_depression_past_year('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -130,8 +124,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_major_depression_lifetime(self, mock_get_field, expected, subject):
-        self.check_func(subject.major_depression_lifetime('participant'), expected)
+    def test_major_depression_lifetime(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.major_depression_lifetime('participant'), expected)
 
     ##############
     # Dysthymia #
@@ -148,8 +142,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_dysthymia_past_month(self, mock_get_field, expected, subject):
-        self.check_func(subject.dysthymia_past_month('participant'), expected)
+    def test_dysthymia_past_month(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.dysthymia_past_month('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -163,8 +157,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_dysthymia_past_six_months(self, mock_get_field, expected, subject):
-        self.check_func(subject.dysthymia_past_six_months('participant'), expected)
+    def test_dysthymia_past_six_months(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.dysthymia_past_six_months('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -178,8 +172,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_dysthymia_past_year(self, mock_get_field, expected, subject):
-        self.check_func(subject.dysthymia_past_year('participant'), expected)
+    def test_dysthymia_past_year(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.dysthymia_past_year('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -193,8 +187,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_dysthymia_lifetime(self, mock_get_field, expected, subject):
-        self.check_func(subject.dysthymia_lifetime('participant'), expected)
+    def test_dysthymia_lifetime(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.dysthymia_lifetime('participant'), expected)
 
     ##########################################################
     # Number of current depression diagnoses (past 6 months) #
@@ -211,8 +205,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_number_of_current_depression_diagnoses(self, mock_get_field, expected, subject):
-        self.check_func(subject.number_of_current_depression_diagnoses('participant'), expected)
+    def test_number_of_current_depression_diagnoses(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.number_of_current_depression_diagnoses('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -226,8 +220,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_has_lifetime_depression_diagnoses(self, mock_get_field, expected, subject):
-        self.check_func(subject.has_lifetime_depression_diagnoses('participant'), expected)
+    def test_has_lifetime_depression_diagnoses(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.has_lifetime_depression_diagnoses('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -241,8 +235,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_categories_for_lifetime_depression_diagnoses(self, mock_get_field, expected, subject):
-        self.check_func(subject.categories_for_lifetime_depression_diagnoses('participant'), expected)
+    def test_categories_for_lifetime_depression_diagnoses(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.categories_for_lifetime_depression_diagnoses('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -256,8 +250,8 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_number_of_major_depression_episodes(self, mock_get_field, expected, subject):
-        self.check_func(subject.number_of_major_depression_episodes('participant'), expected)
+    def test_number_of_major_depression_episodes(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.number_of_major_depression_episodes('participant'), expected)
 
     @pytest.mark.parametrize('mock_get_field,expected', [
         ({'participant': 'participant',
@@ -271,5 +265,5 @@ class TestFourDKLQuestionnaire:
           'value': -1}, np.nan),
     ],
                              indirect=True)
-    def test_major_depression_type(self, mock_get_field, expected, subject):
-        self.check_func(subject.major_depression_type('participant'), expected)
+    def test_major_depression_type(self, mock_get_field, expected, assert_with_nan, subject):
+        assert_with_nan(subject.major_depression_type('participant'), expected)

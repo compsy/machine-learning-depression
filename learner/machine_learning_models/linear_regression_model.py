@@ -1,4 +1,5 @@
 from .machine_learning_model import MachineLearningModel
+
 from sklearn import linear_model
 
 
@@ -8,6 +9,6 @@ class LinearRegressionModel(MachineLearningModel):
         if (self.skmodel is not None):
             return self
 
-        self.skmodel = linear_model.LinearRegression(fit_intercept=True, normalize=True, copy_X=False, n_jobs=-1)
-        self.skmodel = self.skmodel.fit(self.x, self.y)
+        self.skmodel = linear_model.Lasso(alpha=0.01, fit_intercept=False, normalize=True, copy_X=False)
+        self.skmodel = self.skmodel.fit(self.x_train, self.y_train)
         return self

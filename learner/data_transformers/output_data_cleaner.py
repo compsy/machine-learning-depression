@@ -1,7 +1,8 @@
 import numpy as np
+from .data_transformer import DataTransformer
 
 
-class OutputDataCleaner:
+class OutputDataCleaner(DataTransformer):
 
     def clean(self, data, incorrect_indices):
         return np.delete(data, incorrect_indices, axis=0)

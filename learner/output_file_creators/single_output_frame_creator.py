@@ -15,8 +15,8 @@ class SingleOutputFrameCreator:
 
         # Determine the number of columns in the eventual dataframe
         for questionnaire in questionnaires:
-            self.cols += questionnaire.numberOfVariables()
-            header.extend(questionnaire.getHeader())
+            self.cols += questionnaire.number_of_variables()
+            header.extend(questionnaire.get_header())
 
         header = np.array(header)
         result = np.empty(rows * self.cols).reshape(rows, self.cols)
@@ -34,7 +34,7 @@ class SingleOutputFrameCreator:
 
             last_index = 1
             for col_index, questionnaire in enumerate(questionnaires):
-                row = questionnaire.getData(participant)
+                row = questionnaire.get_data(participant)
                 for value in row:
                     participant_array[last_index] = value
                     last_index += 1

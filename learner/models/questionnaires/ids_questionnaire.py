@@ -1,10 +1,11 @@
-from models.questionnaire import Questionnaire
+from ..questionnaire import Questionnaire
+import numpy as np
 
 
 class IDSQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
-        function_mapping = {'somScore': self.somScore, 'severity': self.severity}
+        function_mapping = {'somScore': self.som_score, 'severity': self.severity}
 
         super().__init__(name, filename, measurement_moment, reader, function_mapping)
         self.variables_for_som_score = [
@@ -13,19 +14,20 @@ class IDSQuestionnaire(Questionnaire):
             'ids22', 'ids23', 'ids24', 'ids25', 'ids26', 'ids27'
         ]
 
-    def somScore(self, participant):
-        dat = self.getRow(participant)
+    def som_score(self, participant):
+        dat = self.get_row(participant)
         tot = 0
         for name in self.variables_for_som_score:
-            q_name = self.variableName(name)
+            q_name = self.variable_name(name)
             if q_name in dat and dat[q_name] >= 0:
                 tot += dat[q_name]
-
-        return tot
+        return tot if tot > 0 else np.nan
 
     def severity(self, participant):
-        score = self.somScore(participant)
-        if score <= 13:
+        score = self.som_score(participant)
+        if np.isnan(score):
+            return np.nan
+        elif score <= 13:
             return 0
         elif score <= 25:
             return 1
@@ -36,4 +38,4 @@ class IDSQuestionnaire(Questionnaire):
         elif score <= 84:
             return 4
 
-        return None
+        return 4

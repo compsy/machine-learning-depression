@@ -65,7 +65,7 @@ if __name__ == '__main__':
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
 
-    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=False)
+    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=True)
 
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
@@ -75,13 +75,12 @@ if __name__ == '__main__':
     X_NAMES = np.array(['pident', 'ademo-gender', 'ademo-age', 'aids-somScore', 'amasq-positiveAffectScore',
                         'amasq-negativeAffectScore', 'amasq-somatizationScore', 'abai-totalScore',
                         'abai-subjectiveScaleScore', 'abai-severityScore', 'abai-somaticScaleScore', 'a4dkl-somScore',
-                        'a4dkl-severity', 'acidi-depression-majorDepressionLifetime',
-                        'acidi-depression-dysthymiaLifetime', 'acidi-anxiety-socialfobiaInLifetime',
-                        'acidi-anxiety-panicWithAgorafobiaInLifetime',
+                        'acidi-depression-majorDepressionLifetime', 'acidi-depression-dysthymiaLifetime',
+                        'acidi-anxiety-socialfobiaInLifetime', 'acidi-anxiety-panicWithAgorafobiaInLifetime',
                         'acidi-anxiety-panicWithoutAgorafobiaInLifetime'])
 
     # Output columns
-    Y_NAMES = np.array(['cids-followup-somScore'])
+    Y_NAMES = np.array(['cids-followup-somScore', 'cids-followup-severity'])
 
     selected_header = np.append(X_NAMES, Y_NAMES)
 

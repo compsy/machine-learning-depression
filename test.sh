@@ -1,8 +1,7 @@
 #!/bin/bash
 echo 'Running yapf'
 PRE_DIFF=$(git diff)
-yapf -r -i learner
-yapf -r -i tests
+yapf -i -r -e "*venv/*" .
 POST_DIFF=$(git diff)
 
 DIFF=$(diff <(echo "$PRE_DIFF") <(echo "$POST_DIFF"))

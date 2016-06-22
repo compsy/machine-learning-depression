@@ -18,4 +18,4 @@ echo 'Yapf ran succesfully'
 #echo 'Running TOX'
 #tox
 echo 'Running py.test'
-py.test tests
+py.test --cov=learner tests/

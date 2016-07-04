@@ -1,16 +1,26 @@
-from data_transformers import output_data_cleaner, output_data_splitter
-from data_input import spss_reader
-from data_output.csv_exporter import CsvExporter
-from factories.questionnaire_factory import QuestionnaireFactory
-from machine_learning_models import linear_regression_model, sync_model_runner, support_vector_machine_model, \
-    regression_tree_model
-from models import participant
 import os.path
-from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 import pickle
+
 import numpy as np
 
-from collections import deque
+
+from data_input import spss_reader
+from data_output.csv_exporter import CsvExporter
+from data_output.plotters.actual_vs_prediction_plotter import ActualVsPredictionPlotter
+from data_output.plotters.learning_curve_plotter import LearningCurvePlotter
+from data_output.plotters.validation_curve_plotter import ValidationCurvePlotter
+from data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
+from data_transformers.output_data_cleaner import OutputDataCleaner
+from data_transformers.output_data_splitter import OutputDataSplitter
+from factories.questionnaire_factory import QuestionnaireFactory
+from machine_learning_models import sync_model_runner
+from machine_learning_models.regression.bagging_model import BaggingModel
+from machine_learning_models.regression.boosting_model import BoostingModel
+from machine_learning_models.regression.linear_regression_model import LinearRegressionModel
+from machine_learning_models.regression.regression_tree_model import RegressionTreeModel
+from machine_learning_models.regression.support_vector_machine_model import SupportVectorMachineModel
+from models import participant
+from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
 
 def create_participants(data):
@@ -56,10 +66,17 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
 
 
 if __name__ == '__main__':
+    VERBOSITY = 0
+
     spss_reader = spss_reader.SpssReader()
     single_output_frame_creator = SingleOutputFrameCreator()
-    output_data_cleaner = output_data_cleaner.OutputDataCleaner()
-    output_data_splitter = output_data_splitter.OutputDataSplitter()
+    output_data_cleaner = OutputDataCleaner()
+    output_data_splitter = OutputDataSplitter()
+    data_preprocessor_polynomial = DataPreprocessorPolynomial()
+
+    actual_vs_prediction_plotter = ActualVsPredictionPlotter()
+    learning_curve_plotter = LearningCurvePlotter()
+    validation_curve_plotter = ValidationCurvePlotter()
 
     # First read demographic data
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
@@ -136,7 +153,8 @@ if __name__ == '__main__':
                         'a4dkl-4dkld16',
 
                         # Cidi depression
-                        'acidi-depression-minorDepressionPastMonthacidi-depression-majorDepressionPastMonth',
+                        'acidi-depression-minorDepressionPastMonth',
+                        'acidi-depression-majorDepressionPastMonth',
                         'acidi-depression-majorDepressionPastSixMonths',
                         'acidi-depression-majorDepressionPastYear',
                         'acidi-depression-majorDepressionLifetime',
@@ -191,13 +209,14 @@ if __name__ == '__main__':
 
     # Split the dataframe into a x and y dataset.
     x_data = output_data_cleaner.clean(output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
-    y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
+    x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
+    y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
     # Convert ydata 2d matrix (x * 1) to 1d array (x)
     y_data = np.ravel(y_data)
 
-    print(np.shape(x_data))
-    print(np.shape(y_data))
+    print("The used data for the prediction has shape: %s %s" % np.shape(x_data))
+    print("The values to predict have the shape: %s" % np.shape(y_data))
     # Export all used data to a CSV file
 
     CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
@@ -207,15 +226,29 @@ if __name__ == '__main__':
     # data = np.array(deque(data), [(n, 'float64') for n in header])
 
     models = [
-        linear_regression_model.LinearRegressionModel,
-        # support_vector_machine_model.SupportVectorMachineModel,
-        regression_tree_model.RegressionTreeModel
+        LinearRegressionModel
+        #SupportVectorMachineModel,
+        #RegressionTreeModel
+        #BoostingModel,
+        #BaggingModel
     ]
 
     sync_model_runner = sync_model_runner.SyncModelRunner(models)
-    result_queue = sync_model_runner.runCalculations(x_data, y_data, X_NAMES, Y_NAMES)
 
-    for i in range(0, result_queue.qsize()):
-        model, prediction = result_queue.get()
-    model.plot(model.y_train, prediction)
-    model.print_accuracy()
+    fabricated_models = sync_model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
+
+    # Generate learning curve plots
+    plots = []
+    for model in fabricated_models:
+        #plots.append(learning_curve_plotter.plot(model))
+        plots.append(validation_curve_plotter.plot(model))
+
+
+    # Generate accuracy measures
+    # result_queue = sync_model_runner.run_calculations(fabricated_models=fabricated_models)
+    # for i in range(0, result_queue.qsize()):
+    #     model, prediction = result_queue.get()
+    #     plots.append(actual_vs_prediction_plotter.plot(model.y_train, prediction))
+    #     # model.print_accuracy()
+
+    [plot.show() for plot in plots]

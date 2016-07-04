@@ -1,17 +1,17 @@
 from sklearn.grid_search import GridSearchCV
 
-from .machine_learning_model import MachineLearningModel
+from machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn import svm
 from numpy import logspace
 
 
 class SupportVectorMachineModel(MachineLearningModel):
 
-    def train(self):
-        self.skmodel = self.train_with_grid_search()
-        return self
+    def __init__(self, x, y, x_names, y_names, verbosity):
+        super().__init__(x, y, x_names, y_names)
+        self.skmodel = svm.SVR(verbose=verbosity)
 
-    def train_with_grid_search(self):
+    def train(self):
         # Radial basis function grid
         # rbf_grid = {'kernel': ['rbf'],
         #             'C': [1, 10, 100, 1000],
@@ -37,6 +37,5 @@ class SupportVectorMachineModel(MachineLearningModel):
         #                 'gamma': logspace(0, 1, 5)}
 
         param_grid = [linear_grid]
-        skmodel = svm.SVR()
-        skmodel = GridSearchCV(estimator=skmodel, param_grid=param_grid, n_jobs=-1, verbose=1)
-        return skmodel
+        self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1)
+        return self.skmodel

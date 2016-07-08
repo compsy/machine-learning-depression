@@ -1,3 +1,5 @@
+import sklearn
+
 from data_output.plotters.plotter import Plotter
 
 import numpy as np
@@ -6,7 +8,7 @@ from sklearn.learning_curve import learning_curve
 
 class LearningCurvePlotter(Plotter):
 
-    def plot(self, model, ylim=None, cv=8, n_jobs=-1, train_sizes=np.linspace(.1, 1.0, 10)):
+    def plot(self, model, ylim=None, cv=8, n_jobs=-1, train_sizes=np.linspace(.1, 1.0, 20)):
         """
         Generate a simple plot of the test and traning learning curve.
         from http://scikit-learn.org/stable/auto_examples
@@ -38,17 +40,24 @@ class LearningCurvePlotter(Plotter):
         n_jobs : integer, optional
             Number of jobs to run in parallel (default 1).
         """
-        print('\t -> Determining learning curve for ' + model.given_name)
         plt.figure()
         plt.title('Learning curves for ' + model.given_name)
         plt.xlabel("Training examples")
         plt.ylabel("Score")
 
+        plot_name = model.given_name
+        plot_name = 'learning_' + plot_name.replace(" ", "_")
+
         if ylim is not None:
             plt.ylim(*ylim)
 
+        print('\t -> Determining learning curve for ' + model.given_name)
         train_sizes, train_scores, test_scores = learning_curve(
-            model.skmodel, model.x, model.y, cv=cv, train_sizes=train_sizes, scoring='mean_absolute_error')
+            model.skmodel, model.x, model.y, cv=cv, train_sizes=train_sizes,
+            scoring='mean_squared_error',
+            n_jobs=8,
+            verbose=10)
+        print('\t -> Done fitting training model')
         train_scores_mean = np.mean(train_scores, axis=1)
         train_scores_std = np.std(train_scores, axis=1)
         test_scores_mean = np.mean(test_scores, axis=1)
@@ -66,5 +75,6 @@ class LearningCurvePlotter(Plotter):
                  label="Cross-validation score")
 
         plt.legend(loc="best")
-        return plt
+        print('Done!')
+        return self.return_file(plt, plot_name)
 

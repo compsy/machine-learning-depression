@@ -15,6 +15,7 @@ from data_transformers.output_data_splitter import OutputDataSplitter
 from factories.questionnaire_factory import QuestionnaireFactory
 from machine_learning_models import sync_model_runner
 from machine_learning_models.regression.bagging_model import BaggingModel
+from sklearn.preprocessing import normalize
 from machine_learning_models.regression.boosting_model import BoostingModel
 from machine_learning_models.regression.linear_regression_model import LinearRegressionModel
 from machine_learning_models.regression.regression_tree_model import RegressionTreeModel
@@ -57,7 +58,7 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
     print('Converting data to single dataframe...')
     if not force_to_not_use_cache and os.path.isfile(file_name):
         header, data = read_cache(file_name)
-        print_header(header)
+        #print_header(header)
     else:
         questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
         data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
@@ -67,6 +68,8 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
 
 if __name__ == '__main__':
     VERBOSITY = 0
+    POLYNOMIAL_FEATURES = False
+    NORMALIZE = True
 
     spss_reader = spss_reader.SpssReader()
     single_output_frame_creator = SingleOutputFrameCreator()
@@ -82,8 +85,9 @@ if __name__ == '__main__':
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
 
-    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=False)
+    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=True)
 
+    print('Loaded data with %d rows and %d columns' % np.shape(data))
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
     # - A = the time of the measurement, a = intake, c = followup
@@ -165,8 +169,8 @@ if __name__ == '__main__':
                         'acidi-depression-numberOfCurrentDepressionDiagnoses',
                         'acidi-depression-hasLifetimeDepressionDiagnoses',
                         'acidi-depression-categoriesForLifetimeDepressionDiagnoses',
-                        'acidi-depression-numberOfMajorDepressionEpisodes',
-                        'acidi-depression-majorDepressionType',
+                        #'acidi-depression-numberOfMajorDepressionEpisodes',
+                        #'acidi-depression-majorDepressionType',
 
                         # Cidi anxiety
                         'acidi-anxiety-socialFobiaPastMonth',
@@ -190,30 +194,43 @@ if __name__ == '__main__':
                         'acidi-anxiety-generalAnxietyDisorderPastYear',
                         'acidi-anxiety-generalAnxietyDisorderInLifetime',
                         'acidi-anxiety-numberOfCurrentAnxietyDiagnoses',
-                        'acidi-anxiety-lifetimeAnxietyDiagnosesPresent'])
+                        'acidi-anxiety-lifetimeAnxietyDiagnosesPresent'
+                        ])
 
     # Output columns
     # , 'cids-followup-severity'
     Y_NAMES = np.array(['cids-followup-somScore'])
 
+    print('We will use %s as outcome.' % Y_NAMES)
     selected_header = np.append(X_NAMES, Y_NAMES)
 
     # Select the data we will use in the present experiment
     used_data = output_data_splitter.split(data, header, selected_header)
 
     # Determine which of this set are not complete
-    incorrect_rows = output_data_cleaner.find_incomplete_rows(used_data)
+    incorrect_rows = output_data_cleaner.find_incomplete_rows(used_data, selected_header)
+
+    print('From the loaded data %d rows are incomplete and will be removed!' % len(incorrect_rows))
 
     # Remove the incorrect cases
     used_data = output_data_cleaner.clean(used_data, incorrect_rows)
 
     # Split the dataframe into a x and y dataset.
     x_data = output_data_cleaner.clean(output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
-    x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
+
+
+    if NORMALIZE:
+        print('\t -> We are also normalizing the features')
+        x_data = normalize(x_data)
+
+    if POLYNOMIAL_FEATURES:
+        print('\t -> We are also adding polynomial features')
+        x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
     y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
     # Convert ydata 2d matrix (x * 1) to 1d array (x)
     y_data = np.ravel(y_data)
+
 
     print("The used data for the prediction has shape: %s %s" % np.shape(x_data))
     print("The values to predict have the shape: %s" % np.shape(y_data))
@@ -226,22 +243,21 @@ if __name__ == '__main__':
     # data = np.array(deque(data), [(n, 'float64') for n in header])
 
     models = [
-        LinearRegressionModel
-        #SupportVectorMachineModel,
-        #RegressionTreeModel
-        #BoostingModel,
+        #LinearRegressionModel,
+        SupportVectorMachineModel,
+        RegressionTreeModel,
+        BoostingModel
         #BaggingModel
     ]
 
     sync_model_runner = sync_model_runner.SyncModelRunner(models)
 
     fabricated_models = sync_model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
-
     # Generate learning curve plots
     plots = []
     for model in fabricated_models:
-        #plots.append(learning_curve_plotter.plot(model))
-        plots.append(validation_curve_plotter.plot(model))
+        plots.append(learning_curve_plotter.plot(model))
+        #plots.append(validation_curve_plotter.plot(model))
 
 
     # Generate accuracy measures
@@ -250,5 +266,10 @@ if __name__ == '__main__':
     #     model, prediction = result_queue.get()
     #     plots.append(actual_vs_prediction_plotter.plot(model.y_train, prediction))
     #     # model.print_accuracy()
+    for plt in plots:
+        print(plt)
+        filename = '../exports/'+plt[1]
+        print('Plotting to ' + filename)
+        plt[0].savefig(filename)
+        plt[0].show()
 
-    [plot.show() for plot in plots]

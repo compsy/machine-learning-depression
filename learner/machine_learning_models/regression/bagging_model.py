@@ -7,6 +7,10 @@ class BaggingModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
         super().__init__(x, y, x_names, y_names)
-        self.skmodel = BaggingRegressor(verbose=verbosity)
+        self.skmodel = BaggingRegressor(verbose=verbosity,
+                                        n_estimators=100,
+                                        bootstrap=True,
+                                        max_samples=100)
+
 
 

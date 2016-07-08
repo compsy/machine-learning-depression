@@ -27,7 +27,7 @@ class SupportVectorMachineModel(MachineLearningModel):
         #              'gamma': logspace(0, 1, 5)}
 
         # Linear function grid
-        linear_grid = {'kernel': ['linear'], 'C': [1, 10, 100, 1000], 'epsilon': logspace(0, 1, 5)}
+        #linear_grid = {'kernel': ['linear'], 'C': [1, 10, 100, 1000], 'epsilon': logspace(0, 1, 5)}
 
         # Sigmoid function grid
         # sigmoid_grid = {'kernel': ['sigmoid'],

@@ -26,9 +26,12 @@ class IDSQuestionnaire(Questionnaire):
         tot = 0
         for name in self.variables_for_som_score:
             q_name = self.variable_name(name)
-            if q_name in dat and dat[q_name] >= 0:
-                tot += dat[q_name]
-        return tot if tot > 0 else np.nan
+            if q_name in dat and dat[q_name] > 0:
+                tot += dat[q_name] - 1
+        if(participant.pident == 210269):
+            print(dat)
+            print(tot)
+        return tot if tot >= 0 else np.nan
 
     def severity(self, participant):
         score = self.som_score(participant)

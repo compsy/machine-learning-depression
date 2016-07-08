@@ -23,7 +23,7 @@ class SingleOutputFrameCreator:
 
         # TODO: This is quite slow and inefficient, should be refactored
         for index, participant_key in enumerate(participants):
-            print('Processing participant: ', participant_key)
+            # print('Processing participant: ', participant_key)
             participant = participants[participant_key]
 
             # initialize an empty array
@@ -39,7 +39,7 @@ class SingleOutputFrameCreator:
                     participant_array[last_index] = value
                     last_index += 1
 
-            print(participant_array)
+            # print(participant_array)
             result[index] = participant_array
 
         return dataFrame(data=result, header=header)

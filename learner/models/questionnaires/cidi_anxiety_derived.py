@@ -30,7 +30,9 @@ class CIDIAnxietyDerived(Questionnaire):
             'lifetimeAnxietyDiagnosesPresent': self.lifetime_anxiety_diagnoses_present
         }
 
-        super().__init__(name, filename, measurement_moment, reader, function_mapping)
+        other_available_variables = []
+
+        super().__init__(name, filename, measurement_moment, reader, function_mapping, other_available_variables)
 
     # Social fobia
     def social_fobia_past_month(self, participant):

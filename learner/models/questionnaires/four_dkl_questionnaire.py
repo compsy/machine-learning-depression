@@ -7,7 +7,12 @@ class FourDKLQuestionnaire(Questionnaire):
     def __init__(self, name, filename, measurement_moment, reader):
         function_mapping = {'somScore': self.som_score}
 
-        super().__init__(name, filename, measurement_moment, reader, function_mapping)
+        other_available_variables = [
+            '4dkld01', '4dkld02', '4dkld03', '4dkld04', '4dkld05', '4dkld06', '4dkld07', '4dkld08', '4dkld09',
+            '4dkld10', '4dkld11', '4dkld12', '4dkld13', '4dkld14', '4dkld15', '4dkld16'
+        ]
+
+        super().__init__(name, filename, measurement_moment, reader, function_mapping, other_available_variables)
         self.variables_for_som_score = [
             '4dkld01', '4dkld02', '4dkld03', '4dkld04', '4dkld05', '4dkld06', '4dkld07', '4dkld08', '4dkld09',
             '4dkld10', '4dkld11', '4dkld12', '4dkld13', '4dkld14', '4dkld15', '4dkld16'

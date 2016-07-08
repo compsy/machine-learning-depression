@@ -1,5 +1,4 @@
 from sklearn.cross_validation import cross_val_score, cross_val_predict
-import matplotlib.pyplot as plt
 from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
 
@@ -20,7 +19,7 @@ class MachineLearningModel:
         return imp.transform(data)
 
     def train_test_data(self):
-        x_train, x_test, y_train, y_test = train_test_split(self.x, self.y, test_size=0.33, random_state=42)
+        x_train, x_test, y_train, y_test = train_test_split(self.x, self.y, test_size=0.20, random_state=42)
         return (x_train, x_test, y_train, y_test)
 
     def print_accuracy(self):
@@ -33,28 +32,33 @@ class MachineLearningModel:
         # is a prediction obtained by cross validated:
         return cross_val_score(self.skmodel, self.x_train, self.y_train, cv=8)
 
-    def predict(self):
+    def cv_predict(self):
         self.train()
         # cross_val_predict returns an array of the same size as `y` where each entry
         # is a prediction obtained by cross validated:
         return cross_val_predict(self.skmodel, self.x_train, self.y_train, cv=8)
 
-    def plot(self, actual, predicted):
-        if predicted is None:
-            return False
+    # Delegate default scikit learn functions
+    def predict(self, *args, **kwargs):
+        return self.skmodel.predict(*args, **kwargs)
 
-        fig, ax = plt.subplots()
+    def fit(self, *args, **kwargs):
+        return self.skmodel.fit(*args, **kwargs)
 
-        # Plot the predicted values against the actual values
-        ax.scatter(actual, predicted)
-        ax.plot([actual.min(), actual.max()], [actual.min(), actual.max()], 'k--', lw=4)
-        ax.set_title(self.__class__.__name__)
-        ax.set_xlabel('Measured')
-        ax.set_ylabel('Predicted')
-        plt.show()
+    def score(self, *args, **kwargs):
+        return self.skmodel.score(*args, **kwargs)
 
+    def get_params(self, *args, **kwargs):
+        return self.skmodel.get_params(*args, **kwargs)
+
+    @property
     def given_name(self):
         return type(self).__name__
 
+
     def train(self):
-        raise NotImplementedError
+        if (self.skmodel is not None):
+            return self
+
+        self.skmodel = self.fit(self.x_train, self.y_train)
+        return self

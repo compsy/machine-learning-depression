@@ -1,7 +1,3 @@
-import numpy as np
-from learner.machine_learning_models import linear_regression_model
-
-
 class TestLinearRegressionModel:
 
     def test_train(self):

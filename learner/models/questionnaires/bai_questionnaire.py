@@ -11,8 +11,8 @@ class BAIQuestionnaire(Questionnaire):
             'severityScore': self.severity_score,
             'somaticScaleScore': self.somatic_scale_score
         }
-
-        super().__init__(name, filename, measurement_moment, reader, function_mapping)
+        other_available_variables = []
+        super().__init__(name, filename, measurement_moment, reader, function_mapping, other_available_variables)
 
     def total_score(self, participant):
         val = self.get_field(participant, 'baiscal')

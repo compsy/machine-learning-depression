@@ -11,7 +11,9 @@ class MASQQuestionnaire(Questionnaire):
             'somatizationScore': self.somatization_score
         }
 
-        super().__init__(name, filename, measurement_moment, reader, function_mapping)
+        other_available_variables = []
+
+        super().__init__(name, filename, measurement_moment, reader, function_mapping, other_available_variables )
 
     def positive_affect_score(self, participant):
         val = self.get_field(participant, 'masqpa')

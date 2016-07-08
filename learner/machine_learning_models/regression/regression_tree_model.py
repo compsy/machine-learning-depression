@@ -5,10 +5,7 @@ from sklearn.tree import DecisionTreeRegressor
 
 class RegressionTreeModel(MachineLearningModel):
 
-    def train(self):
-        if (self.skmodel is not None):
-            return self
+    def __init__(self, x, y, x_names, y_names, verbosity):
+        super().__init__(x, y, x_names, y_names)
+        self.skmodel = DecisionTreeRegressor(max_depth=5)
 
-        self.skmodel = DecisionTreeRegressor(max_depth=1000)
-        self.skmodel = self.skmodel.fit(self.x, self.y)
-        return self

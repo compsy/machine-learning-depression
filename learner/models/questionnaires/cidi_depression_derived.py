@@ -21,8 +21,9 @@ class CIDIDepressionDerived(Questionnaire):
             'numberOfMajorDepressionEpisodes': self.number_of_major_depression_episodes,
             'majorDepressionType': self.major_depression_type
         }
+        other_available_variables = []
 
-        super().__init__(name, filename, measurement_moment, reader, function_mapping)
+        super().__init__(name, filename, measurement_moment, reader, function_mapping, other_available_variables)
 
     # Depression
     def minor_depression_past_month(self, participant):

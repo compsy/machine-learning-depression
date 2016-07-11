@@ -7,25 +7,26 @@ from sklearn.learning_curve import learning_curve, validation_curve
 
 class ValidationCurvePlotter(Plotter):
 
-    def plot(self, model, variable_to_validate='max_iter'):
+    def plot(self, model):
 
 
-        space = np.linspace(10, 50, 5)
-        space = [int(spacenow) for spacenow in space]
-
+        space = np.logspace(-5, 6, 50)
+        space = np.linspace(1, 100, 100)
         plot_name = model.given_name
         plot_name = 'validation_' + plot_name.replace(" ", "_")
 
-        print('\t -> Determining validation curve for %s, using space: %d' % model.given_name, space)
-        train_scores, valid_scores = validation_curve(estimator=model.skmodel, X=model.x, y=model.y,
-                                                      param_name=variable_to_validate,
-                                                      param_range = space, n_jobs=1, verbose=1)
+        print(space)
+        print('\t -> Determining validation curve for ' + model.given_name + ', using space: ' + str(space) )
+        train_scores, valid_scores = validation_curve(estimator=model.skmodel, X=model.x_train, y=model.y_train,
+                                                      param_name=model.variable_to_validate(),
+                                                      param_range = space, n_jobs=-1, verbose=1)
 
 
 
+        print('\t -> Validating: ' + model.variable_to_validate() )
         plt.figure()
         plt.title('Validation curves for ' + model.given_name)
-        plt.xlabel("examples")
+        plt.xlabel(model.variable_to_validate())
         plt.ylabel("Score")
 
         plt.xlim(min(space), max(space))

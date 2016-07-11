@@ -8,6 +8,7 @@ from data_input import spss_reader
 from data_output.csv_exporter import CsvExporter
 from data_output.plotters.actual_vs_prediction_plotter import ActualVsPredictionPlotter
 from data_output.plotters.learning_curve_plotter import LearningCurvePlotter
+from data_output.plotters.roc_curve_plotter import RocCurvePlotter
 from data_output.plotters.validation_curve_plotter import ValidationCurvePlotter
 from data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
 from data_transformers.output_data_cleaner import OutputDataCleaner
@@ -16,12 +17,18 @@ from factories.questionnaire_factory import QuestionnaireFactory
 from machine_learning_models import sync_model_runner
 from machine_learning_models.regression.bagging_model import BaggingModel
 from sklearn.preprocessing import normalize
+from models import participant
+from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
+
 from machine_learning_models.regression.boosting_model import BoostingModel
 from machine_learning_models.regression.linear_regression_model import LinearRegressionModel
 from machine_learning_models.regression.regression_tree_model import RegressionTreeModel
 from machine_learning_models.regression.support_vector_machine_model import SupportVectorMachineModel
-from models import participant
-from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
+from machine_learning_models.regression.keras_nn_model import KerasNnModel
+
+from machine_learning_models.classification.naive_bayes_model import NaiveBayesModel
+from machine_learning_models.classification.logistic_regression_model import LogisticRegressionModel
+from machine_learning_models.classification.support_vector_classification_model import SupportVectorClassificationModel
 
 
 def create_participants(data):
@@ -67,9 +74,12 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
 
 
 if __name__ == '__main__':
+
+    # General settings
     VERBOSITY = 0
     POLYNOMIAL_FEATURES = False
     NORMALIZE = True
+    CLASSIFICATION = False
 
     spss_reader = spss_reader.SpssReader()
     single_output_frame_creator = SingleOutputFrameCreator()
@@ -80,12 +90,13 @@ if __name__ == '__main__':
     actual_vs_prediction_plotter = ActualVsPredictionPlotter()
     learning_curve_plotter = LearningCurvePlotter()
     validation_curve_plotter = ValidationCurvePlotter()
+    roc_curve_plotter = RocCurvePlotter()
 
     # First read demographic data
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
 
-    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=True)
+    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=False)
 
     print('Loaded data with %d rows and %d columns' % np.shape(data))
     # Here we select the variables to use in the prediction. The format is:
@@ -197,9 +208,28 @@ if __name__ == '__main__':
                         'acidi-anxiety-lifetimeAnxietyDiagnosesPresent'
                         ])
 
-    # Output columns
-    # , 'cids-followup-severity'
-    Y_NAMES = np.array(['cids-followup-somScore'])
+    models = []
+    if (CLASSIFICATION):
+        models = [
+            SupportVectorClassificationModel,
+            LogisticRegressionModel,
+            NaiveBayesModel
+        ]
+        # Output columns
+        Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
+    else:  # Regression
+        models = [
+            KerasNnModel,
+            # LinearRegressionModel,
+            # SupportVectorMachineModel,
+            RegressionTreeModel
+            # BoostingModel
+            # BaggingModel
+        ]
+        # Output columns
+        Y_NAMES = np.array(['cids-followup-somScore'])
+        #Y_NAMES = np.array(['cids-followup-severity'])
+
 
     print('We will use %s as outcome.' % Y_NAMES)
     selected_header = np.append(X_NAMES, Y_NAMES)
@@ -242,23 +272,23 @@ if __name__ == '__main__':
     # data = map(lambda x: tuple(x), data)
     # data = np.array(deque(data), [(n, 'float64') for n in header])
 
-    models = [
-        #LinearRegressionModel,
-        SupportVectorMachineModel,
-        RegressionTreeModel,
-        BoostingModel
-        #BaggingModel
-    ]
-
     sync_model_runner = sync_model_runner.SyncModelRunner(models)
 
     fabricated_models = sync_model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
+
     # Generate learning curve plots
     plots = []
-    for model in fabricated_models:
-        plots.append(learning_curve_plotter.plot(model))
-        #plots.append(validation_curve_plotter.plot(model))
+    #plots = [roc_curve_plotter.plot(fabricated_models)]
 
+    for model in fabricated_models:
+        1
+        #plots.append(learning_curve_plotter.plot(model))
+        # plots.append(validation_curve_plotter.plot(model))
+    
+    for model in fabricated_models:
+        model.print_accuracy()
+        prediction = model.predict(model.x_test)
+        actual_vs_prediction_plotter.plot(model.y_test, prediction)
 
     # Generate accuracy measures
     # result_queue = sync_model_runner.run_calculations(fabricated_models=fabricated_models)
@@ -266,6 +296,8 @@ if __name__ == '__main__':
     #     model, prediction = result_queue.get()
     #     plots.append(actual_vs_prediction_plotter.plot(model.y_train, prediction))
     #     # model.print_accuracy()
+
+
     for plt in plots:
         print(plt)
         filename = '../exports/'+plt[1]

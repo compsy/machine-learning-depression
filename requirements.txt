@@ -4,3 +4,4 @@ scipy==0.17
 scikit-learn==0.17
 rpy2==2.8
 matplotlib==1.5
+keras

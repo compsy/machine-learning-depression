@@ -1,0 +1,13 @@
+#!/bin/bash
+#docker rmi -f icpe
+
+rm -r learner data requirements.txt install-packages.R
+cp -r ../learner .
+
+mkdir data
+cp -r ../data/* data/
+cp -r ../requirements.txt .
+cp -r ../install-packages.R .
+docker build -t icpe .
+
+#rm -r learner data requirements.txt

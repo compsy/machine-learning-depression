@@ -14,9 +14,6 @@ class SyncModelRunner:
         return created_models
 
     def run_calculations(self, fabricated_models):
-        self.result = Queue()
         for model in fabricated_models:
-            print('\tTraining -> ' + model.given_name)
-            self.result.put((model, model.train()))
-
-        return self.result
+            print('\t -> Training from syncmodelrunner' + model.given_name)
+            model.train()

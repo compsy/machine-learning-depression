@@ -11,7 +11,7 @@ class SupportVectorMachineModel(MachineLearningModel):
         super().__init__(x, y, x_names, y_names)
         self.skmodel = svm.SVR(verbose=verbosity)
 
-    def train(self):
+    def train_not_yet_used(self):
         # Radial basis function grid
         # rbf_grid = {'kernel': ['rbf'],
         #             'C': [1, 10, 100, 1000],

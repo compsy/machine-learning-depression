@@ -1,12 +1,10 @@
 from sklearn.metrics import mean_squared_error
+from machine_learning_evaluation.evaluation import Evaluation
 
+class MseEvaluation(Evaluation):
+    def __init__(self):
+        super().__init__(name='MSE Evaluator', model_type='regression')
 
-class MseEvaluation:
+    def evaluate(self, y_true, y_predicted):
+        return mean_squared_error(y_true, y_predicted)
 
-    @staticmethod
-    def evaluate(self, model, x, y):
-        y_predicted = []
-        for value in y:
-            y_predicted.append(model.predict(y))
-
-        return mean_squared_error(y, y_predicted)

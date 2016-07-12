@@ -19,11 +19,10 @@ class RocCurvePlotter(Plotter):
         plt.plot([0, 1], [0, 1], '--', color=(0.6, 0.6, 0.6), label='Random guess')
 
         for model in models:
-            print('\t -> Determining learning curve for ' + model.given_name)
+            print('\t -> Determining ROC curve for ' + model.given_name)
             print('\t -> Which uses: '+str(model.skmodel))
 
-            fitted_model = model.fit(model.x_train, model.y_train)
-            probas_ = fitted_model.predict_for_roc(model.x_test)
+            probas_ = model.predict_for_roc(model.x_test)
 
             # Compute ROC curve and area the curve
             fpr, tpr, thresholds = roc_curve(model.y_test, probas_[:])

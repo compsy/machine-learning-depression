@@ -4,12 +4,41 @@ from machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn import svm
 import numpy as np
 
-
 class SupportVectorClassificationModel(MachineLearningModel):
-
     def __init__(self, x, y, x_names, y_names, verbosity):
         super().__init__(x, y, x_names, y_names, model_type='classification')
         self.skmodel = svm.SVC(verbose=verbosity, kernel='poly', degree=2, C=600000)
+        # Radial basis function grid
+        rbf_grid = {'kernel': ['rbf'],
+                    'C': [1, 10, 100, 1000],
+                    'epsilon': np.logspace(0, 1, 5),
+                    'gamma': np.logspace(0, 1, 5)}
+
+        # Polynomial function grid
+        poly_grid = {'kernel': ['poly'],
+                     'C': [1, 10, 100, 1000],
+                     'degree': [1, 2, 3, 4, 5],
+                     'coef0': np.logspace(0, 1, 5),
+                     'gamma': np.logspace(0, 1, 5)}
+
+        # Linear function grid
+        linear_grid = {'kernel': ['linear'],
+                    'C': [0.1, 1, 10, 100],
+                    'epsilon': np.logspace(0, 1, 5)}
+
+        # Sigmoid function grid
+        sigmoid_grid = {'kernel': ['sigmoid'],
+                        'C': [1, 10, 100, 1000],
+                        'coef0': np.logspace(0, 1, 5),
+                        'epsilon': np.logspace(0, 1, 5),
+                        'gamma': np.logspace(0, 1, 5)}
+
+        simple_grid = {'kernel': ['poly'],
+                       'degree': [2],
+                       'C': [6000000]}
+
+        param_grid = [simple_grid]
+        self.skmodel = GridSearchCV(estimator=self.skmodel, cv=8, param_grid=param_grid, n_jobs=-1, verbose=1)
 
     def variable_to_validate(self):
         return 'degree'

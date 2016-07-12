@@ -3,16 +3,20 @@ import matplotlib.pyplot as plt
 
 class ActualVsPredictionPlotter(Plotter):
 
-    def plot(self, actual, predicted):
-        if predicted is None:
+    def plot(self, model, actual, predicted):
+        if predicted is None or actual is None:
             return False
 
-        fig, ax = plt.subplots()
+        plot_name = model.given_name
+        plot_name = 'actual_vs_prediction' + plot_name.replace(" ", "_")
+        print('\t -> Plotting '+plot_name)
+        plt.figure()
+        plt.title('Act vs Pred: ' + model.given_name)
+        plt.xlabel('Measured')
+        plt.ylabel('Predicted')
 
         # Plot the predicted values against the actual values
-        ax.scatter(actual, predicted)
-        ax.plot([actual.min(), actual.max()], [actual.min(), actual.max()], 'k--', lw=4)
-        ax.set_title(self.__class__.__name__)
-        ax.set_xlabel('Measured')
-        ax.set_ylabel('Predicted')
-        return plt
+        plt.scatter(actual, predicted)
+        plt.plot([actual.min(), actual.max()], [actual.min(), actual.max()], 'k--', lw=4)
+
+        return self.return_file(plt, plot_name)

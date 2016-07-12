@@ -15,7 +15,7 @@ class KerasNnModel(MachineLearningModel):
         super().__init__(x, y, x_names, y_names)
 
         # Wrap the model in a scikit api
-        self.skmodel = KerasRegressor(build_fn=self.baseline_model, nb_epoch= 1, batch_size=32, verbose=1)
+        self.skmodel = KerasRegressor(build_fn=self.baseline_model, nb_epoch= 500, batch_size=32, verbose=1)
 
     #def validate(self):
         # self.skmodel.evaluate(self.x_test, self.y_test, batch_size=32, verbose=1, sample_weight=None)
@@ -25,21 +25,26 @@ class KerasNnModel(MachineLearningModel):
         keras_model = Sequential()
         keras_model.add(Dense(output_dim=400, input_dim=len(self.x_names)))
         keras_model.add(Dropout(0.4))
-        keras_model.add(Activation("relu"))
+        keras_model.add(Activation("linear"))
         keras_model.add(Dense(output_dim=100))
-        keras_model.add(Activation("relu"))
+        keras_model.add(Activation("linear"))
         keras_model.add(Dropout(0.4))
         keras_model.add(Dense(output_dim=100))
-        keras_model.add(Activation("relu"))
+        keras_model.add(Activation("linear"))
         keras_model.add(Dropout(0.4))
         keras_model.add(Dense(output_dim=1))
-        keras_model.add(Activation("relu"))
+        keras_model.add(Activation("linear"))
 
         # Create the optimizer with a learning rate
-        adam = Adam(lr=0.001)
+        adam = Adam(lr=0.01)
+
         keras_model.compile(loss='mean_squared_error', optimizer=adam)
 
         return keras_model
+
+    # Override the train function, as the keras API returns a history object, not a trained model
+    def train(self):
+        self.skmodel.fit(X=self.x_train, y=self.y_train)
 
     def xx(self):
         # self.skmodel.fit(self.x_train, self.y_train, nb_epoch=2, batch_size=32)

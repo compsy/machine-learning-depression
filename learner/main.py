@@ -1,6 +1,5 @@
 import os.path
 import pickle
-
 import numpy as np
 
 
@@ -10,17 +9,19 @@ from data_output.plotters.actual_vs_prediction_plotter import ActualVsPrediction
 from data_output.plotters.learning_curve_plotter import LearningCurvePlotter
 from data_output.plotters.roc_curve_plotter import RocCurvePlotter
 from data_output.plotters.validation_curve_plotter import ValidationCurvePlotter
+
 from data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
 from data_transformers.output_data_cleaner import OutputDataCleaner
 from data_transformers.output_data_splitter import OutputDataSplitter
+
 from factories.questionnaire_factory import QuestionnaireFactory
 from machine_learning_models import sync_model_runner
-from machine_learning_models.regression.bagging_model import BaggingModel
 from sklearn.preprocessing import normalize
 from models import participant
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
 from machine_learning_models.regression.boosting_model import BoostingModel
+from machine_learning_models.regression.bagging_model import BaggingModel
 from machine_learning_models.regression.linear_regression_model import LinearRegressionModel
 from machine_learning_models.regression.regression_tree_model import RegressionTreeModel
 from machine_learning_models.regression.support_vector_machine_model import SupportVectorMachineModel
@@ -29,6 +30,7 @@ from machine_learning_models.regression.keras_nn_model import KerasNnModel
 from machine_learning_models.classification.naive_bayes_model import NaiveBayesModel
 from machine_learning_models.classification.logistic_regression_model import LogisticRegressionModel
 from machine_learning_models.classification.support_vector_classification_model import SupportVectorClassificationModel
+from machine_learning_models.classification.dummy_classifier_model import DummyClassifierModel, DummyRandomClassifierModel
 
 
 def create_participants(data):
@@ -46,7 +48,6 @@ def read_cache(cache_name):
         data = pickle.load(input)
         return (header, data)
 
-
 def write_cache(header, data, cache_name):
     with open(cache_name, 'wb') as output:
         pickle.dump(header, output, pickle.HIGHEST_PROTOCOL)
@@ -54,7 +55,7 @@ def write_cache(header, data, cache_name):
 
 
 def print_header(header):
-    print('Available headers:')
+    print('\t -> Available headers:')
     for col in header:
         print('\t' + col)
     print()
@@ -62,7 +63,7 @@ def print_header(header):
 
 def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
     header, data = (None, None)
-    print('Converting data to single dataframe...')
+    print('\t -> Converting data to single dataframe...')
     if not force_to_not_use_cache and os.path.isfile(file_name):
         header, data = read_cache(file_name)
         #print_header(header)
@@ -77,9 +78,15 @@ if __name__ == '__main__':
 
     # General settings
     VERBOSITY = 0
-    POLYNOMIAL_FEATURES = False
-    NORMALIZE = True
-    CLASSIFICATION = False
+
+    # Should the analysis include polynomial features?
+    POLYNOMIAL_FEATURES = True
+
+    # Should we normalize?
+    NORMALIZE = False
+
+    # Classification or regression?
+    CLASSIFICATION = True
 
     spss_reader = spss_reader.SpssReader()
     single_output_frame_creator = SingleOutputFrameCreator()
@@ -92,120 +99,123 @@ if __name__ == '__main__':
     validation_curve_plotter = ValidationCurvePlotter()
     roc_curve_plotter = RocCurvePlotter()
 
+    f1_evaluation = F1Evaluation()
+
     # First read demographic data
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
 
     header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=False)
 
-    print('Loaded data with %d rows and %d columns' % np.shape(data))
+    print('\t -> Loaded data with %d rows and %d columns' % np.shape(data))
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
     # - A = the time of the measurement, a = intake, c = followup
     # - B = the name of the questionnaire (check QuestionnaireFactory for the correct names)
     # - C = the name of the variable. Check the name used in the <Questionnairename>questionnaire.py
-    X_NAMES = np.array(['pident',
-                        'ademo-gender',
-                        'ademo-age',
+    X_NAMES = np.array([#'pident',
                         # IDS - 'aids-ids09A', 'aids-ids09B', 'aids-ids09C', are NONE for nearly everyone
                         'aids-somScore',
-                        'aids-ids01',
-                        'aids-ids02',
-                        'aids-ids03',
-                        'aids-ids04',
-                        'aids-ids05',
-                        'aids-ids06',
-                        'aids-ids07',
-                        'aids-ids08',
-                        'aids-ids10',
-                        'aids-ids11',
-                        'aids-ids12',
-                        'aids-ids13',
-                        'aids-ids14',
-                        'aids-ids15',
-                        'aids-ids16',
-                        'aids-ids17',
-                        'aids-ids18',
-                        'aids-ids19',
-                        'aids-ids20',
-                        'aids-ids21',
-                        'aids-ids22',
-                        'aids-ids23',
-                        'aids-ids24',
-                        'aids-ids25',
-                        'aids-ids26',
-                        'aids-ids27',
-                        'aids-ids28',
+                        # 'aids-ids01',
+                        # 'aids-ids02',
+                        # 'aids-ids03',
+                        # 'aids-ids04',
+                        # 'aids-ids05',
+                        # 'aids-ids06',
+                        # 'aids-ids07',
+                        # 'aids-ids08',
+                        # 'aids-ids10',
+                        # 'aids-ids11',
+                        # 'aids-ids12',
+                        # 'aids-ids13',
+                        # 'aids-ids14',
+                        # 'aids-ids15',
+                        # 'aids-ids16',
+                        # 'aids-ids17',
+                        # 'aids-ids18',
+                        # 'aids-ids19',
+                        # 'aids-ids20',
+                        # 'aids-ids21',
+                        # 'aids-ids22',
+                        # 'aids-ids23',
+                        # 'aids-ids24',
+                        # 'aids-ids25',
+                        # 'aids-ids26',
+                        # 'aids-ids27',
+                        # 'aids-ids28',
 
-                        # Masq
-                        'amasq-positiveAffectScore',
-                        'amasq-negativeAffectScore',
-                        'amasq-somatizationScore',
+                        # # Masq
+                        # 'amasq-positiveAffectScore',
+                        # 'amasq-negativeAffectScore',
+                        # 'amasq-somatizationScore',
 
-                        # Bai
-                        'abai-totalScore',
-                        'abai-subjectiveScaleScore',
-                        'abai-severityScore',
-                        'abai-somaticScaleScore',
+                        # # Bai
+                        # 'abai-totalScore',
+                        # 'abai-subjectiveScaleScore',
+                        # 'abai-severityScore',
+                        # 'abai-somaticScaleScore',
 
-                        # 4dkl
-                        'a4dkl-somScore',
-                        'a4dkl-4dkld01',
-                        'a4dkl-4dkld02',
-                        'a4dkl-4dkld03',
-                        'a4dkl-4dkld04',
-                        'a4dkl-4dkld05',
-                        'a4dkl-4dkld06',
-                        'a4dkl-4dkld07',
-                        'a4dkl-4dkld08',
-                        'a4dkl-4dkld09',
-                        'a4dkl-4dkld10',
-                        'a4dkl-4dkld11',
-                        'a4dkl-4dkld12',
-                        'a4dkl-4dkld13',
-                        'a4dkl-4dkld14',
-                        'a4dkl-4dkld15',
-                        'a4dkl-4dkld16',
+                        # # 4dkl
+                        # 'a4dkl-somScore',
+                        # 'a4dkl-4dkld01',
+                        # 'a4dkl-4dkld02',
+                        # 'a4dkl-4dkld03',
+                        # 'a4dkl-4dkld04',
+                        # 'a4dkl-4dkld05',
+                        # 'a4dkl-4dkld06',
+                        # 'a4dkl-4dkld07',
+                        # 'a4dkl-4dkld08',
+                        # 'a4dkl-4dkld09',
+                        # 'a4dkl-4dkld10',
+                        # 'a4dkl-4dkld11',
+                        # 'a4dkl-4dkld12',
+                        # 'a4dkl-4dkld13',
+                        # 'a4dkl-4dkld14',
+                        # 'a4dkl-4dkld15',
+                        # 'a4dkl-4dkld16',
 
-                        # Cidi depression
-                        'acidi-depression-minorDepressionPastMonth',
-                        'acidi-depression-majorDepressionPastMonth',
+                        # # Cidi depression
+                        # 'acidi-depression-minorDepressionPastMonth',
+                        #'acidi-depression-majorDepressionPastMonth',
                         'acidi-depression-majorDepressionPastSixMonths',
-                        'acidi-depression-majorDepressionPastYear',
-                        'acidi-depression-majorDepressionLifetime',
-                        'acidi-depression-dysthymiaPastmonth',
-                        'acidi-depression-dysthymiaPastSixMonths',
-                        'acidi-depression-dysthymiaPastYear',
-                        'acidi-depression-dysthymiaLifetime',
-                        'acidi-depression-numberOfCurrentDepressionDiagnoses',
+                        # 'acidi-depression-majorDepressionPastYear',
+                        # 'acidi-depression-majorDepressionLifetime',
+                        # 'acidi-depression-dysthymiaPastmonth',
+                        # 'acidi-depression-dysthymiaPastSixMonths',
+                        # 'acidi-depression-dysthymiaPastYear',
+                        # 'acidi-depression-dysthymiaLifetime',
+                        # 'acidi-depression-numberOfCurrentDepressionDiagnoses',
                         'acidi-depression-hasLifetimeDepressionDiagnoses',
-                        'acidi-depression-categoriesForLifetimeDepressionDiagnoses',
-                        #'acidi-depression-numberOfMajorDepressionEpisodes',
-                        #'acidi-depression-majorDepressionType',
+                        # 'acidi-depression-categoriesForLifetimeDepressionDiagnoses',
+                        # #'acidi-depression-numberOfMajorDepressionEpisodes',
+                        # #'acidi-depression-majorDepressionType',
 
-                        # Cidi anxiety
-                        'acidi-anxiety-socialFobiaPastMonth',
-                        'acidi-anxiety-socialfobiaPastSixMonths',
-                        'acidi-anxiety-socialFobiaPastYear',
-                        'acidi-anxiety-socialfobiaInLifetime',
-                        'acidi-anxiety-panicWithAgorafobiaPastMonth',
-                        'acidi-anxiety-panicWithAgorafobiaPastSixMonths',
-                        'acidi-anxiety-panicWithAgorafobiaPastYear',
-                        'acidi-anxiety-panicWithAgorafobiaInLifetime',
-                        'acidi-anxiety-panicWithoutAgorafobiaPastSixMonths',
-                        'acidi-anxiety-panicWithoutAgorafobiaPastMonth',
-                        'acidi-anxiety-panicWithoutAgorafobiaPastYear',
-                        'acidi-anxiety-panicWithoutAgorafobiaInLifetime',
-                        'acidi-anxiety-agorafobiaPastMonth',
-                        'acidi-anxiety-agorafobiaPastSixMonths',
-                        'acidi-anxiety-agorafobiaPastYear',
-                        'acidi-anxiety-agorafobiaInLifetime',
-                        'acidi-anxiety-generalAnxietyDisorderPastMonth',
+                        # # Cidi anxiety
+                        # 'acidi-anxiety-socialFobiaPastMonth',
+                        # 'acidi-anxiety-socialfobiaPastSixMonths',
+                        # 'acidi-anxiety-socialFobiaPastYear',
+                        # 'acidi-anxiety-socialfobiaInLifetime',
+                        # 'acidi-anxiety-panicWithAgorafobiaPastMonth',
+                        # 'acidi-anxiety-panicWithAgorafobiaPastSixMonths',
+                        # 'acidi-anxiety-panicWithAgorafobiaPastYear',
+                        # 'acidi-anxiety-panicWithAgorafobiaInLifetime',
+                        # 'acidi-anxiety-panicWithoutAgorafobiaPastSixMonths',
+                        # 'acidi-anxiety-panicWithoutAgorafobiaPastMonth',
+                        # 'acidi-anxiety-panicWithoutAgorafobiaPastYear',
+                        # 'acidi-anxiety-panicWithoutAgorafobiaInLifetime',
+                        # 'acidi-anxiety-agorafobiaPastMonth',
+                        # 'acidi-anxiety-agorafobiaPastSixMonths',
+                        # 'acidi-anxiety-agorafobiaPastYear',
+                        # 'acidi-anxiety-agorafobiaInLifetime',
+                        # 'acidi-anxiety-generalAnxietyDisorderPastMonth',
                         'acidi-anxiety-generalAnxietyDisorderPastSixMonths',
-                        'acidi-anxiety-generalAnxietyDisorderPastYear',
-                        'acidi-anxiety-generalAnxietyDisorderInLifetime',
-                        'acidi-anxiety-numberOfCurrentAnxietyDiagnoses',
-                        'acidi-anxiety-lifetimeAnxietyDiagnosesPresent'
+                        # 'acidi-anxiety-generalAnxietyDisorderPastYear',
+                        # 'acidi-anxiety-generalAnxietyDisorderInLifetime',
+                        # 'acidi-anxiety-numberOfCurrentAnxietyDiagnoses',
+                        'acidi-anxiety-lifetimeAnxietyDiagnosesPresent',
+
+                        #'ademo-gender',
+                         'ademo-age'
                         ])
 
     models = []
@@ -213,17 +223,20 @@ if __name__ == '__main__':
         models = [
             SupportVectorClassificationModel,
             LogisticRegressionModel,
-            NaiveBayesModel
+            NaiveBayesModel,
+            DummyClassifierModel,
+            DummyRandomClassifierModel
         ]
         # Output columns
         Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
     else:  # Regression
         models = [
-            KerasNnModel,
-            # LinearRegressionModel,
+            # KerasNnModel,
+            LinearRegressionModel,
             # SupportVectorMachineModel,
-            RegressionTreeModel
-            # BoostingModel
+            # RegressionTreeModel,
+
+            # BoostingModel,
             # BaggingModel
         ]
         # Output columns
@@ -231,7 +244,7 @@ if __name__ == '__main__':
         #Y_NAMES = np.array(['cids-followup-severity'])
 
 
-    print('We will use %s as outcome.' % Y_NAMES)
+    print('\t -> We will use %s as outcome.' % Y_NAMES)
     selected_header = np.append(X_NAMES, Y_NAMES)
 
     # Select the data we will use in the present experiment
@@ -240,7 +253,7 @@ if __name__ == '__main__':
     # Determine which of this set are not complete
     incorrect_rows = output_data_cleaner.find_incomplete_rows(used_data, selected_header)
 
-    print('From the loaded data %d rows are incomplete and will be removed!' % len(incorrect_rows))
+    print('\t -> From the loaded data %d rows are incomplete and will be removed!' % len(incorrect_rows))
 
     # Remove the incorrect cases
     used_data = output_data_cleaner.clean(used_data, incorrect_rows)
@@ -262,8 +275,8 @@ if __name__ == '__main__':
     y_data = np.ravel(y_data)
 
 
-    print("The used data for the prediction has shape: %s %s" % np.shape(x_data))
-    print("The values to predict have the shape: %s" % np.shape(y_data))
+    print("\t -> The used data for the prediction has shape: %s %s" % np.shape(x_data))
+    print("\t -> The values to predict have the shape: %s" % np.shape(y_data))
     # Export all used data to a CSV file
 
     CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
@@ -273,35 +286,21 @@ if __name__ == '__main__':
     # data = np.array(deque(data), [(n, 'float64') for n in header])
 
     sync_model_runner = sync_model_runner.SyncModelRunner(models)
-
     fabricated_models = sync_model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
 
+    # Train all models, the fitted parameters will be saved inside the models
+    sync_model_runner.run_calculations(fabricated_models=fabricated_models)
+
     # Generate learning curve plots
-    plots = []
-    #plots = [roc_curve_plotter.plot(fabricated_models)]
+    roc_curve_plotter.plot(fabricated_models)
 
     for model in fabricated_models:
         1
-        #plots.append(learning_curve_plotter.plot(model))
+        learning_curve_plotter.plot(model)
         # plots.append(validation_curve_plotter.plot(model))
-    
+
     for model in fabricated_models:
-        model.print_accuracy()
-        prediction = model.predict(model.x_test)
-        actual_vs_prediction_plotter.plot(model.y_test, prediction)
-
-    # Generate accuracy measures
-    # result_queue = sync_model_runner.run_calculations(fabricated_models=fabricated_models)
-    # for i in range(0, result_queue.qsize()):
-    #     model, prediction = result_queue.get()
-    #     plots.append(actual_vs_prediction_plotter.plot(model.y_train, prediction))
-    #     # model.print_accuracy()
-
-
-    for plt in plots:
-        print(plt)
-        filename = '../exports/'+plt[1]
-        print('Plotting to ' + filename)
-        plt[0].savefig(filename)
-        plt[0].show()
+        model.print_evaluation()
+        prediction = model.skmodel.predict(model.x_test)
+        actual_vs_prediction_plotter.plot(model, model.y_test, prediction)
 

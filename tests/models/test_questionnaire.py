@@ -15,19 +15,17 @@ class TestQuestionnaire:
                                               function_mapping=function_mapping)
         return subject
 
-
     def test_init(self, mock_reader):
-        function_mapping = {'value': 2, 'object':3}
-        other_available_variables = ['a','b','c']
+        function_mapping = {'value': 2, 'object': 3}
+        other_available_variables = ['a', 'b', 'c']
         subject = questionnaire.Questionnaire(name='name',
-                                    filename='name.csv',
-                                    measurement_moment='a',
-                                    reader=mock_reader,
-                                    function_mapping=function_mapping,
-                                    other_available_variables = other_available_variables)
+                                              filename='name.csv',
+                                              measurement_moment='a',
+                                              reader=mock_reader,
+                                              function_mapping=function_mapping,
+                                              other_available_variables=other_available_variables)
         assert isinstance(subject.function_mapping, dict)
         assert len(subject.function_mapping) == len(function_mapping) + len(other_available_variables)
-
 
         # Test if the correct values are inserted in the dict.
         for key, value in function_mapping.items():

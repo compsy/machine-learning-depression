@@ -44,7 +44,7 @@ class TestIDSQuestionnaire:
             current = result[funckey]
             # If the current instance is a string, it will be captured by another function, and won't be evaluated as
             # a function.
-            if(isinstance(current, str)): continue
+            if (isinstance(current, str)): continue
             assert current in all_functions
 
     def test_som_score_sums_scores(self, subject, monkeypatch, mock_participant):

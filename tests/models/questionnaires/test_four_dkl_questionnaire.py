@@ -46,8 +46,6 @@ class TestFourDKLQuestionnaire:
             if (isinstance(current, str)): continue
             assert current in all_functions
 
-
-
     def test_som_score_sums_scores(self, subject, monkeypatch, mock_participant):
         fake_data = {}
         index = 0

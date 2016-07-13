@@ -54,7 +54,7 @@ class MachineLearningModel:
     def train(self):
         if (self.was_trained):
             return True
-        
+
         if (self.skmodel is None):
             raise NotImplementedError
 

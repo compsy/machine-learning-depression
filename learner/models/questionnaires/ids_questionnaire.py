@@ -32,7 +32,7 @@ class IDSQuestionnaire(Questionnaire):
             q_name = self.variable_name(name)
             # We can check here for values > 0 since the NESDA dataset uses values from 1 - 5?
             if q_name in dat and dat[q_name] > 0:
-                if(np.isnan(tot)): tot = 0
+                if (np.isnan(tot)): tot = 0
                 tot += dat[q_name] - 1
 
         if (participant.pident == 210269):

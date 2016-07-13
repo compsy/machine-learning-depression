@@ -42,6 +42,9 @@ class TestIDSQuestionnaire:
         all_functions = list(map(lambda function: function[1], all_functions))
         for funckey in result.keys():
             current = result[funckey]
+            # If the current instance is a string, it will be captured by another function, and won't be evaluated as
+            # a function.
+            if(isinstance(current, str)): continue
             assert current in all_functions
 
     def test_som_score_sums_scores(self, subject, monkeypatch, mock_participant):
@@ -50,8 +53,11 @@ class TestIDSQuestionnaire:
         total = 0
         for key in subject.variables_for_som_score:
             fake_data[subject.variable_name(key)] = index
-            total += index
+            total += index - 1
             index += 1
+
+        # Add one, as the first index = 0 == -1, which is neglected
+        total = total + 1
 
         def fake_get_row(participant):
             return fake_data
@@ -64,7 +70,7 @@ class TestIDSQuestionnaire:
     def test_som_score_returns_nan(self, subject, monkeypatch, mock_participant):
         fake_data = {}
         for key in subject.variables_for_som_score:
-            fake_data[subject.variable_name(key)] = 0
+            fake_data[subject.variable_name(key)] = -1
 
         def fake_get_row(participant):
             return fake_data

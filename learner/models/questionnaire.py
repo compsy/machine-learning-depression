@@ -26,7 +26,8 @@ class Questionnaire:
 
         Returns
         -------
-        dict with the mapping
+        dict with the mapping. Note that variables will be stored as a string. This will be worked around in the method
+        accessing the data.
 
         """
         function_dict = {}

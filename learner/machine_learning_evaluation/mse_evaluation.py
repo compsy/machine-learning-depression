@@ -1,5 +1,5 @@
 from sklearn.metrics import mean_squared_error
-from machine_learning_evaluation.evaluation import Evaluation
+from ..machine_learning_evaluation.evaluation import Evaluation
 
 
 class MseEvaluation(Evaluation):

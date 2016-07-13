@@ -1,8 +1,8 @@
 from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
-from machine_learning_evaluation.f1_evaluation import F1Evaluation
-from machine_learning_evaluation.mse_evaluation import MseEvaluation
+from learner.machine_learning_evaluation.f1_evaluation import F1Evaluation
+from learner.machine_learning_evaluation.mse_evaluation import MseEvaluation
 
 
 class MachineLearningModel:
@@ -54,6 +54,9 @@ class MachineLearningModel:
     def train(self):
         if (self.was_trained):
             return True
+        
+        if (self.skmodel is None):
+            raise NotImplementedError
 
         self.was_trained = True
         self.skmodel = self.skmodel.fit(X=self.x_train, y=self.y_train)

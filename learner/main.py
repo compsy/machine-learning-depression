@@ -216,9 +216,6 @@ if __name__ == '__main__':
         'ademo-age'
     ])
 
-
-
-
     models = []
     if (CLASSIFICATION):
         models = [
@@ -260,7 +257,6 @@ if __name__ == '__main__':
     # Logtransform the data
     # x_data[:,0] += 1
     # x_data[:,0] = np.log(x_data[:,0])
-
 
     if NORMALIZE:
         print('\t -> We are also normalizing the features')
@@ -309,4 +305,3 @@ if __name__ == '__main__':
         y_train_pred = model.skmodel.predict(model.x_train)
         y_test_pred = model.skmodel.predict(model.x_test)
         actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
-

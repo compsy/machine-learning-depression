@@ -10,7 +10,7 @@ from sklearn.neighbors.kde import KernelDensity
 
 class DataDensityPlotter(Plotter):
 
-    def plot(self, X, header,  sampling_density = 1000):
+    def plot(self, X, header, sampling_density=1000):
         X_plot = np.linspace(0, sampling_density, sampling_density)[:, np.newaxis]
         bins = np.linspace(0, 100, 100)
 
@@ -34,7 +34,7 @@ class DataDensityPlotter(Plotter):
             beg = min(np.unique(x))
             end = max(np.unique(x))
             bins = np.linspace(beg, end, 100)
-            if(unique_entries < 10): bins = np.linspace(beg, end, unique_entries +1)
+            if (unique_entries < 10): bins = np.linspace(beg, end, unique_entries + 1)
 
             # histogram 1
             ax[row, col].hist(x, bins=bins, fc='#AAAAFF', normed=True)
@@ -42,7 +42,7 @@ class DataDensityPlotter(Plotter):
 
             col += 1
             col = col % cols
-            if(col == 0): row += 1
+            if (col == 0): row += 1
 
             # kde = KernelDensity(kernel='tophat', bandwidth=0.1).fit(X[:,[variable]])
             #

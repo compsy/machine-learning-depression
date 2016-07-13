@@ -41,6 +41,7 @@ class SupportVectorMachineModel(MachineLearningModel):
         self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1)
         return self.skmodel
 
+
 class SupportVectorClassificationModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):

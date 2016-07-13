@@ -4,6 +4,7 @@ from sklearn import linear_model
 from sklearn.linear_model import LogisticRegression
 from sklearn.grid_search import GridSearchCV
 
+
 class LinearRegressionModel(MachineLearningModel):
     MAX_ITERATIONS = 10000
 

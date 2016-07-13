@@ -3,6 +3,7 @@ import numpy as np
 
 
 class IDSQuestionnaire(Questionnaire):
+
     def __init__(self, name, filename, measurement_moment, reader):
         function_mapping = {'somScore': self.som_score, 'severity': self.severity}
 
@@ -23,15 +24,18 @@ class IDSQuestionnaire(Questionnaire):
 
     def som_score(self, participant):
         dat = self.get_row(participant)
-        tot = 0
+
+        # If there are no values > 0, we return nan
+        tot = np.nan
+
         for name in self.variables_for_som_score:
             q_name = self.variable_name(name)
+            # We can check here for values > 0 since the NESDA dataset uses values from 1 - 5?
             if q_name in dat and dat[q_name] > 0:
+                if (np.isnan(tot)): tot = 0
                 tot += dat[q_name] - 1
-        if(participant.pident == 210269):
-            print(dat)
-            print(tot)
-        return tot if tot >= 0 else np.nan
+
+        return tot
 
     def severity(self, participant):
         score = self.som_score(participant)

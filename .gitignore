@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+docker/learner
+docker/requirements.txt
+docker/install-packages.R
+docker/data
+docker/exports
+
 # C extensions
 *.so
 

@@ -13,8 +13,8 @@ class Questionnaire:
         raw_value_function_mapping = self.create_raw_value_function_mapping(other_available_variables)
 
         # Merge the two functions into one
-        self.function_mapping = {**function_mapping, **raw_value_function_mapping}
-
+        self.function_mapping = function_mapping.copy()
+        self.function_mapping.update(raw_value_function_mapping)
 
     def create_raw_value_function_mapping(self, other_available_variables):
         """
@@ -26,14 +26,14 @@ class Questionnaire:
 
         Returns
         -------
-        dict with the mapping
+        dict with the mapping. Note that variables will be stored as a string. This will be worked around in the method
+        accessing the data.
 
         """
         function_dict = {}
         for variable_name in other_available_variables:
             function_dict[variable_name] = variable_name
         return function_dict
-
 
     def create_data_hash(self, data):
         data_hashed = {}
@@ -46,7 +46,6 @@ class Questionnaire:
         for index, entry in data.iterrows():
             data_hashed[int(entry[key])] = entry
         return data_hashed
-
 
     def get_header(self):
         col_names = self.function_mapping.keys()
@@ -80,7 +79,7 @@ class Questionnaire:
                 possible_function = self.function_mapping[field]
 
                 # If the passed value is a function, call it, otherwise it should be a raw value
-                if(possible_function in all_functions):
+                if (possible_function in all_functions):
                     res[index] = possible_function(participant)
                 else:
                     res[index] = self.get_field(participant, possible_function)

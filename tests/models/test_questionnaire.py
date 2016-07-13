@@ -15,6 +15,35 @@ class TestQuestionnaire:
                                               function_mapping=function_mapping)
         return subject
 
+    def test_init(self, mock_reader):
+        function_mapping = {'value': 2, 'object': 3}
+        other_available_variables = ['a', 'b', 'c']
+        subject = questionnaire.Questionnaire(name='name',
+                                              filename='name.csv',
+                                              measurement_moment='a',
+                                              reader=mock_reader,
+                                              function_mapping=function_mapping,
+                                              other_available_variables=other_available_variables)
+        assert isinstance(subject.function_mapping, dict)
+        assert len(subject.function_mapping) == len(function_mapping) + len(other_available_variables)
+
+        # Test if the correct values are inserted in the dict.
+        for key, value in function_mapping.items():
+            assert subject.function_mapping[key] == function_mapping[key]
+
+        for key in other_available_variables:
+            assert subject.function_mapping[key] == key
+
+    def test_create_raw_value_function_mapping(self, subject):
+        other_variables = ['a', 'b', 'c']
+        result = subject.create_raw_value_function_mapping(other_variables)
+        assert isinstance(result, dict)
+        assert len(result) == len(other_variables)
+        for key, value in result.items():
+            assert isinstance(key, str)
+            assert isinstance(value, str)
+            assert key == value
+
     def test_create_data_hash(self, subject):
         file_data = pd.DataFrame([[1, 1.5], [2, 2.5]], columns=['pident', 'avalue'])
         result = subject.create_data_hash(file_data)

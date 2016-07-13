@@ -11,4 +11,4 @@ class NaiveBayesModel(MachineLearningModel):
 
     def predict_for_roc(self, x_data):
         # TODO: What is the difference between log_proba and proba?
-        return self.skmodel.predict_log_proba(x_data)[:,1]
+        return self.skmodel.predict_log_proba(x_data)[:, 1]

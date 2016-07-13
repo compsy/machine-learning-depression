@@ -43,7 +43,7 @@ class MachineLearningModel:
         self.print_accuracy()
         prediction = self.skmodel.predict(self.x_test)
         for evaluator in self.evaluations:
-            if(evaluator.problem_type == self.model_type):
+            if (evaluator.problem_type == self.model_type):
                 evaluator.print_evaluation(self, self.y_test, prediction)
         print('\t ---------------------------------------------------------')
         print('')
@@ -51,12 +51,11 @@ class MachineLearningModel:
     def cv_score(self):
         return cross_val_score(self.skmodel, self.x_test, self.y_test, cv=3)
 
-
     def train(self):
-        if(self.was_trained):
+        if (self.was_trained):
             return True
 
-        self.was_trained=True
+        self.was_trained = True
         self.skmodel = self.skmodel.fit(X=self.x_train, y=self.y_train)
 
     def cv_predict(self):
@@ -66,16 +65,15 @@ class MachineLearningModel:
         return cross_val_predict(self.skmodel, X=self.x_train, y=self.y_train, cv=8)
 
     def scoring(self):
-        if(self.model_type == 'regression'):
+        if (self.model_type == 'regression'):
             return 'mean_squared_error'
-        elif(self.model_type == 'classification'):
+        elif (self.model_type == 'classification'):
             return 'accuracy'
         else:
             raise NotImplementedError('Type: ' + self.type + ' not implented')
 
     def variable_to_validate(self):
         return 'max_iter'
-
 
     @property
     def given_name(self):

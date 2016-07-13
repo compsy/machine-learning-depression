@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 
+
 class RocCurvePlotter(Plotter):
 
     def plot(self, models, cv=6):
@@ -20,7 +21,7 @@ class RocCurvePlotter(Plotter):
 
         for model in models:
             print('\t -> Determining ROC curve for ' + model.given_name)
-            print('\t -> Which uses: '+str(model.skmodel))
+            print('\t -> Which uses: ' + str(model.skmodel))
 
             probas_ = model.predict_for_roc(model.x_test)
 
@@ -28,8 +29,7 @@ class RocCurvePlotter(Plotter):
             fpr, tpr, thresholds = roc_curve(model.y_test, probas_[:])
 
             roc_auc = auc(fpr, tpr)
-            plt.plot(fpr, tpr, lw=1, label='ROC (area = %0.2f) for %s' % (roc_auc,  model.given_name))
-
+            plt.plot(fpr, tpr, lw=1, label='ROC (area = %0.2f) for %s' % (roc_auc, model.given_name))
 
         print('\t -> Done fitting learning curve')
 
@@ -38,7 +38,5 @@ class RocCurvePlotter(Plotter):
 
         plt.grid()
 
-
         plt.legend(loc="best")
         return self.return_file(plt, plot_name)
-

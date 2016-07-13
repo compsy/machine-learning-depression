@@ -1,7 +1,9 @@
 from sklearn.metrics import f1_score
 from machine_learning_evaluation.evaluation import Evaluation
 
+
 class F1Evaluation(Evaluation):
+
     def __init__(self):
         super().__init__(name='F1 Evaluator', model_type='classification')
 

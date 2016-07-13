@@ -9,16 +9,17 @@ from keras.wrappers.scikit_learn import KerasRegressor
 import numpy as np
 from pandas import DataFrame
 
+
 class KerasNnModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
         super().__init__(x, y, x_names, y_names)
 
         # Wrap the model in a scikit api
-        self.skmodel = KerasRegressor(build_fn=self.baseline_model, nb_epoch= 500, batch_size=32, verbose=1)
+        self.skmodel = KerasRegressor(build_fn=self.baseline_model, nb_epoch=500, batch_size=32, verbose=1)
 
     #def validate(self):
-        # self.skmodel.evaluate(self.x_test, self.y_test, batch_size=32, verbose=1, sample_weight=None)
+    # self.skmodel.evaluate(self.x_test, self.y_test, batch_size=32, verbose=1, sample_weight=None)
 
     def baseline_model(self):
         # Create the model

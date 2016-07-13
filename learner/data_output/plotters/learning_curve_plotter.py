@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.learning_curve import learning_curve
 
+
 class LearningCurvePlotter(Plotter):
 
     def plot(self, model, ylim=None, cv=10, n_jobs=-1, train_sizes=np.linspace(.1, 1.0, 50)):
@@ -48,14 +49,16 @@ class LearningCurvePlotter(Plotter):
         plot_name = 'learning_' + plot_name.replace(" ", "_")
 
         print('\t -> Determining learning curve for ' + model.given_name)
-        print('\t -> Which uses: '+str(model.skmodel))
-        train_sizes, train_scores, test_scores = learning_curve(
-            model.skmodel, model.x_train, model.y_train, cv=cv, train_sizes=train_sizes,
-            scoring=model.scoring(),
-            n_jobs=-1,
-            verbose=1)
+        print('\t -> Which uses: ' + str(model.skmodel))
+        train_sizes, train_scores, test_scores = learning_curve(model.skmodel,
+                                                                model.x_train,
+                                                                model.y_train,
+                                                                cv=cv,
+                                                                train_sizes=train_sizes,
+                                                                scoring=model.scoring(),
+                                                                n_jobs=-1,
+                                                                verbose=1)
         print('\t -> Done fitting learning curve')
-
 
         train_scores_mean = np.mean(train_scores, axis=1)
         train_scores_std = np.std(train_scores, axis=1)
@@ -64,18 +67,20 @@ class LearningCurvePlotter(Plotter):
         plt.grid()
 
         # Create the shading
-        plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
-                         train_scores_mean + train_scores_std, alpha=0.1,
+        plt.fill_between(train_sizes,
+                         train_scores_mean - train_scores_std,
+                         train_scores_mean + train_scores_std,
+                         alpha=0.1,
                          color="r")
-        plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
-                         test_scores_mean + test_scores_std, alpha=0.1, color="g")
+        plt.fill_between(train_sizes,
+                         test_scores_mean - test_scores_std,
+                         test_scores_mean + test_scores_std,
+                         alpha=0.1,
+                         color="g")
 
         # Plot the means of the lines
-        plt.plot(train_sizes, train_scores_mean, 'o-', color="r",
-                 label="Training score")
-        plt.plot(train_sizes, test_scores_mean, 'o-', color="g",
-                 label="Cross-validation score")
+        plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training score")
+        plt.plot(train_sizes, test_scores_mean, 'o-', color="g", label="Cross-validation score")
 
         plt.legend(loc="best")
         return self.return_file(plt, plot_name)
-

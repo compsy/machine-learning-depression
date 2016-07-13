@@ -1,6 +1,7 @@
 from data_output.plotters.plotter import Plotter
 import matplotlib.pyplot as plt
 
+
 class ActualVsPredictionPlotter(Plotter):
 
     def plot(self, model, actual, predicted):
@@ -9,7 +10,7 @@ class ActualVsPredictionPlotter(Plotter):
 
         plot_name = model.given_name
         plot_name = 'actual_vs_prediction' + plot_name.replace(" ", "_")
-        print('\t -> Plotting '+plot_name)
+        print('\t -> Plotting ' + plot_name)
         plt.figure()
         plt.title('Act vs Pred: ' + model.given_name)
         plt.xlabel('Measured')

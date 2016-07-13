@@ -15,5 +15,5 @@ class SyncModelRunner:
 
     def run_calculations(self, fabricated_models):
         for model in fabricated_models:
-            print('\t -> Training from syncmodelrunner' + model.given_name)
+            print('\t -> Training from syncmodelrunner')
             model.train()

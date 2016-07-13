@@ -59,3 +59,9 @@ class KerasNnModel(MachineLearningModel):
         # err.append(np.ravel(pred[0][0] - act))
 
         # print(err)
+
+
+class KerasNnClassificationModel(MachineLearningModel):
+
+    def __init__(self, x, y, x_names, y_names, verbosity):
+        super().__init__(x, y, x_names, y_names)

@@ -1,2 +1,12 @@
 #!/bin/bash
-docker-compose run icpe /bin/bash
+loc=$1
+if [ $# -eq 0 ]; then
+  echo "No arguments provided, please provide the location where to mount the exports"
+  echo "Now using"
+  loc="$(pwd)/exports"
+  mkdir -p $loc
+  echo $loc
+fi
+
+docker run --rm -it -v $loc:/exports --name icpe frbl/icpe-machine-learning 
+

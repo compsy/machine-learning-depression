@@ -1,13 +1,13 @@
 from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
-from learner.machine_learning_evaluation.f1_evaluation import F1Evaluation
-from learner.machine_learning_evaluation.mse_evaluation import MseEvaluation
+from machine_learning_evaluation.f1_evaluation import F1Evaluation
+from machine_learning_evaluation.mse_evaluation import MseEvaluation
 
 
 class MachineLearningModel:
 
-    def __init__(self, x, y, x_names, y_names, model_type='regression'):
+    def __init__(self, x, y, x_names, y_names, model_type='models'):
         self.skmodel = None
         self.x = x
         self.y = y
@@ -57,9 +57,10 @@ class MachineLearningModel:
 
         if (self.skmodel is None):
             raise NotImplementedError
-
+        print('\t -> Training ' + self.given_name)
         self.was_trained = True
         self.skmodel = self.skmodel.fit(X=self.x_train, y=self.y_train)
+        print('\t -> Fitted ' + self.given_name)
 
     def cv_predict(self):
         self.skmodel.fit(self.x_train, self.y_train)
@@ -68,7 +69,7 @@ class MachineLearningModel:
         return cross_val_predict(self.skmodel, X=self.x_train, y=self.y_train, cv=8)
 
     def scoring(self):
-        if (self.model_type == 'regression'):
+        if (self.model_type == 'models'):
             return 'mean_squared_error'
         elif (self.model_type == 'classification'):
             return 'accuracy'
@@ -81,3 +82,7 @@ class MachineLearningModel:
     @property
     def given_name(self):
         return type(self).__name__
+
+    ## Override
+    def predict_for_roc(self, x_data):
+        return self.skmodel.decision_function(x_data)

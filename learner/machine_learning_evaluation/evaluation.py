@@ -1,6 +1,6 @@
 class Evaluation:
 
-    def __init__(self, name='Evaluator', model_type='regression'):
+    def __init__(self, name='Evaluator', model_type='models'):
         self.model_type = model_type
         self.name = name
 

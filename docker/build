@@ -1,5 +1,5 @@
 #!/bin/bash
-docker rmi -f icpe
+#docker rmi -f icpe
 
 rm -r learner data requirements.txt install-packages.R
 cp -r ../learner .
@@ -8,7 +8,7 @@ mkdir data
 cp -r ../data/* data/
 cp -r ../requirements.txt .
 cp -r ../install-packages.R .
-docker-compose build
+#docker-compose build
 
 docker build -t frbl/icpe-machine-learning .
 

@@ -35,10 +35,6 @@ class IDSQuestionnaire(Questionnaire):
                 if (np.isnan(tot)): tot = 0
                 tot += dat[q_name] - 1
 
-        if (participant.pident == 210269):
-            print(dat)
-            print(tot)
-
         return tot
 
     def severity(self, participant):

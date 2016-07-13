@@ -26,7 +26,7 @@ class LearningCurvePlotter(Plotter):
             n_features is the number of features.
 
         y : array-like, shape (n_samples) or (n_samples, n_features), optional
-            Target relative to X for classification or regression;
+            Target relative to X for classification or models;
             None for unsupervised learning.
 
         ylim : tuple, shape (ymin, ymax), optional

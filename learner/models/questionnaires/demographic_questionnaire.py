@@ -10,8 +10,17 @@ class DemographicQuestionnaire(Questionnaire):
         # bcspec is not in here, as its a string
         # natspec is not in here, as its a string
         other_available_variables = [
-            'frame01', 'frame02', 'area', 'educat', 'edu', 'edulvl', 'bthctry', 'natnmbr',
-            'nation1', 'nation2', 'northea',
+            'frame01',
+            'frame02',
+            'area',
+            'educat',
+            'edu',
+            'edulvl',
+            'bthctry',
+            'natnmbr',
+            'nation1',
+            'nation2',
+            'northea',
         ]
 
         super().__init__(name, filename, measurement_moment, reader, function_mapping, other_available_variables)
@@ -21,4 +30,3 @@ class DemographicQuestionnaire(Questionnaire):
 
     def age(self, participant):
         return participant.age
-

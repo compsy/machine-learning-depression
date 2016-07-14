@@ -15,6 +15,7 @@ from data_output.plotters.validation_curve_plotter import ValidationCurvePlotter
 from data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
 from data_transformers.output_data_cleaner import OutputDataCleaner
 from data_transformers.output_data_splitter import OutputDataSplitter
+from data_transformers.variable_transformer import VariableTransformer
 from factories.questionnaire_factory import QuestionnaireFactory
 from machine_learning_models import sync_model_runner
 from machine_learning_models.classification.naive_bayes_model import NaiveBayesModel
@@ -87,31 +88,12 @@ if __name__ == '__main__':
 
     FORCE_NO_CACHING = False
 
-    spss_reader = spss_reader.SpssReader()
-    single_output_frame_creator = SingleOutputFrameCreator()
-    output_data_cleaner = OutputDataCleaner()
-    output_data_splitter = OutputDataSplitter()
-    data_preprocessor_polynomial = DataPreprocessorPolynomial()
-
-    actual_vs_prediction_plotter = ActualVsPredictionPlotter()
-    learning_curve_plotter = LearningCurvePlotter()
-    validation_curve_plotter = ValidationCurvePlotter()
-    roc_curve_plotter = RocCurvePlotter()
-    data_density_plotter = DataDensityPlotter()
-
-    # First read demographic data
-    N1_A100R = spss_reader.read_file("N1_A100R.sav")
-    participants = create_participants(N1_A100R)
-
-    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=FORCE_NO_CACHING)
-
-    print('\t -> Loaded data with %d rows and %d columns' % np.shape(data))
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
     # - A = the time of the measurement, a = intake, c = followup
     # - B = the name of the questionnaire (check QuestionnaireFactory for the correct names)
     # - C = the name of the variable. Check the name used in the <Questionnairename>questionnaire.py
-    X_NAMES = np.array([  #'pident',
+    X_NAMES = np.array([  # 'pident',
         # IDS - 'aids-ids09A', 'aids-ids09B', 'aids-ids09C', are NONE for nearly everyone
         'aids-somScore',
         'aids-ids01',
@@ -212,9 +194,30 @@ if __name__ == '__main__':
         'acidi-anxiety-numberOfCurrentAnxietyDiagnoses',
         'acidi-anxiety-lifetimeAnxietyDiagnosesPresent',
 
-        #'ademo-gender',
+        # 'ademo-gender',
         'ademo-age'
     ])
+
+    spss_reader = spss_reader.SpssReader()
+    single_output_frame_creator = SingleOutputFrameCreator()
+    output_data_cleaner = OutputDataCleaner()
+    output_data_splitter = OutputDataSplitter()
+    data_preprocessor_polynomial = DataPreprocessorPolynomial()
+
+    actual_vs_prediction_plotter = ActualVsPredictionPlotter()
+    learning_curve_plotter = LearningCurvePlotter()
+    validation_curve_plotter = ValidationCurvePlotter()
+    roc_curve_plotter = RocCurvePlotter()
+    data_density_plotter = DataDensityPlotter()
+    variable_transformer = VariableTransformer(X_NAMES)
+
+    # First read demographic data
+    N1_A100R = spss_reader.read_file("N1_A100R.sav")
+    participants = create_participants(N1_A100R)
+
+    header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=FORCE_NO_CACHING)
+
+    print('\t -> Loaded data with %d rows and %d columns' % np.shape(data))
 
     models = []
     if (CLASSIFICATION):
@@ -255,8 +258,7 @@ if __name__ == '__main__':
     x_data = output_data_cleaner.clean(output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
 
     # Logtransform the data
-    # x_data[:,0] += 1
-    # x_data[:,0] = np.log(x_data[:,0])
+    variable_transformer.log_transform(x_data, 'aids-somScore')
 
     if NORMALIZE:
         print('\t -> We are also normalizing the features')

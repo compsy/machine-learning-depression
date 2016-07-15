@@ -12,7 +12,7 @@ from sklearn.metrics import roc_curve, auc
 class RocCurvePlotter(Plotter):
 
     def plot(self, models, cv=6):
-        plt.figure()
+        plt.figure(figsize=(12,12), dpi=72)
         plt.title('Receiver Operator Curves')
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')

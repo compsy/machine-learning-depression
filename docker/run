@@ -8,5 +8,17 @@ if [ $# -eq 0 ]; then
   echo $loc
 fi
 
-docker run --rm -it -v $loc:/exports --name icpe frbl/icpe-machine-learning 
+gitdir="ICPE_machine_learning_workgroup"
+if [ ! -d "$gitdir" ]; then
+  if [ $GITHUB_TOKEN == "" ]; then
+    echo 'Github token not set, please export GITHUB_TOKEN'
+    exit 1
+  fi
+  git clone https://$GITHUB_TOKEN:x-oauth-basicgithub.com/compsy/$gitdir.git
+fi
 
+cd $gitdir
+git pull
+cd ..
+learner="$(pwd)/$gitdir/learner"
+docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning /bin/bash

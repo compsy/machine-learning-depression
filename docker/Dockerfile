@@ -30,9 +30,11 @@ VOLUME /exports
 COPY install-packages.R /usr/src/app/
 RUN R CMD BATCH install-packages.R
 
+# Copy the data
+COPY data /usr/src/app/data
+
 # Copy the actual application
 COPY learner /usr/src/app/learner
-COPY data /usr/src/app/data
 
 #ENV R_HOME=/usr/local/lib/R
 #ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$R_HOME/lib

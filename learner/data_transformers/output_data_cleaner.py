@@ -26,5 +26,5 @@ class OutputDataCleaner(DataTransformer):
 
         print('\t -> The following keys have the most missings:')
         for key, value in sorted(missing_value_hash.items(), key=lambda k_v: (k_v[1], k_v[0]), reverse=True):
-            print("\t --> %s: \t\t %s" % (key, value))
+            print("\t --> %s \t %s" % (value, key))
         return incorrect_indices

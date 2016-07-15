@@ -1,8 +1,8 @@
 from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
-from learner.machine_learning_evaluation.f1_evaluation import F1Evaluation
-from learner.machine_learning_evaluation.mse_evaluation import MseEvaluation
+from machine_learning_evaluation.f1_evaluation import F1Evaluation
+from machine_learning_evaluation.mse_evaluation import MseEvaluation
 
 
 class MachineLearningModel:

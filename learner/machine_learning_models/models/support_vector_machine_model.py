@@ -6,7 +6,7 @@ from numpy import logspace
 import numpy as np
 
 
-class SupportVectorMachineModel(MachineLearningModel):
+class SupportVectorRegressionModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
         super().__init__(x, y, x_names, y_names)

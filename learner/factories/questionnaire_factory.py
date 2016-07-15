@@ -59,11 +59,11 @@ class QuestionnaireFactory:
 
             # N1_x255    4DKL (physical complaints)
             four_dkl_questionnaire.FourDKLQuestionnaire(name="4dkl",
-                                                        filename="N1_A232R.sav",
+                                                        filename="N1_A232R.SAV",
                                                         measurement_moment='a',
                                                         reader=reader),
             four_dkl_questionnaire.FourDKLQuestionnaire(name="4dkl-followup",
-                                                        filename="N1_C232R.sav",
+                                                        filename="N1_C232R.SAV",
                                                         measurement_moment='c',
                                                         reader=reader),
 

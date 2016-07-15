@@ -1,6 +1,5 @@
 import os.path
 import pickle
-
 import numpy as np
 from sklearn.ensemble.bagging import BaggingClassifier
 from sklearn.preprocessing import normalize, scale

@@ -1,24 +1,29 @@
 #!/bin/bash
 loc=$1
-if [ $# -eq 0 ]; then
-  echo "No arguments provided, please provide the location where to mount the exports"
-  echo "Now using"
-  loc="$(pwd)/exports"
-  mkdir -p $loc
-  echo $loc
+
+end=""
+if [ ! $# -eq 0 ]; then
+	end="/bin/bash"
 fi
+
+echo "Mountin exports location on "
+echo $loc
+loc="$(pwd)/exports"
+mkdir -p $loc
+echo $loc
 
 gitdir="ICPE_machine_learning_workgroup"
 if [ ! -d "$gitdir" ]; then
-  if [ $GITHUB_TOKEN == "" ]; then
-    echo 'Github token not set, please export GITHUB_TOKEN'
+  if [ -z $GITHUB_TOKEN ]; then
+    echo 'Error: Github token not set, please export GITHUB_TOKEN'
     exit 1
   fi
-  git clone https://$GITHUB_TOKEN:x-oauth-basicgithub.com/compsy/$gitdir.git
+  git clone https://$GITHUB_TOKEN:x-oauth-basic@github.com/compsy/$gitdir.git
 fi
 
 cd $gitdir
 git pull
 cd ..
 learner="$(pwd)/$gitdir/learner"
-docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning /bin/bash
+docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $end
+

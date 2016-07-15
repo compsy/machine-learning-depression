@@ -11,7 +11,6 @@ class ConfusionMatrixPlotter(Plotter):
         if predicted is None or actual is None:
             return False
 
-        cm = confusion_matrix(actual, predicted)
 
         cmap = plt.cm.Blues
         np.set_printoptions(precision=2)
@@ -22,26 +21,28 @@ class ConfusionMatrixPlotter(Plotter):
         plot_name = 'confusion_matrix_' + plot_name.replace(" ", "_")
         print('\t -> Plotting ' + plot_name)
 
-        ax[0, 0].imshow(cm, interpolation='nearest', cmap=cmap)
-        ax[0, 0].colorbar()
-        ax[0, 0].set_title('Confusion matrix: ' + model.given_name)
-        ax[0, 0].ylabel('True label')
-        ax[0, 0].xlabel('Predicted label')
-        ax[0, 0].tight_layout()
+        plt.colorbar()
+        plt.tight_layout()
+        
+        cm = confusion_matrix(actual, predicted)
+        ax[0].imshow(cm, interpolation='nearest', cmap=cmap)
 
-        ax[0, 0].xticks(2, np.array('yes', 'no'), rotation=45)
-        ax[0, 0].yticks(2, np.array('yes', 'no'))
+        ax[0].set_title('Confusion matrix: ' + model.given_name)
+        ax[0].ylabel('True label')
+        ax[0].xlabel('Predicted label')
+
+
+        ax[0].xticks(2, np.array('yes', 'no'), rotation=45)
+        ax[0].yticks(2, np.array('yes', 'no'))
 
         cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
 
-        ax[0, 1].imshow(cm_normalized, interpolation='nearest', cmap=cmap)
-        ax[0, 1].colorbar()
-        ax[0, 1].set_title('Normalized confusion matrix: ' + model.given_name)
-        ax[0, 1].ylabel('True label')
-        ax[0, 1].xlabel('Predicted label')
-        ax[0, 1].tight_layout()
+        ax[1].imshow(cm_normalized, interpolation='nearest', cmap=cmap)
+        ax[1].set_title('Normalized confusion matrix: ' + model.given_name)
+        ax[1].ylabel('True label')
+        ax[1].xlabel('Predicted label')
 
-        ax[0, 1].xticks(2, np.array('yes', 'no'), rotation=45)
-        ax[0, 1].yticks(2, np.array('yes', 'no'))
+        ax[1].xticks(2, np.array('yes', 'no'), rotation=45)
+        ax[1].yticks(2, np.array('yes', 'no'))
 
         return self.return_file(plt, plot_name)

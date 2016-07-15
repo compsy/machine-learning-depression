@@ -89,7 +89,7 @@ if __name__ == '__main__':
     # Classification or models?
     CLASSIFICATION = True
 
-    FORCE_NO_CACHING = True
+    FORCE_NO_CACHING = False
 
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
@@ -206,8 +206,8 @@ if __name__ == '__main__':
     if (CLASSIFICATION):
         models = [
             SupportVectorClassificationModel, LogisticRegressionModel, NaiveBayesModel, DummyClassifierModel,
-            DummyRandomClassifierModel, BoostingClassificationModel, BaggingClassificationModel,
-            KerasNnClassificationModel
+            #DummyRandomClassifierModel, BoostingClassificationModel, BaggingClassificationModel,
+            #KerasNnClassificationModel
         ]
         # Output columns
         Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])

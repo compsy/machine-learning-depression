@@ -9,10 +9,12 @@ from keras.wrappers.scikit_learn import KerasRegressor, KerasClassifier
 import numpy as np
 from pandas import DataFrame
 
+
 class KerasWrapper(MachineLearningModel):
     # Override the train function, as the keras API returns a history object, not a trained model
     def train(self):
         self.skmodel.fit(X=self.x_train, y=self.y_train)
+
 
 class KerasNnModel(KerasWrapper):
 
@@ -48,7 +50,6 @@ class KerasNnModel(KerasWrapper):
 
         return keras_model
 
-
     def xx(self):
         # self.skmodel.fit(self.x_train, self.y_train, nb_epoch=2, batch_size=32)
         print(np.shape(np.transpose(self.x_test)))
@@ -70,7 +71,6 @@ class KerasNnClassificationModel(KerasWrapper):
 
         # Wrap the model in a scikit api
         self.skmodel = KerasClassifier(build_fn=self.baseline_model, nb_epoch=500, batch_size=64, verbose=1)
-
 
     def baseline_model(self):
         # Create the model

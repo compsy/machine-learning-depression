@@ -4,6 +4,7 @@ from sklearn.metrics import confusion_matrix
 
 import numpy as np
 
+
 class ConfusionMatrixPlotter(Plotter):
 
     def plot(self, model, actual, predicted):
@@ -21,7 +22,7 @@ class ConfusionMatrixPlotter(Plotter):
         plot_name = 'confusion_matrix_' + plot_name.replace(" ", "_")
         print('\t -> Plotting ' + plot_name)
 
-        ax[0,0].imshow(cm, interpolation='nearest', cmap=cmap)
+        ax[0, 0].imshow(cm, interpolation='nearest', cmap=cmap)
         ax[0, 0].colorbar()
         ax[0, 0].set_title('Confusion matrix: ' + model.given_name)
         ax[0, 0].ylabel('True label')
@@ -44,8 +45,3 @@ class ConfusionMatrixPlotter(Plotter):
         ax[0, 1].yticks(2, np.array('yes', 'no'))
 
         return self.return_file(plt, plot_name)
-
-
-
-
-

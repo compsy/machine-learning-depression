@@ -13,7 +13,7 @@ class DataTransformer:
         return variable_indices
 
     def get_variable_index(self, all_names, name):
-        if(not isinstance(all_names, np.ndarray)):
+        if (not isinstance(all_names, np.ndarray)):
             warnings.warn('Note that this function only works on NP arrays!')
 
         if (len(np.where(all_names == name)[0]) == 0):

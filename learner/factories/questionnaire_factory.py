@@ -81,11 +81,11 @@ class QuestionnaireFactory:
             # N1_x226    MASQ - Mood and Anxiety Scoring Questionnaire
             ## !! Only derived is available !!
             masq_questionnaire.MASQQuestionnaire(name="masq",
-                                                 filename='N1_A226D.sav',
+                                                 filename='N1_A226D.SAV',
                                                  measurement_moment='a',
                                                  reader=reader),
             masq_questionnaire.MASQQuestionnaire(name="masq-followup",
-                                                 filename='N1_C226D.sav',
+                                                 filename='N1_C226D.SAV',
                                                  measurement_moment='c',
                                                  reader=reader),
 

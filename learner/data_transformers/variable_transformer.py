@@ -10,7 +10,7 @@ class VariableTransformer(DataTransformer):
     def __init__(self, header):
         self.header = header
 
-    def log_transform(self, x, variable_to_transform, additive = False):
+    def log_transform(self, x, variable_to_transform, additive=False):
         var_loc = self.get_variable_index(self.header, variable_to_transform)
         if (var_loc is None): raise ValueError('Variable %s not found..' % variable_to_transform)
         if (min(x[:, var_loc]) <= 0):
@@ -21,7 +21,7 @@ class VariableTransformer(DataTransformer):
 
         x[:, var_loc] = np.log(x[:, var_loc])
 
-    def sqrt_transform(self, x, variable_to_transform, additive = False):
+    def sqrt_transform(self, x, variable_to_transform, additive=False):
         var_loc = self.get_variable_index(self.header, variable_to_transform)
         if (var_loc is None): raise ValueError('Variable %s not found..' % variable_to_transform)
 
@@ -32,7 +32,7 @@ class VariableTransformer(DataTransformer):
                           (variable_to_transform, adder))
             values_to_add += adder
 
-        if(additive):
+        if (additive):
             self.header.append('sqrt_' + variable_to_transform)
             x[:, var_loc + 1] = np.sqrt(values_to_add)
         else:

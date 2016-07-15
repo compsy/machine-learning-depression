@@ -208,17 +208,12 @@ if __name__ == '__main__':
             SupportVectorClassificationModel, LogisticRegressionModel, NaiveBayesModel, DummyClassifierModel,
             DummyRandomClassifierModel, BoostingClassificationModel, BaggingClassificationModel,
             KerasNnClassificationModel
-
         ]
         # Output columns
         Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
     else:  # Regression
         models = [
-            KerasNnModel,
-            LinearRegressionModel,
-            SupportVectorRegressionModel,
-            RegressionTreeModel,
-            BoostingModel,
+            KerasNnModel, LinearRegressionModel, SupportVectorRegressionModel, RegressionTreeModel, BoostingModel,
             BaggingModel
         ]
         # Output columns
@@ -279,7 +274,6 @@ if __name__ == '__main__':
         print('\t -> We are also adding polynomial features')
         x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
-
     # Plot an overview of the density estimations of the variables used in the actual model calculation.
     data_density_plotter.plot(x_data, X_NAMES)
 
@@ -316,4 +310,3 @@ if __name__ == '__main__':
         actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
         if CLASSIFICATION:
             confusion_matrix_plotter.plot(model, model.y_test, y_test_pred)
-

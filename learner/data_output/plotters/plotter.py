@@ -13,7 +13,6 @@ class Plotter:
         self.save_file(plot, file_name)
 
     def save_file(self, plot, file_name):
-        print('Saving to file...')
         plot.savefig(self.location + file_name + '.png')
         plot.clf()
         return True

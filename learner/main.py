@@ -24,7 +24,9 @@ from machine_learning_models.models.boosting_model import BoostingClassification
 from machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
 from machine_learning_models.models.linear_regression_model import LinearRegressionModel, LogisticRegressionModel
 from machine_learning_models.models.regression_tree_model import RegressionTreeModel
-from machine_learning_models.models.support_vector_machine_model import SupportVectorClassificationModel
+from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, SupportVectorClassificationModel
+from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
+
 from models import participant
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
@@ -84,7 +86,7 @@ if __name__ == '__main__':
     SCALE = True
 
     # Classification or models?
-    CLASSIFICATION = False
+    CLASSIFICATION = True
 
     FORCE_NO_CACHING = False
 
@@ -198,6 +200,30 @@ if __name__ == '__main__':
         'ademo-age'
     ])
 
+    ##### Define the models we should run
+    models = []
+    if (CLASSIFICATION):
+        models = [
+            SupportVectorClassificationModel, LogisticRegressionModel, NaiveBayesModel, DummyClassifierModel,
+            DummyRandomClassifierModel, BoostingClassificationModel, BaggingClassificationModel,
+            KerasNnClassificationModel
+
+        ]
+        # Output columns
+        Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
+    else:  # Regression
+        models = [
+            KerasNnModel,
+            LinearRegressionModel,
+            SupportVectorRegressionModel,
+            RegressionTreeModel,
+            BoostingModel,
+            BaggingModel
+        ]
+        # Output columns
+        Y_NAMES = np.array(['cids-followup-somScore'])
+        #Y_NAMES = np.array(['cids-followup-severity'])
+
     spss_reader = spss_reader.SpssReader()
     single_output_frame_creator = SingleOutputFrameCreator()
     output_data_cleaner = OutputDataCleaner()
@@ -214,36 +240,15 @@ if __name__ == '__main__':
     # First read demographic data
     N1_A100R = spss_reader.read_file("N1_A100R.sav")
     participants = create_participants(N1_A100R)
-
     header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=FORCE_NO_CACHING)
 
+    print('\t -> We have %d participants in the inital dataset' % len(participants.keys()))
     print('\t -> Loaded data with %d rows and %d columns' % np.shape(data))
-
-    models = []
-    if (CLASSIFICATION):
-        models = [
-            SupportVectorClassificationModel, LogisticRegressionModel, NaiveBayesModel, DummyClassifierModel,
-            DummyRandomClassifierModel, BoostingClassificationModel, BaggingClassificationModel
-        ]
-        # Output columns
-        Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
-    else:  # Regression
-        models = [
-            # KerasNnModel,
-            LinearRegressionModel,
-            # SupportVectorMachineModel,
-            RegressionTreeModel,
-            BoostingModel,
-            BaggingModel
-        ]
-        # Output columns
-        Y_NAMES = np.array(['cids-followup-somScore'])
-        #Y_NAMES = np.array(['cids-followup-severity'])
-
     print('\t -> We will use %s as outcome.' % Y_NAMES)
+
     selected_header = np.append(X_NAMES, Y_NAMES)
 
-    # Select the data we will use in the present experiment
+    # Select the data we will use in the present experiment (used_data = both x and y)
     used_data = output_data_splitter.split(data, header, selected_header)
 
     # Determine which of this set are not complete
@@ -255,10 +260,10 @@ if __name__ == '__main__':
     used_data = output_data_cleaner.clean(used_data, incorrect_rows)
 
     # Split the dataframe into a x and y dataset.
-    x_data = output_data_cleaner.clean(output_data_splitter.split(data, header, X_NAMES), incorrect_rows)
+    x_data = output_data_splitter.split(used_data, selected_header, X_NAMES)
 
     # Logtransform the data
-    variable_transformer.log_transform(x_data, 'aids-somScore')
+    # variable_transformer.log_transform(x_data, 'aids-somScore')
 
     if NORMALIZE:
         print('\t -> We are also normalizing the features')
@@ -272,30 +277,30 @@ if __name__ == '__main__':
         print('\t -> We are also adding polynomial features')
         x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
+
+    # Plot an overview of the density estimations of the variables used in the actual model calculation.
     data_density_plotter.plot(x_data, X_NAMES)
 
     y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
-    # Convert ydata 2d matrix (x * 1) to 1d array (x)
-    y_data = np.ravel(y_data)
 
     print("\t -> The used data for the prediction has shape: %s %s" % np.shape(x_data))
-    print("\t -> The values to predict have the shape: %s" % np.shape(y_data))
-    # Export all used data to a CSV file
+    print("\t -> The values to predict have the shape: %s %s" % np.shape(y_data))
 
+    # Convert ydata 2d matrix (x * 1) to 1d array (x). Needed for the classifcation things
+    y_data = np.ravel(y_data)
+
+    # Export all used data to a CSV file
     CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
 
-    # Add the header to the numpy array, won't work now
-    # data = map(lambda x: tuple(x), data)
-    # data = np.array(deque(data), [(n, 'float64') for n in header])
-
-    sync_model_runner = sync_model_runner.SyncModelRunner(models)
-    fabricated_models = sync_model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
+    model_runner = sync_model_runner.SyncModelRunner(models)
+    fabricated_models = model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
 
     # Train all models, the fitted parameters will be saved inside the models
-    sync_model_runner.run_calculations(fabricated_models=fabricated_models)
+    model_runner.run_calculations(fabricated_models=fabricated_models)
 
     # Generate learning curve plots
-    #roc_curve_plotter.plot(fabricated_models)
+    if CLASSIFICATION:
+        roc_curve_plotter.plot(fabricated_models)
 
     for model in fabricated_models:
         1
@@ -307,3 +312,4 @@ if __name__ == '__main__':
         y_train_pred = model.skmodel.predict(model.x_train)
         y_test_pred = model.skmodel.predict(model.x_test)
         actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
+

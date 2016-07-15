@@ -90,7 +90,7 @@ if __name__ == '__main__':
     # Classification or models?
     CLASSIFICATION = True
 
-    FORCE_NO_CACHING = False
+    FORCE_NO_CACHING = True
 
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:

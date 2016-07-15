@@ -12,6 +12,8 @@ from data_output.plotters.data_density_plotter import DataDensityPlotter
 from data_output.plotters.learning_curve_plotter import LearningCurvePlotter
 from data_output.plotters.roc_curve_plotter import RocCurvePlotter
 from data_output.plotters.validation_curve_plotter import ValidationCurvePlotter
+from data_output.plotters.confusion_matrix_plotter import ConfusionMatrixPlotter
+
 from data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
 from data_transformers.output_data_cleaner import OutputDataCleaner
 from data_transformers.output_data_splitter import OutputDataSplitter
@@ -234,6 +236,7 @@ if __name__ == '__main__':
     learning_curve_plotter = LearningCurvePlotter()
     validation_curve_plotter = ValidationCurvePlotter()
     roc_curve_plotter = RocCurvePlotter()
+    confusion_matrix_plotter = ConfusionMatrixPlotter()
     data_density_plotter = DataDensityPlotter()
     variable_transformer = VariableTransformer(X_NAMES)
 
@@ -312,4 +315,6 @@ if __name__ == '__main__':
         y_train_pred = model.skmodel.predict(model.x_train)
         y_test_pred = model.skmodel.predict(model.x_test)
         actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
+        if CLASSIFICATION:
+            confusion_matrix_plotter.plot(model, model.y_test, y_test_pred)
 

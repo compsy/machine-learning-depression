@@ -10,7 +10,7 @@ class ValidationCurvePlotter(Plotter):
     def plot(self, model, variable_to_validate=None):
 
         space = np.logspace(-5, 6, 50)
-        space = np.linspace(1, 10000, 100, dtype='int_')
+        space = np.linspace(1, 1000, 10, dtype='int_')
         plot_name = model.given_name
         plot_name = 'validation_' + plot_name.replace(" ", "_")
 

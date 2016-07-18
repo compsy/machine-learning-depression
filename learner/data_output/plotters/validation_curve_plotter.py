@@ -7,19 +7,21 @@ from sklearn.learning_curve import learning_curve, validation_curve
 
 class ValidationCurvePlotter(Plotter):
 
-    def plot(self, model):
+    def plot(self, model, variable_to_validate=None):
 
         space = np.logspace(-5, 6, 50)
-        space = np.linspace(1, 100, 100)
+        space = np.linspace(1, 10000, 100, dtype='int_')
         plot_name = model.given_name
         plot_name = 'validation_' + plot_name.replace(" ", "_")
 
-        print(space)
         print('\t -> Determining validation curve for ' + model.given_name + ', using space: ' + str(space))
+
+        if (variable_to_validate is None): variable_to_validate = model.variable_to_validate()
+
         train_scores, valid_scores = validation_curve(estimator=model.skmodel,
                                                       X=model.x_train,
                                                       y=model.y_train,
-                                                      param_name=model.variable_to_validate(),
+                                                      param_name=variable_to_validate,
                                                       param_range=space,
                                                       n_jobs=-1,
                                                       verbose=1)

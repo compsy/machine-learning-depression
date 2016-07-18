@@ -7,14 +7,17 @@ class BoostingModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
         super().__init__(x, y, x_names, y_names)
-        self.skmodel = GradientBoostingRegressor(verbose=verbosity)
+        self.skmodel = GradientBoostingRegressor(verbose=verbosity, init=self.skmodel)
 
 
 class BoostingClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity):
-        super().__init__(x, y, x_names, y_names)
-        self.skmodel = GradientBoostingClassifier(verbose=verbosity)
+    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
+        super().__init__(x, y, x_names, y_names, **kwargs)
+        self.skmodel = GradientBoostingClassifier(verbose=verbosity, init=self.skmodel,
+                                                  n_estimators=100,
+                                                  learning_rate=0.01,
+                                                  max_depth=5)
 
     def predict_for_roc(self, x_data):
         return self.skmodel.decision_function(x_data)

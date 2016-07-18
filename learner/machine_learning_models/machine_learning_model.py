@@ -7,7 +7,7 @@ from machine_learning_evaluation.mse_evaluation import MseEvaluation
 
 class MachineLearningModel:
 
-    def __init__(self, x, y, x_names, y_names, model_type='models'):
+    def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0):
         self.skmodel = None
         self.x = x
         self.y = y

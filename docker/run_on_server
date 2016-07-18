@@ -1,0 +1,7 @@
+#!/bin/bash
+cd ..
+git add --all
+git commit -am 'Running on server'
+git push
+cd -
+ssh -t pro "cd docker_test;./run"

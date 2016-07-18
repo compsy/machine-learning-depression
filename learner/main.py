@@ -205,7 +205,9 @@ if __name__ == '__main__':
     models = []
     if (CLASSIFICATION):
         models = [
-            SupportVectorClassificationModel, LogisticRegressionModel, NaiveBayesModel, DummyClassifierModel,
+            #SupportVectorClassificationModel,
+            LogisticRegressionModel
+            #, NaiveBayesModel, DummyClassifierModel,
             #DummyRandomClassifierModel, BoostingClassificationModel, BaggingClassificationModel,
             #KerasNnClassificationModel
         ]
@@ -275,7 +277,7 @@ if __name__ == '__main__':
         x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
     # Plot an overview of the density estimations of the variables used in the actual model calculation.
-    data_density_plotter.plot(x_data, X_NAMES)
+    #data_density_plotter.plot(x_data, X_NAMES)
 
     y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
@@ -301,7 +303,7 @@ if __name__ == '__main__':
     for model in fabricated_models:
         1
         #learning_curve_plotter.plot(model)
-        # plots.append(validation_curve_plotter.plot(model))
+        validation_curve_plotter.plot(model, variable_to_validate='n_estimators')
 
     for model in fabricated_models:
         model.print_evaluation()

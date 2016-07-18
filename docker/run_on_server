@@ -4,5 +4,6 @@ git add --all
 git commit -am 'Running on server'
 git push
 cd -
-ssh -t pro "cd docker_test;./run"
+rev=$(git rev-parse HEAD)
+ssh -t pro "cd docker_test;./run -b $rev"
 scp -r pro:~/docker_test/exports ~/Desktop/exports

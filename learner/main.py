@@ -77,7 +77,7 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
 if __name__ == '__main__':
 
     # General settings
-    VERBOSITY = 0
+    VERBOSITY = 1
 
     # Should the analysis include polynomial features?
     POLYNOMIAL_FEATURES = False

@@ -77,7 +77,7 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
 if __name__ == '__main__':
 
     # General settings
-    VERBOSITY = 1
+    VERBOSITY = 0
 
     # Should the analysis include polynomial features?
     POLYNOMIAL_FEATURES = False
@@ -205,10 +205,12 @@ if __name__ == '__main__':
     models = []
     if (CLASSIFICATION):
         models = [
-            #SupportVectorClassificationModel,
-            LogisticRegressionModel
-            #, NaiveBayesModel, DummyClassifierModel,
-            #DummyRandomClassifierModel, BoostingClassificationModel, BaggingClassificationModel,
+            SupportVectorClassificationModel,
+            # LogisticRegressionModel
+            BoostingClassificationModel, BaggingClassificationModel,
+            NaiveBayesModel, DummyClassifierModel
+            #DummyRandomClassifierModel,
+
             #KerasNnClassificationModel
         ]
         # Output columns
@@ -277,7 +279,7 @@ if __name__ == '__main__':
         x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
     # Plot an overview of the density estimations of the variables used in the actual model calculation.
-    #data_density_plotter.plot(x_data, X_NAMES)
+    data_density_plotter.plot(x_data, X_NAMES)
 
     y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
@@ -302,13 +304,15 @@ if __name__ == '__main__':
 
     for model in fabricated_models:
         1
-        #learning_curve_plotter.plot(model)
-        validation_curve_plotter.plot(model, variable_to_validate='n_estimators')
+        learning_curve_plotter.plot(model)
+        #validation_curve_plotter.plot(model, variable_to_validate='n_estimators')
 
     for model in fabricated_models:
         model.print_evaluation()
         y_train_pred = model.skmodel.predict(model.x_train)
         y_test_pred = model.skmodel.predict(model.x_test)
-        actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
+
         if CLASSIFICATION:
             confusion_matrix_plotter.plot(model, model.y_test, y_test_pred)
+        else:
+            actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)

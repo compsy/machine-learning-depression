@@ -40,4 +40,4 @@ COPY learner /usr/src/app/learner
 #ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$R_HOME/lib
 
 WORKDIR /usr/src/app/learner
-CMD [ "python", "main.py", "| tee ../exports/output.txt" ]
+CMD [ "python", "main.py | tee ../exports/output.txt" ]

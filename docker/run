@@ -39,12 +39,12 @@ if [ ! -d "$gitdir" ]; then
   fi
   git clone https://$GITHUB_TOKEN:x-oauth-basic@github.com/compsy/$gitdir.git
 fi
-git checkout master
 cd $gitdir
+git checkout master
 git pull
 git checkout $BRANCH
 cd ..
 
 learner="$(pwd)/$gitdir/learner"
+docker pull frbl/icpe-machine-learning
 docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $COMMAND
-

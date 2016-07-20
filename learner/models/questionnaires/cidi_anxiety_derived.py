@@ -5,6 +5,7 @@ import numpy as np
 class CIDIAnxietyDerived(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
+        # Most variables are dichotomous, except for the 'numberOfCurrentAnxietyDiagnosis, which is numeric.
         function_mapping = {
             'socialFobiaPastMonth': self.social_fobia_past_month,
             'socialfobiaPastSixMonths': self.social_fobia_past_six_months,

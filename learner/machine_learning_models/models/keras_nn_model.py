@@ -8,7 +8,7 @@ from keras.layers import Dense, Activation, Dropout
 from keras.wrappers.scikit_learn import KerasRegressor, KerasClassifier
 import numpy as np
 from pandas import DataFrame
-
+from data_output.std_logger import L
 
 class KerasWrapper(MachineLearningModel):
     # Override the train function, as the keras API returns a history object, not a trained model
@@ -46,13 +46,15 @@ class KerasNnModel(KerasWrapper):
         adam = Adam(lr=0.01)
 
         keras_model.compile(loss='mean_squared_error', optimizer=adam)
+        L.info('Printing Neural Network configuration:')
         keras_model.summary()
+        L.info(keras_model.to_json())
 
         return keras_model
 
     def xx(self):
         # self.skmodel.fit(self.x_train, self.y_train, nb_epoch=2, batch_size=32)
-        print(np.shape(np.transpose(self.x_test)))
+        L.info(np.shape(np.transpose(self.x_test)))
         err = self.skmodel.predict((self.x_test))
         err = np.ravel(err) - self.y_test
         out = DataFrame(data={'err': err, 'out': np.ravel(self.y_test)})
@@ -95,6 +97,8 @@ class KerasNnClassificationModel(KerasWrapper):
 
         keras_model.compile(loss='binary_crossentropy', optimizer=adam, metrics=['accuracy'])
         keras_model.summary()
+        L.info('Printing Neural Network configuration:')
+        L.info(keras_model.to_json())
 
         return keras_model
 

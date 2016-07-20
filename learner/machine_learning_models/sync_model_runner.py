@@ -1,6 +1,6 @@
 from queue import Queue
 import numpy as np
-
+from data_output.std_logger import L
 
 class SyncModelRunner:
 
@@ -15,5 +15,5 @@ class SyncModelRunner:
 
     def run_calculations(self, fabricated_models):
         for model in fabricated_models:
-            print('\t -> Training from syncmodelrunner')
+            L.info('Training from syncmodelrunner')
             model.train()

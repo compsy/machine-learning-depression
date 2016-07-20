@@ -1,6 +1,6 @@
 from data_output.plotters.plotter import Plotter
 import matplotlib.pyplot as plt
-
+from data_output.std_logger import L
 
 class ActualVsPredictionPlotter(Plotter):
 
@@ -10,7 +10,7 @@ class ActualVsPredictionPlotter(Plotter):
 
         plot_name = model.given_name
         plot_name = 'actual_vs_prediction' + plot_name.replace(" ", "_")
-        print('\t -> Plotting ' + plot_name)
+        L.info('Plotting ' + plot_name)
         plt.figure()
         plt.title('Act vs Pred: ' + model.given_name)
         plt.xlabel('Measured')
@@ -25,7 +25,7 @@ class ActualVsPredictionPlotter(Plotter):
     def plot_both(self, model, y_test, y_test_pred, y_train, y_train_pred):
         plot_name = model.given_name
         plot_name = 'actual_vs_prediction_both' + plot_name.replace(" ", "_")
-        print('\t -> Plotting ' + plot_name)
+        L.info('Plotting ' + plot_name)
         plt.figure()
         plt.title('Act vs Pred: ' + model.given_name)
         plt.xlabel('Measured')

@@ -6,7 +6,7 @@ from data_output.plotters.plotter import Plotter
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.neighbors.kde import KernelDensity
-
+from data_output.std_logger import L
 
 class DataDensityPlotter(Plotter):
 
@@ -23,7 +23,7 @@ class DataDensityPlotter(Plotter):
         row = 0
         col = 0
 
-        print('\t -> Plotting distribution (%d cols, %d rows)' % (cols, rows))
+        L.info('Plotting distribution (%d cols, %d rows)' % (cols, rows))
         for variable in range(nr_of_variables):
             fig.subplots_adjust(hspace=0.05, wspace=0.05)
 
@@ -51,7 +51,8 @@ class DataDensityPlotter(Plotter):
             #
             # ax[1, 1].fill(X_plot[:, 0], dens, fc='#AAAAFF')
             # ax[1, 1].text(-3.5, 0.31, "Gaussian Kernel Density")
-        print()
+        L.br()
+
         # kde = KernelDensity(kernel='gaussian', bandwidth=0.5).fit(X)
         # x = np.linspace(0, sampling_density, sampling_density)
         # y = kde.sample(sampling_density)[:,0]

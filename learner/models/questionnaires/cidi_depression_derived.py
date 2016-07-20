@@ -79,8 +79,15 @@ class CIDIDepressionDerived(Questionnaire):
     # of MDD episodes
     def number_of_major_depression_episodes(self, participant):
         val = self.get_field(participant, 'cidep13')
+
+        # Val = -2 is there were no MDD episodes
+        if val is not None and val == -2: return 0
+
         return val if val is not None and val >= 0 else np.nan
 
     def major_depression_type(self, participant):
         val = self.get_field(participant, 'cidep14')
+
+        # Val = -1 is there were no MDD episodes
+        if val is not None and val == -1: return 0
         return val if val is not None and val >= 0 else np.nan

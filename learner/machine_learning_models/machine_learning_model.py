@@ -3,7 +3,7 @@ from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
 from machine_learning_evaluation.f1_evaluation import F1Evaluation
 from machine_learning_evaluation.mse_evaluation import MseEvaluation
-
+from data_output.std_logger import L
 
 class MachineLearningModel:
 
@@ -35,18 +35,18 @@ class MachineLearningModel:
         Prints the accuracy of a model using crossvalidation on the test set
         """
         scores = self.skmodel.score(self.x_test, self.y_test)
-        print("\t -> %s - Accuracy: %0.2f (+/- %0.2f)" % (self.given_name, scores.mean(), scores.std() * 2))
+        L.info("%s - Accuracy: %0.2f (+/- %0.2f)" % (self.given_name, scores.mean(), scores.std() * 2))
 
     def print_evaluation(self):
-        print('\t SCORES OF MODEL: ' + self.given_name)
-        print('\t ---------------------------------------------------------')
+        L.info('SCORES OF MODEL: ' + self.given_name)
+        L.info('---------------------------------------------------------')
         self.print_accuracy()
         prediction = self.skmodel.predict(self.x_test)
         for evaluator in self.evaluations:
             if (evaluator.problem_type == self.model_type):
                 evaluator.print_evaluation(self, self.y_test, prediction)
-        print('\t ---------------------------------------------------------')
-        print('')
+        L.info('---------------------------------------------------------')
+        L.br()
 
     def cv_score(self):
         return cross_val_score(self.skmodel, self.x_test, self.y_test, cv=3)
@@ -57,10 +57,11 @@ class MachineLearningModel:
 
         if (self.skmodel is None):
             raise NotImplementedError
-        print('\t -> Training ' + self.given_name)
+
+        L.info('Training ' + self.given_name)
         self.was_trained = True
         self.skmodel = self.skmodel.fit(X=self.x_train, y=self.y_train)
-        print('\t -> Fitted ' + self.given_name)
+        L.info('Fitted ' + self.given_name)
 
     def cv_predict(self):
         self.skmodel.fit(self.x_train, self.y_train)

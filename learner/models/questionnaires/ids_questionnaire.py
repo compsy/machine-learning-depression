@@ -23,6 +23,7 @@ class IDSQuestionnaire(Questionnaire):
         ]
 
     def som_score(self, participant):
+        L.warn('Check if the sumscore calculation is correct this way')
         dat = self.get_row(participant)
 
         # If there are no values > 0, we return nan

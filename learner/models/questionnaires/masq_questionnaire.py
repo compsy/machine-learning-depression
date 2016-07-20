@@ -5,6 +5,9 @@ import numpy as np
 class MASQQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
+        # -3 = Q2 not returned
+        # -1 = Too many missings
+        # lowest value = 8
         function_mapping = {
             'positiveAffectScore': self.positive_affect_score,
             'negativeAffectScore': self.negative_affect_score,

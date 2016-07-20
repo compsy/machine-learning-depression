@@ -1,7 +1,7 @@
 from queue import Queue
 from threading import Thread
 import numpy as np
-
+from data_output.std_logger import L
 
 class AsyncModelRunner:
 
@@ -16,7 +16,7 @@ class AsyncModelRunner:
             self.queue.put(model)
 
         workers = min([self.workers, self.queue.qsize()])
-        print('Starting calculation of models with %s workers.' % workers)
+        L.info('Starting calculation of models with %s workers.' % workers)
         for i in range(workers):
             t = Thread(target=self.work, args=(np.copy(x), np.copy(y), x_names, y_names))
             t.daemon = True

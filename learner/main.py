@@ -304,7 +304,7 @@ if __name__ == '__main__':
 
     for model in fabricated_models:
         1
-        learning_curve_plotter.plot(model)
+        #learning_curve_plotter.plot(model)
         #validation_curve_plotter.plot(model, variable_to_validate='n_estimators')
 
     for model in fabricated_models:

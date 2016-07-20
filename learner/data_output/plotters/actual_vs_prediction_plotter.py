@@ -32,8 +32,9 @@ class ActualVsPredictionPlotter(Plotter):
         plt.ylabel('Predicted')
 
         # Plot the predicted values against the actual values
-        plt.scatter(y_test, y_test_pred)
-        plt.scatter(y_train, y_train_pred, c='r', alpha=0.1)
+        plt.scatter(y_test, y_test_pred, label='Test set')
+        plt.scatter(y_train, y_train_pred, c='r', alpha=0.1, label='Training set')
+        plt.legend()
         plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=4)
 
         return self.return_file(plt, plot_name)

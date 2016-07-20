@@ -6,4 +6,8 @@ git push
 cd -
 rev=$(git rev-parse HEAD)
 ssh -t pro "cd docker_test;./run -b $rev"
-scp -r pro:~/docker_test/exports ~/Desktop/exports
+
+direction_dir="~/Desktop/exports/"
+
+scp -r pro:~/docker_test/exports/* $direction_dir
+open $direction_dir

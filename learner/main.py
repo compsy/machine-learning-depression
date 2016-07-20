@@ -87,7 +87,7 @@ if __name__ == '__main__':
     SCALE = True
 
     # Classification or models?
-    CLASSIFICATION = True
+    CLASSIFICATION = False
 
     FORCE_NO_CACHING = False
 

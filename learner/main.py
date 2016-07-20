@@ -89,9 +89,9 @@ if __name__ == '__main__':
     SCALE = True
 
     # Classification or models?
-    CLASSIFICATION = False
+    CLASSIFICATION = True
 
-    FORCE_NO_CACHING = False
+    FORCE_NO_CACHING = True
 
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:

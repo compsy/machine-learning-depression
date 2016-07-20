@@ -30,6 +30,8 @@ echo $loc
 loc="$(pwd)/exports"
 mkdir -p $loc
 echo $loc
+echo "Removing $loc contents"
+rm -rf $loc/*
 
 gitdir="ICPE_machine_learning_workgroup"
 if [ ! -d "$gitdir" ]; then

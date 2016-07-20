@@ -7,7 +7,6 @@ cd -
 rev=$(git rev-parse HEAD)
 ssh -t pro "cd docker_test;./run -b $rev"
 
-direction_dir="~/Desktop/exports/"
 
-scp -r pro:~/docker_test/exports/* $direction_dir
-open $direction_dir
+scp -r pro:~/docker_test/exports/* ~/Desktop/exports
+open ~/Desktop/exports

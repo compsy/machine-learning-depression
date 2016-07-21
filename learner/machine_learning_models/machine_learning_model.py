@@ -1,9 +1,13 @@
 from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
+
+from machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
 from machine_learning_evaluation.f1_evaluation import F1Evaluation
-from machine_learning_evaluation.mse_evaluation import MseEvaluation
+from machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
 from data_output.std_logger import L
+from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
+
 
 class MachineLearningModel:
 
@@ -16,7 +20,7 @@ class MachineLearningModel:
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
-        self.evaluations = [F1Evaluation(), MseEvaluation()]
+        self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(), RootMseEvaluation()]
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
@@ -43,7 +47,7 @@ class MachineLearningModel:
         self.print_accuracy()
         prediction = self.skmodel.predict(self.x_test)
         for evaluator in self.evaluations:
-            if (evaluator.problem_type == self.model_type):
+            if evaluator.problem_type == self.model_type:
                 evaluator.print_evaluation(self, self.y_test, prediction)
         L.info('---------------------------------------------------------')
         L.br()

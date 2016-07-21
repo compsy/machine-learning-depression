@@ -9,7 +9,7 @@ import numpy as np
 class SupportVectorRegressionModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
-        super().__init__(x, y, x_names, y_names)
+        super().__init__(x, y, x_names, y_names, model_type='regression')
         self.skmodel = svm.SVR(verbose=verbosity)
 
     def train_not_yet_used(self):

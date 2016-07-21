@@ -19,7 +19,7 @@ class KerasWrapper(MachineLearningModel):
 class KerasNnModel(KerasWrapper):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
-        super().__init__(x, y, x_names, y_names)
+        super().__init__(x, y, x_names, y_names, model_type='regression')
 
         # Wrap the model in a scikit api
         self.skmodel = KerasRegressor(build_fn=self.baseline_model, nb_epoch=500, batch_size=32, verbose=1)

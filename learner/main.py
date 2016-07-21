@@ -74,6 +74,17 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
         write_cache(header, data, file_name)
     return (header, data)
 
+def calculate_true_false_ratio(y_data):
+    trues = 0
+    falses = 0
+    for i in y_data:
+        if i == 0:
+            falses += 1
+        if i == 1:
+            trues += 1
+
+    return (trues / (trues + falses)) * 100
+
 
 if __name__ == '__main__':
     L.setup()
@@ -89,9 +100,9 @@ if __name__ == '__main__':
     SCALE = True
 
     # Classification or models?
-    CLASSIFICATION = True
+    CLASSIFICATION = False
 
-    FORCE_NO_CACHING = True
+    FORCE_NO_CACHING = False
 
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
@@ -220,7 +231,7 @@ if __name__ == '__main__':
             #KerasNnClassificationModel
         ]
         # Output columns
-        Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
+        Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastYear'])
     else:  # Regression
         models = [
             KerasNnModel, LinearRegressionModel, SupportVectorRegressionModel, RegressionTreeModel, BoostingModel,
@@ -288,6 +299,9 @@ if __name__ == '__main__':
     data_density_plotter.plot(x_data, X_NAMES)
 
     y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
+
+    if CLASSIFICATION:
+        L.info('In the output set, %0.2f percent is true' % calculate_true_false_ratio(y_data))
 
     L.info("The used data for the prediction has shape: %s %s" % np.shape(x_data))
     L.info("The values to predict have the shape: %s %s" % np.shape(y_data))

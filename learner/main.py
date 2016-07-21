@@ -100,7 +100,7 @@ if __name__ == '__main__':
     SCALE = True
 
     # Classification or models?
-    CLASSIFICATION = False
+    CLASSIFICATION = True
 
     FORCE_NO_CACHING = False
 
@@ -224,8 +224,8 @@ if __name__ == '__main__':
         models = [
             SupportVectorClassificationModel,
             # LogisticRegressionModel
-            BoostingClassificationModel, BaggingClassificationModel,
-            NaiveBayesModel, DummyClassifierModel
+            #BoostingClassificationModel, BaggingClassificationModel,
+            #NaiveBayesModel, DummyClassifierModel
             #DummyRandomClassifierModel,
 
             #KerasNnClassificationModel

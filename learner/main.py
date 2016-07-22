@@ -19,7 +19,9 @@ from data_transformers.output_data_cleaner import OutputDataCleaner
 from data_transformers.output_data_splitter import OutputDataSplitter
 from data_transformers.variable_transformer import VariableTransformer
 from factories.questionnaire_factory import QuestionnaireFactory
-from machine_learning_models import sync_model_runner
+from machine_learning_models.sync_model_runner import SyncModelRunner
+from machine_learning_models.distributed_model_runner import DistributedModelRunner
+
 from machine_learning_models.classification.naive_bayes_model import NaiveBayesModel
 from machine_learning_models.models.bagging_model import BaggingClassificationModel, BaggingModel
 from machine_learning_models.models.boosting_model import BoostingClassificationModel, BoostingModel
@@ -93,7 +95,7 @@ if __name__ == '__main__':
 
     # General settings
     VERBOSITY = 0
-
+    HPC = True
     # Should the analysis include polynomial features?
     POLYNOMIAL_FEATURES = False
 
@@ -224,8 +226,8 @@ if __name__ == '__main__':
     models = []
     if (CLASSIFICATION):
         models = [
-            #SupportVectorClassificationModel,
-            # LogisticRegressionModel,
+            SupportVectorClassificationModel,
+            LogisticRegressionModel,
             # BaggingClassificationModel,
             BoostingClassificationModel,
             NaiveBayesModel,
@@ -317,7 +319,11 @@ if __name__ == '__main__':
     # Export all used data to a CSV file
     CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
 
-    model_runner = sync_model_runner.SyncModelRunner(models)
+    if HPC:
+        model_runner = DistributedModelRunner(models)
+    else:
+        model_runner = SyncModelRunner(models)
+
     fabricated_models = model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
 
     # Train all models, the fitted parameters will be saved inside the models

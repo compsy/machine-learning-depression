@@ -18,3 +18,4 @@ cd learner
 echo "Running main.py"
 export MPLBACKEND="agg"
 mpirun python main.py
+

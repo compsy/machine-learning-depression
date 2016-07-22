@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --time=00:10:00
-#SBATCH --nodes=2
-#SBATCH --ntasks=3
+#SBATCH --time=00:20:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=30
 #SBATCH --job-name=python_cpu
 #SBATCH --mem=8000
 module load Python/3.5.1-foss-2016a

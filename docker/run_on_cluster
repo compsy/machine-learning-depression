@@ -8,4 +8,4 @@ cd -
 rev=$(git rev-parse HEAD)
 scp run $server_name:~/
 scp -r ../data $server_name:~/
-ssh -t $server_name "./run -b $rev -h"
+ssh -t $server_name "rm slurm*;./run -b $rev -h"

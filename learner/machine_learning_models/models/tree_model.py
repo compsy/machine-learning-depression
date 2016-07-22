@@ -12,7 +12,6 @@ from machine_learning_models.models.boosting_model import BoostingClassification
 
 
 class RegressionTreeModel(MachineLearningModel):
-
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search = True):
         super().__init__(x, y, x_names, y_names, model_type='regression')
         self.skmodel = DecisionTreeRegressor(max_depth=5)
@@ -24,20 +23,19 @@ class RegressionTreeModel(MachineLearningModel):
             self.grid_search([parameter_grid])
 
 
-
 class ClassificationTreeModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = False):
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = True):
         self.skmodel = DecisionTreeClassifier(max_depth=5)
-        super().__init__(x, y, x_names, y_names, model_type='classification', verbosity=verbosity)
 
         if grid_search:
             parameter_grid = {
                 'max_depth': np.logspace(0, 2, 20),
-                'learning_rate': np.logspace(0, 1, 10),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             self.grid_search([parameter_grid])
+
+        super().__init__(x, y, x_names, y_names, model_type='classification', verbosity=verbosity)
 
 
     def predict_for_roc(self, x_data):

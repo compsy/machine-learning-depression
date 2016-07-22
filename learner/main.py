@@ -226,7 +226,8 @@ if __name__ == '__main__':
         models = [
             #SupportVectorClassificationModel,
             # LogisticRegressionModel,
-            #BoostingClassificationModel, BaggingClassificationModel,
+            # BaggingClassificationModel,
+            BoostingClassificationModel,
             NaiveBayesModel,
             # DummyClassifierModel,
             # DummyRandomClassifierModel,

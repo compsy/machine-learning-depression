@@ -90,7 +90,7 @@ if __name__ == '__main__':
     L.setup()
 
     # General settings
-    VERBOSITY = 0
+    VERBOSITY = 1
 
     # Should the analysis include polynomial features?
     POLYNOMIAL_FEATURES = False

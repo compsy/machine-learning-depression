@@ -10,7 +10,7 @@ module load R/3.3.1-foss-2016a
 module load OpenMPI/1.10.2-GCC-4.9.3-2.25-CUDA-7.5.18
 gitdir="ICPE_machine_learning_workgroup"
 cd $gitdir
-pip install --user -r requirements.txt
+#pip install --user -r requirements.txt
 cd learner
 echo "Running main.py"
 mpirun python main.py

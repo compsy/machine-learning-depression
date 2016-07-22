@@ -5,6 +5,9 @@ from data_output.plotters.plotter import Plotter
 from scipy import interp
 
 import numpy as np
+
+import matplotlib
+matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 from data_output.std_logger import L

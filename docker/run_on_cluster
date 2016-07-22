@@ -6,5 +6,5 @@ git commit -am 'Running on cluster'
 git push
 cd -
 rev=$(git rev-parse HEAD)
-scp run $server_name:~/test_python/
-ssh -t $server_name "cd test_python;./run -b $rev -h"
+scp run $server_name:~/
+ssh -t $server_name "./run -b $rev -h"

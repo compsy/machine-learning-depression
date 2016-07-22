@@ -1,9 +1,11 @@
 import os.path
 import pickle
 import numpy as np
+import random
 from data_output.std_logger import L
 from sklearn.ensemble.bagging import BaggingClassifier
 from sklearn.preprocessing import normalize, scale
+from mpi4py import MPI
 
 from data_input import spss_reader
 from data_output.csv_exporter import CsvExporter
@@ -92,6 +94,7 @@ def calculate_true_false_ratio(y_data):
 
 if __name__ == '__main__':
     L.setup()
+    random.seed(42)
 
     # General settings
     VERBOSITY = 0
@@ -106,7 +109,7 @@ if __name__ == '__main__':
     # Classification or models?
     CLASSIFICATION = True
 
-    FORCE_NO_CACHING = False
+    FORCE_NO_CACHING = True
 
     # Here we select the variables to use in the prediction. The format is:
     # AB-C:
@@ -317,7 +320,7 @@ if __name__ == '__main__':
     y_data = np.ravel(y_data)
 
     # Export all used data to a CSV file
-    CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
+    # CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
 
     if HPC:
         model_runner = DistributedModelRunner(models)

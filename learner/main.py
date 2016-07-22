@@ -225,8 +225,9 @@ if __name__ == '__main__':
             #SupportVectorClassificationModel,
             # LogisticRegressionModel,
             #BoostingClassificationModel, BaggingClassificationModel,
-            NaiveBayesModel, DummyClassifierModel,
-            DummyRandomClassifierModel,
+            NaiveBayesModel,
+            # DummyClassifierModel,
+            # DummyRandomClassifierModel,
             ClassificationTreeModel
             #KerasNnClassificationModel
         ]

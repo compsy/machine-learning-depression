@@ -13,7 +13,6 @@ from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
 class MachineLearningModel:
 
     def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0):
-        self.skmodel = self.skmodel or None
         self.x = x
         self.y = y
         self.x_names = x_names
@@ -61,11 +60,11 @@ class MachineLearningModel:
             return True
 
         if (self.skmodel is None):
-            raise NotImplementedError
+            raise NotImplementedError('Skmodel is none!')
 
         L.info('Training ' + self.given_name)
-        self.was_trained = True
         self.skmodel = self.skmodel.fit(X=self.x_train, y=self.y_train)
+        self.was_trained = True
 
         if isinstance(self.skmodel, GridSearchCV):
             self.skmodel = self.skmodel.best_estimator_

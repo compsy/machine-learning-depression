@@ -25,7 +25,7 @@ class RegressionTreeModel(MachineLearningModel):
 
 
 
-class ClassificationTreeModel(BoostingClassificationModel):
+class ClassificationTreeModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search = False):
         self.skmodel = DecisionTreeClassifier(max_depth=5)
@@ -33,7 +33,7 @@ class ClassificationTreeModel(BoostingClassificationModel):
 
         if grid_search:
             parameter_grid = {
-                'max_depyh': np.logspace(0, 2, 20),
+                'max_depth': np.logspace(0, 2, 20),
                 'learning_rate': np.logspace(0, 1, 10),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }

@@ -323,8 +323,8 @@ if __name__ == '__main__':
     model_runner.run_calculations(fabricated_models=fabricated_models)
 
     # Generate learning curve plots
-    if CLASSIFICATION:
-        roc_curve_plotter.plot(fabricated_models)
+    # if CLASSIFICATION:
+        # roc_curve_plotter.plot(fabricated_models)
 
     for model in fabricated_models:
         1

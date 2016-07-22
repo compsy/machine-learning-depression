@@ -1,6 +1,6 @@
 from ..questionnaire import Questionnaire
 import numpy as np
-
+from data_output.std_logger import L
 
 class IDSQuestionnaire(Questionnaire):
 
@@ -23,6 +23,7 @@ class IDSQuestionnaire(Questionnaire):
         ]
 
     def som_score(self, participant):
+        L.warn('Check if the sumscore calculation is correct this way')
         dat = self.get_row(participant)
 
         # If there are no values > 0, we return nan

@@ -1,6 +1,7 @@
 import os.path
 import pickle
 import numpy as np
+from data_output.std_logger import L
 from sklearn.ensemble.bagging import BaggingClassifier
 from sklearn.preprocessing import normalize, scale
 
@@ -23,8 +24,8 @@ from machine_learning_models.classification.naive_bayes_model import NaiveBayesM
 from machine_learning_models.models.bagging_model import BaggingClassificationModel, BaggingModel
 from machine_learning_models.models.boosting_model import BoostingClassificationModel, BoostingModel
 from machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
-from machine_learning_models.models.linear_regression_model import LinearRegressionModel, LogisticRegressionModel
-from machine_learning_models.models.regression_tree_model import RegressionTreeModel
+from machine_learning_models.models.regression_model import LinearRegressionModel, LogisticRegressionModel
+from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
 from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, SupportVectorClassificationModel
 from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
 
@@ -55,15 +56,15 @@ def write_cache(header, data, cache_name):
 
 
 def print_header(header):
-    print('\t -> Available headers:')
+    L.info('Available headers:')
     for col in header:
-        print('\t' + col)
-    print()
+        L.info('\t' + col)
+    L.br()
 
 
 def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
     header, data = (None, None)
-    print('\t -> Converting data to single dataframe...')
+    L.info('Converting data to single dataframe...')
     if not force_to_not_use_cache and os.path.isfile(file_name):
         header, data = read_cache(file_name)
         #print_header(header)
@@ -73,8 +74,20 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
         write_cache(header, data, file_name)
     return (header, data)
 
+def calculate_true_false_ratio(y_data):
+    trues = 0
+    falses = 0
+    for i in y_data:
+        if i == 0:
+            falses += 1
+        if i == 1:
+            trues += 1
+
+    return (trues / (trues + falses)) * 100
+
 
 if __name__ == '__main__':
+    L.setup()
 
     # General settings
     VERBOSITY = 0
@@ -139,7 +152,7 @@ if __name__ == '__main__':
         'abai-somaticScaleScore',
 
         # # 4dkl
-        'a4dkl-somScore',
+        #'a4dkl-somScore',
         'a4dkl-4dkld01',
         'a4dkl-4dkld02',
         'a4dkl-4dkld03',
@@ -156,6 +169,10 @@ if __name__ == '__main__':
         'a4dkl-4dkld14',
         'a4dkl-4dkld15',
         'a4dkl-4dkld16',
+
+        'a4dkl-ph-somatizationSumScore',
+        'a4dkl-ph-somatizationTrychotomization',
+        'a4dkl-ph-dichotomizationThrychotomization',
 
         # # Cidi depression
         'acidi-depression-minorDepressionPastMonth',
@@ -206,9 +223,11 @@ if __name__ == '__main__':
     if (CLASSIFICATION):
         models = [
             #SupportVectorClassificationModel,
-            LogisticRegressionModel
-            #, NaiveBayesModel, DummyClassifierModel,
-            #DummyRandomClassifierModel, BoostingClassificationModel, BaggingClassificationModel,
+            LogisticRegressionModel,
+            #BoostingClassificationModel, BaggingClassificationModel,
+            #NaiveBayesModel, DummyClassifierModel
+            #DummyRandomClassifierModel,
+            ClassificationTreeModel
             #KerasNnClassificationModel
         ]
         # Output columns
@@ -241,9 +260,9 @@ if __name__ == '__main__':
     participants = create_participants(N1_A100R)
     header, data = get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=FORCE_NO_CACHING)
 
-    print('\t -> We have %d participants in the inital dataset' % len(participants.keys()))
-    print('\t -> Loaded data with %d rows and %d columns' % np.shape(data))
-    print('\t -> We will use %s as outcome.' % Y_NAMES)
+    L.info('We have %d participants in the inital dataset' % len(participants.keys()))
+    L.info('Loaded data with %d rows and %d columns' % np.shape(data))
+    L.info('We will use %s as outcome.' % Y_NAMES)
 
     selected_header = np.append(X_NAMES, Y_NAMES)
 
@@ -253,7 +272,7 @@ if __name__ == '__main__':
     # Determine which of this set are not complete
     incorrect_rows = output_data_cleaner.find_incomplete_rows(used_data, selected_header)
 
-    print('\t -> From the loaded data %d rows are incomplete and will be removed!' % len(incorrect_rows))
+    L.info('From the loaded data %d rows are incomplete and will be removed!' % len(incorrect_rows))
 
     # Remove the incorrect cases
     used_data = output_data_cleaner.clean(used_data, incorrect_rows)
@@ -265,24 +284,27 @@ if __name__ == '__main__':
     # variable_transformer.log_transform(x_data, 'aids-somScore')
 
     if NORMALIZE:
-        print('\t -> We are also normalizing the features')
+        L.info('We are also normalizing the features')
         x_data = normalize(x_data)
 
     if SCALE:
-        print('\t -> We are also scaling the features')
+        L.info('We are also scaling the features')
         x_data = scale(x_data)
 
     if POLYNOMIAL_FEATURES:
-        print('\t -> We are also adding polynomial features')
+        L.info('We are also adding polynomial features')
         x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
     # Plot an overview of the density estimations of the variables used in the actual model calculation.
-    #data_density_plotter.plot(x_data, X_NAMES)
+    # data_density_plotter.plot(x_data, X_NAMES)
 
     y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
-    print("\t -> The used data for the prediction has shape: %s %s" % np.shape(x_data))
-    print("\t -> The values to predict have the shape: %s %s" % np.shape(y_data))
+    if CLASSIFICATION:
+        L.info('In the output set, %0.2f percent is true' % calculate_true_false_ratio(y_data))
+
+    L.info("The used data for the prediction has shape: %s %s" % np.shape(x_data))
+    L.info("The values to predict have the shape: %s %s" % np.shape(y_data))
 
     # Convert ydata 2d matrix (x * 1) to 1d array (x). Needed for the classifcation things
     y_data = np.ravel(y_data)
@@ -303,12 +325,14 @@ if __name__ == '__main__':
     for model in fabricated_models:
         1
         #learning_curve_plotter.plot(model)
-        validation_curve_plotter.plot(model, variable_to_validate='n_estimators')
+        #validation_curve_plotter.plot(model, variable_to_validate='n_estimators')
 
     for model in fabricated_models:
         model.print_evaluation()
         y_train_pred = model.skmodel.predict(model.x_train)
         y_test_pred = model.skmodel.predict(model.x_test)
-        actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
+
         if CLASSIFICATION:
             confusion_matrix_plotter.plot(model, model.y_test, y_test_pred)
+        else:
+            actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)

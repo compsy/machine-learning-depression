@@ -5,7 +5,7 @@ from data_output.plotters.plotter import Plotter
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.learning_curve import learning_curve
-
+from data_output.std_logger import L
 
 class LearningCurvePlotter(Plotter):
 
@@ -48,8 +48,8 @@ class LearningCurvePlotter(Plotter):
         plot_name = model.given_name
         plot_name = 'learning_' + plot_name.replace(" ", "_")
 
-        print('\t -> Determining learning curve for ' + model.given_name)
-        print('\t -> Which uses: ' + str(model.skmodel))
+        L.info('Determining learning curve for ' + model.given_name)
+        L.info('Which uses: ' + str(model.skmodel))
         train_sizes, train_scores, test_scores = learning_curve(model.skmodel,
                                                                 model.x_train,
                                                                 model.y_train,
@@ -58,7 +58,7 @@ class LearningCurvePlotter(Plotter):
                                                                 scoring=model.scoring(),
                                                                 n_jobs=-1,
                                                                 verbose=1)
-        print('\t -> Done fitting learning curve')
+        L.info('Done fitting learning curve')
 
         train_scores_mean = np.mean(train_scores, axis=1)
         train_scores_std = np.std(train_scores, axis=1)

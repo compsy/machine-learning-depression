@@ -1,16 +1,37 @@
 #!/bin/bash
-loc=$1
+COMMAND=""
+BRANCH="master"
 
-end=""
-if [ ! $# -eq 0 ]; then
-	end="/bin/bash"
-fi
+while [[ $# -gt 1 ]]
+do
+key="$1"
 
-echo "Mountin exports location on "
+case $key in
+    -b|--branch)
+    BRANCH="$2"
+    shift # past argument
+    ;;
+    -c|--command)
+    COMMAND="$2"
+    shift # past argument
+    ;;
+    --default)
+    DEFAULT=YES
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+shift # past argument or value
+done
+
+echo "Mounting exports location on "
 echo $loc
 loc="$(pwd)/exports"
 mkdir -p $loc
 echo $loc
+echo "Removing $loc contents"
+rm -rf $loc/*
 
 gitdir="ICPE_machine_learning_workgroup"
 if [ ! -d "$gitdir" ]; then
@@ -20,10 +41,12 @@ if [ ! -d "$gitdir" ]; then
   fi
   git clone https://$GITHUB_TOKEN:x-oauth-basic@github.com/compsy/$gitdir.git
 fi
-
 cd $gitdir
+git checkout master
 git pull
+git checkout $BRANCH
 cd ..
-learner="$(pwd)/$gitdir/learner"
-docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $end
 
+learner="$(pwd)/$gitdir/learner"
+docker pull frbl/icpe-machine-learning
+docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $COMMAND

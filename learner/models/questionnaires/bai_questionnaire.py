@@ -5,6 +5,10 @@ import numpy as np
 class BAIQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
+
+        #-3 = no scale, too many missings
+        # -2 = Qnair not returned
+        # 0 = a valid score.
         function_mapping = {
             'totalScore': self.total_score,
             'subjectiveScaleScore': self.subjective_scale_score,

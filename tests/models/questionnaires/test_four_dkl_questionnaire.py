@@ -1,6 +1,6 @@
 import inspect
 
-from learner.models.questionnaires.four_dkl_questionnaire import FourDKLQuestionnaire
+from learner.models.questionnaires.four_dkl_distress_questionnaire import FourDKLQuestionnaire
 import pytest
 import numpy as np
 

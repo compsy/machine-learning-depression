@@ -11,5 +11,6 @@ cp -r ../install-packages.R .
 #docker-compose build
 
 docker build -t frbl/icpe-machine-learning .
+docker push frbl/icpe-machine-learning
 
 rm -r learner data requirements.txt install-packages.R

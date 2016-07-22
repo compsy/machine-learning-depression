@@ -1,14 +1,19 @@
 from sklearn.cross_validation import cross_val_score, cross_val_predict
+from sklearn.grid_search import GridSearchCV
 from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
+
+from machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
 from machine_learning_evaluation.f1_evaluation import F1Evaluation
-from machine_learning_evaluation.mse_evaluation import MseEvaluation
+from machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
+from data_output.std_logger import L
+from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
 
 
 class MachineLearningModel:
 
     def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0):
-        self.skmodel = None
+        self.skmodel = self.skmodel or None
         self.x = x
         self.y = y
         self.x_names = x_names
@@ -16,7 +21,7 @@ class MachineLearningModel:
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
-        self.evaluations = [F1Evaluation(), MseEvaluation()]
+        self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(), RootMseEvaluation()]
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
@@ -35,18 +40,18 @@ class MachineLearningModel:
         Prints the accuracy of a model using crossvalidation on the test set
         """
         scores = self.skmodel.score(self.x_test, self.y_test)
-        print("\t -> %s - Accuracy: %0.2f (+/- %0.2f)" % (self.given_name, scores.mean(), scores.std() * 2))
+        L.info("%s - Accuracy: %0.2f (+/- %0.2f)" % (self.given_name, scores.mean(), scores.std() * 2))
 
     def print_evaluation(self):
-        print('\t SCORES OF MODEL: ' + self.given_name)
-        print('\t ---------------------------------------------------------')
+        L.info('SCORES OF MODEL: ' + self.given_name)
+        L.info('---------------------------------------------------------')
         self.print_accuracy()
         prediction = self.skmodel.predict(self.x_test)
         for evaluator in self.evaluations:
-            if (evaluator.problem_type == self.model_type):
+            if evaluator.problem_type == self.model_type:
                 evaluator.print_evaluation(self, self.y_test, prediction)
-        print('\t ---------------------------------------------------------')
-        print('')
+        L.info('---------------------------------------------------------')
+        L.br()
 
     def cv_score(self):
         return cross_val_score(self.skmodel, self.x_test, self.y_test, cv=3)
@@ -57,10 +62,15 @@ class MachineLearningModel:
 
         if (self.skmodel is None):
             raise NotImplementedError
-        print('\t -> Training ' + self.given_name)
+
+        L.info('Training ' + self.given_name)
         self.was_trained = True
         self.skmodel = self.skmodel.fit(X=self.x_train, y=self.y_train)
-        print('\t -> Fitted ' + self.given_name)
+
+        if isinstance(self.skmodel, GridSearchCV):
+            self.skmodel = self.skmodel.best_estimator_
+
+        L.info('Fitted ' + self.given_name)
 
     def cv_predict(self):
         self.skmodel.fit(self.x_train, self.y_train)
@@ -82,6 +92,10 @@ class MachineLearningModel:
     @property
     def given_name(self):
         return type(self).__name__
+
+    def grid_search(self, param_grid):
+        self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
+        return self.skmodel
 
     ## Override
     def predict_for_roc(self, x_data):

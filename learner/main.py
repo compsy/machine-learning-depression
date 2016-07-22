@@ -90,7 +90,7 @@ if __name__ == '__main__':
     L.setup()
 
     # General settings
-    VERBOSITY = 1
+    VERBOSITY = 0
 
     # Should the analysis include polynomial features?
     POLYNOMIAL_FEATURES = False
@@ -223,10 +223,10 @@ if __name__ == '__main__':
     if (CLASSIFICATION):
         models = [
             #SupportVectorClassificationModel,
-            LogisticRegressionModel,
+            # LogisticRegressionModel,
             #BoostingClassificationModel, BaggingClassificationModel,
-            #NaiveBayesModel, DummyClassifierModel
-            #DummyRandomClassifierModel,
+            NaiveBayesModel, DummyClassifierModel,
+            DummyRandomClassifierModel,
             ClassificationTreeModel
             #KerasNnClassificationModel
         ]

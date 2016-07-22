@@ -2,7 +2,7 @@
 #SBATCH --time=00:20:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=10
+#SBATCH --cpus-per-task=12
 #SBATCH --job-name=python_cpu
 #SBATCH --mem=8000
 module load Python/3.5.1-foss-2016a

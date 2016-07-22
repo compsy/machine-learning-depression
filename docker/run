@@ -49,9 +49,10 @@ git checkout $BRANCH
 cd ..
 
 learner="$(pwd)/$gitdir/learner"
+docker="$(pwd)/$gitdir/docker"
 
 if [ $HPC ]; then
-  cd $learner/docker/cluster
+  cd $docker/cluster
   sbatch submit.sh
 else
   echo "Running in docker mode"

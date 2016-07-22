@@ -53,7 +53,7 @@ data="$(pwd)/$gitdir/data"
 docker="$(pwd)/$gitdir/docker"
 
 if [ $HPC ]; then
-  cp data $data
+  cp ~/data $data
   cd $docker/cluster
   mv submit.sh ~
   cd ~

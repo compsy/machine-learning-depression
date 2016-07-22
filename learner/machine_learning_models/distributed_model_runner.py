@@ -16,7 +16,7 @@ class DistributedModelRunner:
             created_models.append(model(np.copy(x), np.copy(y), x_names, y_names, verbosity))
         return created_models
 
-    def runCalculations(self, fabricated_models):
+    def run_calculations(self, fabricated_models):
         self.size = self.comm.Get_size()
         self.rank = self.comm.Get_rank()
 

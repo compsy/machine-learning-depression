@@ -57,7 +57,8 @@ if [ $HPC ]; then
   cd $docker/cluster
   mv submit.sh ~
   cd ~
-  sbatch submit.sh
+  sbatch submit.sh | cut -d" " -f 4 | tee last_job
+  tail -f slurm*
 else
   echo "Running in docker mode"
   echo "Mounting exports location on "

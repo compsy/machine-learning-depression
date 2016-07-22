@@ -7,7 +7,7 @@ from scipy import interp
 import numpy as np
 
 import matplotlib
-matplotlib.use('pdf')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 from data_output.std_logger import L

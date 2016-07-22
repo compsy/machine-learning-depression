@@ -58,7 +58,7 @@ if [ $HPC ]; then
   mv submit.sh ~
   cd ~
   sbatch submit.sh | cut -d" " -f 4 | tee last_job
-  sleep 10
+  sleep 5
   tail -f slurm*
 else
   echo "Running in docker mode"

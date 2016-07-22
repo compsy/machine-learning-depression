@@ -49,11 +49,11 @@ git checkout $BRANCH
 cd ..
 
 learner="$(pwd)/$gitdir/learner"
-data="$(pwd)/$gitdir/data"
+location="$(pwd)/$gitdir/"
 docker="$(pwd)/$gitdir/docker"
 
 if [ $HPC ]; then
-  cp -r ~/data $data
+  cp -r ~/data $location
   cd $docker/cluster
   mv submit.sh ~
   cd ~

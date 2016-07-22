@@ -53,6 +53,8 @@ docker="$(pwd)/$gitdir/docker"
 
 if [ $HPC ]; then
   cd $docker/cluster
+  mv submit.sh ~
+  cd ~
   sbatch submit.sh
 else
   echo "Running in docker mode"

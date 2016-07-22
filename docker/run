@@ -1,6 +1,7 @@
 #!/bin/bash
 COMMAND=""
 BRANCH="master"
+HPC=false
 
 while [[ $# -gt 1 ]]
 do
@@ -15,6 +16,10 @@ case $key in
     COMMAND="$2"
     shift # past argument
     ;;
+    -h|--hpc)
+    HPC=true
+    shift # past argument
+    ;;
     --default)
     DEFAULT=YES
     ;;
@@ -25,13 +30,9 @@ esac
 shift # past argument or value
 done
 
-echo "Mounting exports location on "
-echo $loc
-loc="$(pwd)/exports"
-mkdir -p $loc
-echo $loc
-echo "Removing $loc contents"
-rm -rf $loc/*
+if [ $HPC ]; then
+  module load git
+fi
 
 gitdir="ICPE_machine_learning_workgroup"
 if [ ! -d "$gitdir" ]; then
@@ -48,5 +49,21 @@ git checkout $BRANCH
 cd ..
 
 learner="$(pwd)/$gitdir/learner"
-docker pull frbl/icpe-machine-learning
-docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $COMMAND
+
+if [ $HPC ]; then
+  cd $learner/docker/cluster
+  sbatch submit.sh
+else
+  echo "Running in docker mode"
+  echo "Mounting exports location on "
+  echo $loc
+  loc="$(pwd)/exports"
+  mkdir -p $loc
+  echo $loc
+  echo "Removing $loc contents"
+  rm -rf $loc/*
+
+  docker pull frbl/icpe-machine-learning
+  docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $COMMAND
+fi
+

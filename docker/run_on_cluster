@@ -1,0 +1,10 @@
+#!/bin/bash
+server_name=peregrine
+cd ..
+git add --all
+git commit -am 'Running on cluster'
+git push
+cd -
+rev=$(git rev-parse HEAD)
+scp run $server_name:~/docker_test/
+ssh -t $server_name "cd python_test;./run -b $rev -h"

@@ -32,6 +32,8 @@ from machine_learning_models.models.support_vector_machine_model import SupportV
 from models import participant
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
+import matplotlib
+matplotlib.use('pdf')
 
 def create_participants(data):
     participants = {}

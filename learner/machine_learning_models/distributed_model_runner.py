@@ -23,7 +23,7 @@ class DistributedModelRunner:
         data = []
         for i in range(len(fabricated_models)):
             if i == len(data):
-                data[i] = []
+                data.append([])
             data[i].append(models[i])
 
         self.comm.scatter(data, root = 0)

@@ -51,7 +51,6 @@ class SupportVectorClassificationModel(MachineLearningModel):
         # Radial basis function grid
         rbf_grid = {'kernel': ['rbf'],
                     'C': [1, 10, 100, 1000],
-                    'epsilon': np.logspace(0, 1, 5),
                     'gamma': np.logspace(0, 1, 5)}
 
         # Polynomial function grid
@@ -62,20 +61,18 @@ class SupportVectorClassificationModel(MachineLearningModel):
                      'gamma': np.logspace(0, 1, 5)}
 
         # Linear function grid
-        linear_grid = {'kernel': ['linear'], 'C': [0.1, 1, 10, 100], 'epsilon': np.logspace(0, 1, 5)}
+        linear_grid = {'kernel': ['linear'],
+                       'C': [0.1, 1, 10, 100]}
 
         # Sigmoid function grid
         sigmoid_grid = {'kernel': ['sigmoid'],
                         'C': [1, 10, 100, 1000],
                         'coef0': np.logspace(0, 1, 5),
-                        'epsilon': np.logspace(0, 1, 5),
                         'gamma': np.logspace(0, 1, 5)}
 
         simple_grid = {'kernel': ['poly'], 'degree': [2], 'C': [6000000]}
 
-        param_grid = [simple_grid]
-
-        param_grid = [rbf_grid, poly_grid, linear_grid, sigmoid_grid]
+        param_grid = [poly_grid]# rbf_grid, linear_grid, sigmoid_grid]
         return GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, verbose=1)
 
     def variable_to_validate(self):

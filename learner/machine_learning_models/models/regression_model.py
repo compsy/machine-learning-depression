@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.grid_search import GridSearchCV
 
 from machine_learning_models.models.boosting_model import BoostingClassificationModel
-
+import numpy as np
 
 class LinearRegressionModel(MachineLearningModel):
     MAX_ITERATIONS = 10000
@@ -22,9 +22,9 @@ class LinearRegressionModel(MachineLearningModel):
                                             n_jobs=-1)
 
 
-class LogisticRegressionModel(BoostingClassificationModel):
+class LogisticRegressionModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity):
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = True):
         self.skmodel = LogisticRegression(penalty='l2',
                                           C=0.1,
                                           verbose=verbosity,
@@ -32,10 +32,16 @@ class LogisticRegressionModel(BoostingClassificationModel):
                                           tol=0.000001,
                                           max_iter=100000)
 
-        linear_grid = {'penalty': ['l2'], 'C': [0.1]}
-        param_grid = [linear_grid]
-        self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1)
+        if grid_search:
+            parameter_grid = {
+                'penalty': ['l1', 'l2'],
+                           'C': np.logspace(0, 2, 10)
+                           }
+
+            self.grid_search([parameter_grid])
+
         super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification')
+
 
     def predict_for_roc(self, x_data):
         return self.skmodel.decision_function(x_data)

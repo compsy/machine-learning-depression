@@ -1,4 +1,5 @@
 from sklearn.cross_validation import cross_val_score, cross_val_predict
+from sklearn.grid_search import GridSearchCV
 from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
 
@@ -12,7 +13,7 @@ from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
 class MachineLearningModel:
 
     def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0):
-        self.skmodel = None
+        self.skmodel = self.skmodel or None
         self.x = x
         self.y = y
         self.x_names = x_names
@@ -65,6 +66,10 @@ class MachineLearningModel:
         L.info('Training ' + self.given_name)
         self.was_trained = True
         self.skmodel = self.skmodel.fit(X=self.x_train, y=self.y_train)
+
+        if isinstance(self.skmodel, GridSearchCV):
+            self.skmodel = self.skmodel.best_estimator_
+
         L.info('Fitted ' + self.given_name)
 
     def cv_predict(self):
@@ -87,6 +92,10 @@ class MachineLearningModel:
     @property
     def given_name(self):
         return type(self).__name__
+
+    def grid_search(self, param_grid):
+        self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
+        return self.skmodel
 
     ## Override
     def predict_for_roc(self, x_data):

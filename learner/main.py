@@ -24,8 +24,8 @@ from machine_learning_models.classification.naive_bayes_model import NaiveBayesM
 from machine_learning_models.models.bagging_model import BaggingClassificationModel, BaggingModel
 from machine_learning_models.models.boosting_model import BoostingClassificationModel, BoostingModel
 from machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
-from machine_learning_models.models.linear_regression_model import LinearRegressionModel, LogisticRegressionModel
-from machine_learning_models.models.regression_tree_model import RegressionTreeModel
+from machine_learning_models.models.regression_model import LinearRegressionModel, LogisticRegressionModel
+from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
 from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, SupportVectorClassificationModel
 from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
 
@@ -222,16 +222,16 @@ if __name__ == '__main__':
     models = []
     if (CLASSIFICATION):
         models = [
-            SupportVectorClassificationModel,
-            # LogisticRegressionModel
+            #SupportVectorClassificationModel,
+            LogisticRegressionModel,
             #BoostingClassificationModel, BaggingClassificationModel,
             #NaiveBayesModel, DummyClassifierModel
             #DummyRandomClassifierModel,
-
+            ClassificationTreeModel
             #KerasNnClassificationModel
         ]
         # Output columns
-        Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastYear'])
+        Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
     else:  # Regression
         models = [
             KerasNnModel, LinearRegressionModel, SupportVectorRegressionModel, RegressionTreeModel, BoostingModel,
@@ -296,7 +296,7 @@ if __name__ == '__main__':
         x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
     # Plot an overview of the density estimations of the variables used in the actual model calculation.
-    data_density_plotter.plot(x_data, X_NAMES)
+    # data_density_plotter.plot(x_data, X_NAMES)
 
     y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 

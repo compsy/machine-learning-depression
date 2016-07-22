@@ -17,7 +17,7 @@ class BoostingClassificationModel(MachineLearningModel):
         self.skmodel = GradientBoostingClassifier(verbose=verbosity, init=self.skmodel,
                                                   n_estimators=100,
                                                   learning_rate=0.01,
-                                                  max_depth=5)
+                                                  max_depth=50)
 
     def predict_for_roc(self, x_data):
         return self.skmodel.decision_function(x_data)

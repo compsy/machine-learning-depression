@@ -12,4 +12,5 @@ cd $gitdir
 #- #SBATCH --cpus-per-task=1
 pip install --user -r requirements.txt
 cd learner
+echo "Running main.py"
 mpirun python main.py

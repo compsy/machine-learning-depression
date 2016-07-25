@@ -28,7 +28,7 @@ class DistributedModelRunner:
         self.comm.Barrier()
 
         if (self.rank == 0): L.info('Running %d models on %d nodes' % (len(data), self.size))
-        if (self.rank == 0): L.info('Running ' + data)
+        if (self.rank == 0): L.info('Running ' + ', '.join(data))
 
         data = self.comm.scatter(data, root=0)
 

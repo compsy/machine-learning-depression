@@ -11,7 +11,7 @@ class DistributedModelRunner:
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.rank = self.comm.Get_rank()
-        
+
         L.info(self.comm)
         L.info('This is node %d' % self.rank)
         self.models = models
@@ -30,6 +30,7 @@ class DistributedModelRunner:
             if i == len(data):
                 data.append([])
             data[i].append(fabricated_models[i])
+        if(self.rank == 0): L.info('Running %d models on %d nodes' % (len(data), self.size))
 
         self.comm.scatter(data, root = 0)
 

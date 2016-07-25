@@ -22,8 +22,8 @@ class DistributedModelRunner:
                 if i == len(data):
                     data.append([])
                 data[i].append(self.models[i])
-            #data = self.models
-            dat = ', '.join(data[0])
+            data = self.models
+            dat = ', '.join(data)
         else:
             data = None
 
@@ -34,10 +34,11 @@ class DistributedModelRunner:
 
         data = self.comm.scatter(data, root=0)
 
-        for model in data:
-            L.info('Training from MPI model runner on node %d' % self.rank)
-            model = model(np.copy(x), np.copy(y), x_names, y_names, verbosity)
-            model.train()
+        model = data
+        #for model in data:
+        L.info('Training from MPI model runner on node %d' % self.rank)
+        model = model(np.copy(x), np.copy(y), x_names, y_names, verbosity)
+        model.train()
 
         self.comm.Barrier()
 

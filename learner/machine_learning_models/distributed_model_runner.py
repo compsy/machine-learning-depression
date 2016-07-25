@@ -16,6 +16,7 @@ class DistributedModelRunner:
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
         L.info('Fabbing models')
 
+        jobs_per_node = 3
 
         if (self.rank == 0):
             data = self.models
@@ -29,11 +30,11 @@ class DistributedModelRunner:
         else:
             data = np.empty(len(self.models))
 
-        my_data = np.empty(1)
+        my_data = np.empty(jobs_per_node)
         self.comm.Barrier()
-        if (self.rank == 0): L.info('Running %d models on %d nodes' % (len(data), self.size))
+        if (self.rank == 0): L.info('Running %d models on %d nodes (%d jobs per node)' % (len(data), self.size, len(my_data)))
 
-        data = self.comm.Scatter([data, MPI.ANY_TAG], [my_data, MPI.ANY_TAG])
+        data = self.comm.Scatter(data, my_data)
 
         model = my_data[0]
         #for model in data:

@@ -16,7 +16,7 @@ class DistributedModelRunner:
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
         L.info('Fabbing models')
 
-        jobs_per_node = 3
+        state = True if self.rank == 0 else False
 
         if (self.rank == 0):
             data = []
@@ -27,9 +27,8 @@ class DistributedModelRunner:
         else:
             data = np.empty(len(self.models))
 
-        my_data = np.empty(jobs_per_node)
         self.comm.Barrier()
-        if (self.rank == 0): L.info('Running %d models on %d nodes (%d jobs per node)' % (len(data), self.size, len(my_data)))
+        if (self.rank == 0): L.info('Running %d models on %d nodes.' % (len(data), self.size))
 
         data = self.comm.scatter(data, root=0)
 
@@ -44,9 +43,15 @@ class DistributedModelRunner:
         if self.rank == 0: L.info('!!Trained all models!!')
 
         data = self.comm.gather(data, root=0)
+
+        if not state: return (state, data)
+
+        L.info(data)
+        L.info(len(data))
+        L.info(len(data[0]))
+
         data = [val for sublist in data for val in sublist]
-        
-        state = True if self.rank == 0 else False
+
         return(state, data)
 
 

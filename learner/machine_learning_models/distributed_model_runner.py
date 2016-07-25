@@ -7,7 +7,9 @@ from mpi4py import MPI
 class DistributedModelRunner:
 
     def __init__(self, models):
+        L.info('Running distributed model runner')
         self.comm = MPI.COMM_WORLD
+        L.info(self.comm)
         self.models = models
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):

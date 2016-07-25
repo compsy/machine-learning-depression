@@ -13,7 +13,7 @@ class DistributedModelRunner:
         self.rank = self.comm.Get_rank()
 
         L.info(self.comm)
-        L.info('This is node %d' % self.rank)
+        L.info('This is node %d/%d' % (self.rank, self.size))
         self.models = models
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
@@ -38,3 +38,4 @@ class DistributedModelRunner:
             L.info('Training from MPI model runner on node %d' % self.rank)
             model.train()
         self.comm.Barrier()
+        if self.rank == 0: L.info('!!Trained all models!!')

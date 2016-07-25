@@ -33,10 +33,14 @@ class DistributedModelRunner:
         data = self.comm.scatter(data, root=0)
 
         #model = data
+        my_data = []
         for model in data:
             L.info('Training from MPI model runner on node %d' % self.rank)
             model = model(np.copy(x), np.copy(y), x_names, y_names, verbosity)
             model.train()
+            my_data.append(model)
+
+        data = my_data
 
         self.comm.Barrier()
 
@@ -46,11 +50,9 @@ class DistributedModelRunner:
 
         if not state: return (state, data)
 
+        data = [val for sublist in data for val in sublist]
         L.info(data)
         L.info(len(data))
-        L.info(len(data[0]))
-
-        data = [val for sublist in data for val in sublist]
 
         return(state, data)
 

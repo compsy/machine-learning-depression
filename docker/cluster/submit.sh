@@ -3,6 +3,8 @@
 #SBATCH --nodes=5
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=12
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=peregrine@compsy.nl
 #SBATCH --job-name=python_cpu
 #SBATCH --mem=8000
 module load Python/3.5.1-foss-2016a

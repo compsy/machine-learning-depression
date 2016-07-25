@@ -17,3 +17,4 @@ class SyncModelRunner:
         for model in fabricated_models:
             L.info('Training from syncmodelrunner')
             model.train()
+        return fabricated_models

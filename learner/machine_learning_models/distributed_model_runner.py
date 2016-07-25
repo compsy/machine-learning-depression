@@ -60,6 +60,8 @@ class DistributedModelRunner:
 
         data = self.comm.scatter(data, root=0)
 
+        print('Yes here! from %d' % self.rank)
+
         for model in data[self.rank]:
             L.info('Training from MPI model runner on node %d' % self.rank)
             model.train()

@@ -6,14 +6,14 @@ class DistributedModelRunner:
 
     def __init__(self, models):
         L.info('Running distributed model runner')
+        self.models = models
+
+    def fabricate_models(self, x, y, x_names, y_names, verbosity):
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.rank = self.comm.Get_rank()
         L.info('This is node %d/%d' % (self.rank, self.size))
-        self.models = models
-        self.models = ['a', 'b']
-
-    def fabricate_models(self, x, y, x_names, y_names, verbosity):
+        self.models = [1, 2]
         L.info('Fabbing models')
 
         jobs_per_node = 3

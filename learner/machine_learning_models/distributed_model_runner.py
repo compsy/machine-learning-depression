@@ -43,7 +43,11 @@ class DistributedModelRunner:
 
         if self.rank == 0: L.info('!!Trained all models!!')
 
-        return self.comm.gather(data, root=0)
+        data = self.comm.gather(data, root=0)
+        data = [val for sublist in data for val in sublist]
+        
+        state = True if self.rank == 0 else False
+        return(state, data)
 
 
     def run_calculations(self, fabricated_models):

@@ -324,8 +324,10 @@ if __name__ == '__main__':
     else:
         model_runner = SyncModelRunner(models)
 
-    fabricated_models = model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
+    state, fabricated_models = model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
 
+    if not state:
+        exit(0)
     # Train all models, the fitted parameters will be saved inside the models
     #fabricated_models = model_runner.run_calculations(fabricated_models=fabricated_models)
 

@@ -29,14 +29,14 @@ class DistributedModelRunner:
         else:
             data = np.empty(len(self.models))
 
-        empty_data = np.empty(5)
+        my_data = np.empty(len(self.size))
         self.comm.Barrier()
 
         if (self.rank == 0): L.info('Running %d models on %d nodes' % (len(data), self.size))
 
-        data = self.comm.Scatter(data, empty_data, root=0)
+        data = self.comm.Scatter(data, my_data)
 
-        model = data
+        model = my_data[0]
         #for model in data:
         L.info('Training from MPI model runner on node %d' % self.rank)
         model = model(np.copy(x), np.copy(y), x_names, y_names, verbosity)

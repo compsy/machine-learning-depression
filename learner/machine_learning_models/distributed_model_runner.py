@@ -10,6 +10,8 @@ class DistributedModelRunner:
         L.info('Running distributed model runner')
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
+        self.rank = self.comm.Get_rank()
+        
         L.info(self.comm)
         L.info('This is node %d' % self.rank)
         self.models = models

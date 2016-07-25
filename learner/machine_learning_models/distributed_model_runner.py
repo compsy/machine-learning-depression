@@ -17,7 +17,7 @@ class DistributedModelRunner:
         self.models = models
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
-        L.info('Fabbing models')
+        if (self.rank == 0): L.info('Fabbing models')
         created_models = []
         for model in self.models:
             L.info('Model')

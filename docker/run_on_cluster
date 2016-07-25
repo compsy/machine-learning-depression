@@ -8,6 +8,7 @@ case $key in
     server_name="$2"
     shift # past argument
     ;;
+
     --default)
     DEFAULT=YES
     ;;

@@ -31,10 +31,9 @@ class DistributedModelRunner:
 
         my_data = np.empty(1)
         self.comm.Barrier()
-
         if (self.rank == 0): L.info('Running %d models on %d nodes' % (len(data), self.size))
 
-        data = self.comm.Scatter(data, my_data)
+        data = self.comm.Scatter([data, MPI.ANY_TAG], [my_data, MPI.ANY_TAG])
 
         model = my_data[0]
         #for model in data:

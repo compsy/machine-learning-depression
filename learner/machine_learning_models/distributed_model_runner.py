@@ -43,7 +43,7 @@ class DistributedModelRunner:
 
         if self.rank == 0: L.info('!!Trained all models!!')
 
-        return self.comm.Gather(data, root=0)
+        return self.comm.gather(data, root=0)
 
 
     def run_calculations(self, fabricated_models):

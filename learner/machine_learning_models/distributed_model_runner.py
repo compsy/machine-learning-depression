@@ -22,7 +22,7 @@ class DistributedModelRunner:
                 if i == len(data):
                     data.append([])
                 data[i].append(self.models[i])
-                dat = ', '.join(data)
+                dat = ', '.join(data[0])
         else:
             data = None
 

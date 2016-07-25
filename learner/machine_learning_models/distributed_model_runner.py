@@ -11,7 +11,7 @@ class DistributedModelRunner:
         self.rank = self.comm.Get_rank()
         L.info('This is node %d/%d' % (self.rank, self.size))
         self.models = models
-        self.models = ['a', 'b','c','d','e', 'f']
+        self.models = ['a', 'b']
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
         L.info('Fabbing models')

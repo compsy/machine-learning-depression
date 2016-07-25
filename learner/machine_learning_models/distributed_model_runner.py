@@ -13,12 +13,15 @@ class DistributedModelRunner:
         self.models = models
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
-        if (self.rank == 0): L.info('Fabbing models')
-        created_models = []
-        for model in self.models:
-            L.info('Model')
-            created_models.append(model(np.copy(x), np.copy(y), x_names, y_names, verbosity))
-        return created_models
+        if (self.rank == 0):
+            L.info('Fabbing models')
+            created_models = []
+            for model in self.models:
+                L.info('Model')
+                created_models.append(model(np.copy(x), np.copy(y), x_names, y_names, verbosity))
+            return created_models
+        else:
+            return None
 
     def run_calculations(self, fabricated_models):
 
@@ -42,4 +45,4 @@ class DistributedModelRunner:
 
         if self.rank == 0: L.info('!!Trained all models!!')
 
-        fabricated_models = self.comm.gather(data, root=0)
+        return self.comm.gather(data, root=0)

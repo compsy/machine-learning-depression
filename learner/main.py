@@ -327,7 +327,7 @@ if __name__ == '__main__':
     fabricated_models = model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
 
     # Train all models, the fitted parameters will be saved inside the models
-    model_runner.run_calculations(fabricated_models=fabricated_models)
+    fabricated_models = model_runner.run_calculations(fabricated_models=fabricated_models)
 
     # Generate learning curve plots
     if CLASSIFICATION:

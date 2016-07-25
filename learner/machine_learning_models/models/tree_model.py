@@ -25,7 +25,7 @@ class RegressionTreeModel(MachineLearningModel):
 
 class ClassificationTreeModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = True):
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = False):
         self.skmodel = DecisionTreeClassifier(max_depth=5)
 
         if grid_search:

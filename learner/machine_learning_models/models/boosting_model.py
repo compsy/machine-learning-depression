@@ -11,7 +11,7 @@ class BoostingModel(MachineLearningModel):
 
 class BoostingClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = True):
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = False):
         self.skmodel = GradientBoostingClassifier(verbose=verbosity,
                                                   n_estimators=100,
                                                   max_depth=5)

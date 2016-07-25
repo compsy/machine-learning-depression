@@ -45,7 +45,7 @@ class SupportVectorClassificationModel(MachineLearningModel):
     def __init__(self, x, y, x_names, y_names, verbosity):
         super().__init__(x, y, x_names, y_names, model_type='classification')
         self.skmodel = svm.SVC(verbose=verbosity, kernel='poly', degree=2, C=600000)
-        self.skmodel = self.grid_search(self.skmodel)
+        #self.skmodel = self.grid_search(self.skmodel)
 
     def grid_search(self, model):
         # Radial basis function grid

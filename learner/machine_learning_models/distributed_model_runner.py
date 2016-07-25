@@ -29,7 +29,7 @@ class DistributedModelRunner:
         else:
             data = np.empty(len(self.models))
 
-        my_data = np.empty(len(self.size))
+        my_data = np.empty(self.size)
         self.comm.Barrier()
 
         if (self.rank == 0): L.info('Running %d models on %d nodes' % (len(data), self.size))

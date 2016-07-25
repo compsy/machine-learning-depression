@@ -9,19 +9,20 @@ class DistributedModelRunner:
     def __init__(self, models):
         L.info('Running distributed model runner')
         self.comm = MPI.COMM_WORLD
+        self.size = self.comm.Get_size()
         L.info(self.comm)
+        L.info('This is node %d' % self.rank)
         self.models = models
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
+        L.info('Fabbing models')
         created_models = []
         for model in self.models:
+            L.info('Model')
             created_models.append(model(np.copy(x), np.copy(y), x_names, y_names, verbosity))
         return created_models
 
     def run_calculations(self, fabricated_models):
-        self.size = self.comm.Get_size()
-        self.rank = self.comm.Get_rank()
-
         data = []
         for i in range(len(fabricated_models)):
             if i == len(data):

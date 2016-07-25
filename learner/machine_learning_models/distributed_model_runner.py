@@ -34,9 +34,9 @@ class DistributedModelRunner:
         self.comm.Barrier()
         if (self.rank == 0): L.info('Running %d models on %d nodes (%d jobs per node)' % (len(data), self.size, len(my_data)))
 
-        data = self.comm.Scatter(data, my_data)
+        data = self.comm.scatter(data, root=0)
 
-        model = my_data[0]
+        model = data
         #for model in data:
         L.info('Training from MPI model runner on node %d' % self.rank)
         model = model(np.copy(x), np.copy(y), x_names, y_names, verbosity)

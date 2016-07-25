@@ -56,13 +56,13 @@ class DistributedModelRunner:
 
         self.comm.Barrier()
 
-        print(data)
+        L.info(data)
 
         if (self.rank == 0): L.info('Running %d models on %d nodes' % (len(data), self.size))
 
         data = self.comm.scatter(data, root=0)
 
-        print('Yes here! from %d' % self.rank)
+        L.info('Yes here! from %d' % self.rank)
 
         for model in data[self.rank]:
             L.info('Training from MPI model runner on node %d' % self.rank)

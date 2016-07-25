@@ -1,5 +1,23 @@
 #!/bin/bash
 server_name=peregrine
+while [[ $# -gt 1 ]]
+do
+key="$1"
+case $key in
+    -s|--server)
+    server_name="$2"
+    shift # past argument
+    ;;
+    --default)
+    DEFAULT=YES
+    ;;
+    *)
+            # unknown option
+    ;;
+esac
+shift # past argument or value
+done
+
 cd ..
 git add --all
 git commit -am 'Running on cluster'

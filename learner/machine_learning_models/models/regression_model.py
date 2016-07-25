@@ -24,7 +24,7 @@ class LinearRegressionModel(MachineLearningModel):
 
 class LogisticRegressionModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = False):
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = True):
         self.skmodel = LogisticRegression(penalty='l2',
                                           C=0.1,
                                           verbose=verbosity,

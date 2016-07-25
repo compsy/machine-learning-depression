@@ -58,7 +58,7 @@ if [ $HPC ]; then
   mv submit.sh ~
   cd ~
   sbatch submit.sh | cut -d" " -f 4 | tee last_job
-  while ! ls run* 1> /dev/null 2>&1
+  while ! ls slurm* 1> /dev/null 2>&1
   do
     sleep 5
   done

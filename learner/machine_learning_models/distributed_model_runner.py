@@ -1,5 +1,3 @@
-from queue import Queue
-from threading import Thread
 import numpy as np
 from data_output.std_logger import L
 from mpi4py import MPI
@@ -11,8 +9,6 @@ class DistributedModelRunner:
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.rank = self.comm.Get_rank()
-
-        L.info(self.comm)
         L.info('This is node %d/%d' % (self.rank, self.size))
         self.models = models
 
@@ -25,17 +21,25 @@ class DistributedModelRunner:
         return created_models
 
     def run_calculations(self, fabricated_models):
-        data = []
-        for i in range(len(fabricated_models)):
-            if i == len(data):
-                data.append([])
-            data[i].append(fabricated_models[i])
+
+        if (self.rank == 0):
+            data = []
+            for i in range(len(fabricated_models)):
+                if i == len(data):
+                    data.append([])
+                data[i].append(fabricated_models[i])
+        else:
+            data = None
+
         if(self.rank == 0): L.info('Running %d models on %d nodes' % (len(data), self.size))
 
-        self.comm.scatter(data, root = 0)
+        data = self.comm.scatter(data, root = 0)
 
         for model in data[self.rank]:
             L.info('Training from MPI model runner on node %d' % self.rank)
             model.train()
         self.comm.Barrier()
+
         if self.rank == 0: L.info('!!Trained all models!!')
+
+        fabricated_models = self.comm.gather(data, root=0)

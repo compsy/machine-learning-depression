@@ -72,7 +72,7 @@ class DistributedGridSearch:
         L.info('\tQueue is empty, continueing')
         models = []
         models = self.comm.gather(models, root=0)
-        best_model = None
+        best_model = 123
         best_score = float('-inf')
         
         L.info('\tWe received %d models' % len(models))

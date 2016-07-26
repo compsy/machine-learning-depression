@@ -19,8 +19,7 @@ class LinearRegressionModel(MachineLearningModel):
                                             normalize=True,
                                             copy_X=False,
                                             max_iter=self.MAX_ITERATIONS,
-                                            verbose=verbosity,
-                                            n_jobs=-1)
+                                            verbose=verbosity)
 
 
 class LogisticRegressionModel(MachineLearningModel):
@@ -29,7 +28,6 @@ class LogisticRegressionModel(MachineLearningModel):
         super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification')
         self.skmodel = LogisticRegression(penalty='l2',
                                           C=0.1,
-                                          n_jobs=-1,
                                           verbose=verbosity,
                                           random_state=42,
                                           tol=0.000001,

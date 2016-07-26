@@ -74,17 +74,24 @@ class DistributedGridSearch:
         models = self.comm.gather(models, root=0)
         best_model = None
         best_score = float('-inf')
-
+        
+        L.info('We received %d models' % len(models))
+        none_models = 0
+        empty_models = 0
+        good_models = 0
         for model in models:
             if model is None:
+                none_models += 1
                 continue
             if len(model) == 0:
+                empty_models += 1
                 continue
             for sub_model in model:
+                good_models += 1
                 if sub_model[0] > best_score:
                     best_score = sub_model[0]
                     best_model = sub_model[1]
-
+        L.info('These models had %d nones, %d emptys, and %d goods' % (none_models, empty_models, good_models))
         return best_model
 
     def slave(self, X, y):
@@ -98,7 +105,7 @@ class DistributedGridSearch:
 
             # only add the best model
             model = (model.best_score_, model.best_estimator_)
-            L.info('\t\t\t!!!!!!!!!! Appending model with score %d' % model.best_score_)
+            L.info('\t\t\t!!!!!!!!!! Appending model with score %d' % model[0])
             models.append(model)
 
         # Collective report to parent

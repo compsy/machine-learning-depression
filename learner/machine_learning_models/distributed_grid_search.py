@@ -32,7 +32,7 @@ class DistributedGridSearch:
             while (self.comm.recv() and running):
                 a += 1
                 print('%d of %d' % (a, self.size))
-                if a == self.size: running = false
+                if a == self.size: running = False
 
         self.comm.Barrier()
         if self.rank == 0:

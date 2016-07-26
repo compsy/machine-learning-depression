@@ -87,10 +87,10 @@ class DistributedGridSearch:
         for task in iter(lambda: self.comm.sendrecv(self.rank, 0), StopIteration):
             L.info('\t\tSlave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
             model = GridSearchCV(estimator=self.skmodel, param_grid=task, n_jobs=-1, verbose=1, cv=self.cv)
-            # model = model.fit(X=X, y=y)
+            model = model.fit(X=X, y=y)
 
             # only add the best model
-            # model = (model.best_score_, model.best_estimator_)
+            model = (model.best_score_, model.best_estimator_)
             models.append(model)
 
         # Collective report to parent

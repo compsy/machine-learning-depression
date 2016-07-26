@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 from data_output.std_logger import L
 
+
 class RocCurvePlotter(Plotter):
 
     def plot(self, models, cv=6):

@@ -36,6 +36,7 @@ from machine_learning_models.models.support_vector_machine_model import SupportV
 from models import participant
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
+
 def create_participants(data):
     participants = {}
     for index, entry in data.iterrows():
@@ -76,6 +77,7 @@ def get_file_data(file_name, spss_reader, force_to_not_use_cache=False):
         data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
         write_cache(header, data, file_name)
     return (header, data)
+
 
 def calculate_true_false_ratio(y_data):
     trues = 0
@@ -173,7 +175,6 @@ if __name__ == '__main__':
         'a4dkl-4dkld14',
         'a4dkl-4dkld15',
         'a4dkl-4dkld16',
-
         'a4dkl-ph-somatizationSumScore',
         'a4dkl-ph-somatizationTrychotomization',
         'a4dkl-ph-dichotomizationThrychotomization',
@@ -241,7 +242,10 @@ if __name__ == '__main__':
     else:  # Regression
         models = [
             # KerasNnModel,
-            LinearRegressionModel, SupportVectorRegressionModel, RegressionTreeModel, BoostingModel,
+            LinearRegressionModel,
+            SupportVectorRegressionModel,
+            RegressionTreeModel,
+            BoostingModel,
             BaggingModel
         ]
         # Output columns
@@ -302,7 +306,6 @@ if __name__ == '__main__':
         L.info('We are also adding polynomial features')
         x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
-
     y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
     if CLASSIFICATION:
@@ -313,7 +316,6 @@ if __name__ == '__main__':
 
     # Convert ydata 2d matrix (x * 1) to 1d array (x). Needed for the classifcation things
     y_data = np.ravel(y_data)
-
 
     if HPC:
         model_runner = DistributedModelRunner(models)

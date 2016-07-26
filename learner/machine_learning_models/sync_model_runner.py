@@ -2,6 +2,7 @@ from queue import Queue
 import numpy as np
 from data_output.std_logger import L
 
+
 class SyncModelRunner:
 
     def __init__(self, models):

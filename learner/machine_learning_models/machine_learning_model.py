@@ -10,6 +10,7 @@ from data_output.std_logger import L
 from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
 from machine_learning_models.distributed_grid_search import DistributedGridSearch
 
+
 class MachineLearningModel:
 
     def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0):
@@ -20,7 +21,8 @@ class MachineLearningModel:
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
-        self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(), RootMseEvaluation()]
+        self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(),
+                            RootMseEvaluation()]
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)

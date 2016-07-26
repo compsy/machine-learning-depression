@@ -2,6 +2,7 @@ import numpy as np
 from .data_transformer import DataTransformer
 from data_output.std_logger import L
 
+
 class OutputDataCleaner(DataTransformer):
 
     def clean(self, data, incorrect_indices):
@@ -39,7 +40,8 @@ class OutputDataCleaner(DataTransformer):
             current_indices = set(missing_indices[key])
             new_removed_vars = len(set(current_indices).difference(variables_that_are_gone))
 
-            variables_that_are_gone = variables_that_are_gone | (set(current_indices).difference(variables_that_are_gone))
+            variables_that_are_gone = variables_that_are_gone | (
+                set(current_indices).difference(variables_that_are_gone))
 
             if print_info: L.info("--> %s (of which %d are new) \t %s" % (value, new_removed_vars, key))
         return incorrect_indices

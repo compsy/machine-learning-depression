@@ -18,13 +18,12 @@ class SupportVectorRegressionModel(MachineLearningModel):
 
         # Polynomial function grid
         poly_grid = {'kernel': ['poly'],
-                      'C': [1, 10, 100, 1000],
-                      'degree': [1, 2, 3, 4, 5],
-                      'coef0': logspace(0, 1, 5),
-                      'gamma': logspace(0, 1, 5)}
+                     'C': [1, 10, 100, 1000],
+                     'degree': [1, 2, 3, 4, 5],
+                     'coef0': logspace(0, 1, 5),
+                     'gamma': logspace(0, 1, 5)}
         # Linear function grid
-        linear_grid = {'kernel': ['linear'],
-                       'C': [1, 10, 100, 1000]}
+        linear_grid = {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}
 
         # Sigmoid function grid
         sigmoid_grid = {'kernel': ['sigmoid'],
@@ -44,9 +43,7 @@ class SupportVectorClassificationModel(MachineLearningModel):
         self.skmodel = svm.SVC(verbose=verbosity, kernel='poly', degree=2, C=600000)
         self.skmodel = self.grid_search(self.skmodel)
         # Radial basis function grid
-        rbf_grid = {'kernel': ['rbf'],
-                    'C': [1, 10, 100, 1000],
-                    'gamma': np.logspace(0, 1, 5)}
+        rbf_grid = {'kernel': ['rbf'], 'C': [1, 10, 100, 1000], 'gamma': np.logspace(0, 1, 5)}
 
         # Polynomial function grid
         poly_grid = {'kernel': ['poly'],
@@ -56,8 +53,7 @@ class SupportVectorClassificationModel(MachineLearningModel):
                      'gamma': np.logspace(0, 1, 5)}
 
         # Linear function grid
-        linear_grid = {'kernel': ['linear'],
-                       'C': [0.1, 1, 10, 100]}
+        linear_grid = {'kernel': ['linear'], 'C': [0.1, 1, 10, 100]}
 
         # Sigmoid function grid
         sigmoid_grid = {'kernel': ['sigmoid'],

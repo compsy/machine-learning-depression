@@ -2,6 +2,7 @@ from ..questionnaire import Questionnaire
 import numpy as np
 from data_output.std_logger import L
 
+
 class FourDKLQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):

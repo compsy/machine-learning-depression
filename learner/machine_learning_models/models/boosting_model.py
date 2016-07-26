@@ -2,6 +2,7 @@ from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor, Gradie
 from machine_learning_models.machine_learning_model import MachineLearningModel
 import numpy as np
 
+
 class BoostingModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
@@ -11,10 +12,8 @@ class BoostingModel(MachineLearningModel):
 
 class BoostingClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search = True):
-        self.skmodel = GradientBoostingClassifier(verbose=verbosity,
-                                                  n_estimators=100,
-                                                  max_depth=5)
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True):
+        self.skmodel = GradientBoostingClassifier(verbose=verbosity, n_estimators=100, max_depth=5)
         if grid_search:
             parameter_grid = {
                 'max_depth': np.logspace(0, 2, 20),

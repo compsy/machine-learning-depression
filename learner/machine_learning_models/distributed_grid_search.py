@@ -3,7 +3,9 @@ from queue import Queue
 from data_output.std_logger import L
 from mpi4py import MPI
 
+
 class DistributedGridSearch:
+
     def __init__(self, estimator, param_grid, cv):
         # Number of nodes
         self.comm = MPI.COMM_WORLD
@@ -27,8 +29,8 @@ class DistributedGridSearch:
         if self.rank == 0:
             a = 0
             running = True
-            while(self.comm.recv() and running):
-                a +=  1
+            while (self.comm.recv() and running):
+                a += 1
                 print('%d of %d' % (a, self.size))
                 if a == self.size: running = false
 
@@ -53,13 +55,12 @@ class DistributedGridSearch:
             self.queue.put(StopIteration)
 
         status = MPI.Status()
-        while(not self.queue.empty):
+        while (not self.queue.empty):
             obj = self.queue.get()
             self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
             percent = ((position + 1) * 100) // (n_tasks + n_workers)
-            sys.stdout.write('\rProgress: [%-50s] %3i%% ' %
-                    ('=' * (percent // 2), percent))
+            sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             sys.stdout.flush()
 
         models = comm.gather(root=MPI.ROOT)
@@ -77,9 +78,7 @@ class DistributedGridSearch:
         # Ask for work until we receive StopIteration
         for task in iter(lambda: comm.sendrecv(dest=0), StopIteration):
             L.info('Picking up a task on node %d' % self.rank)
-            model = GridSearchCV(estimator=self.skmodel,
-                    param_grid=self.param_grid, n_jobs=-1, verbose=1,
-                    cv=self.cv)
+            model = GridSearchCV(estimator=self.skmodel, param_grid=self.param_grid, n_jobs=-1, verbose=1, cv=self.cv)
             model = model.fit(X=X, y=y)
 
             # only add the best model
@@ -88,4 +87,3 @@ class DistributedGridSearch:
 
         # Collective report to parent
         comm.gather(sendobj=models, root=0)
-

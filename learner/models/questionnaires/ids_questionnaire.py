@@ -2,6 +2,7 @@ from ..questionnaire import Questionnaire
 import numpy as np
 from data_output.std_logger import L
 
+
 class IDSQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):

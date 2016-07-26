@@ -2,6 +2,7 @@ import numpy as np
 from data_output.std_logger import L
 from mpi4py import MPI
 
+
 class DistributedModelRunner:
 
     def __init__(self, models):
@@ -54,8 +55,7 @@ class DistributedModelRunner:
         L.info(data)
         L.info(len(data))
 
-        return(state, data)
-
+        return (state, data)
 
     def run_calculations(self, fabricated_models):
 

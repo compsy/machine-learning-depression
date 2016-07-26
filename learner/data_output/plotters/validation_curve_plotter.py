@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.learning_curve import learning_curve, validation_curve
 from data_output.std_logger import L
 
+
 class ValidationCurvePlotter(Plotter):
 
     def plot(self, model, variable_to_validate=None):
@@ -16,8 +17,8 @@ class ValidationCurvePlotter(Plotter):
 
         if (variable_to_validate is None): variable_to_validate = model.variable_to_validate()
 
-        L.info('Determining validation curve for ' + model.given_name + ', using space: ' + str(space)
-               + ', and variable '+ variable_to_validate)
+        L.info('Determining validation curve for ' + model.given_name + ', using space: ' + str(space) +
+               ', and variable ' + variable_to_validate)
 
         train_scores, valid_scores = validation_curve(estimator=model.skmodel,
                                                       X=model.x_train,
@@ -26,7 +27,6 @@ class ValidationCurvePlotter(Plotter):
                                                       param_range=space,
                                                       n_jobs=-1,
                                                       verbose=1)
-
 
         plt.figure()
         plt.title('Validation curves for ' + model.given_name)

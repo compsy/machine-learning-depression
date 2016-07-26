@@ -2,6 +2,7 @@ import numpy as np
 from data_output.std_logger import L
 from mpi4py import MPI
 
+
 class DistributedModelRunner:
 
     def __init__(self, models):
@@ -54,5 +55,4 @@ class DistributedModelRunner:
         if not self.is_root: return (self.is_root, None)
 
         data = [val for sublist in data for val in sublist]
-        return(self.is_root, data)
-
+        return (self.is_root, data)

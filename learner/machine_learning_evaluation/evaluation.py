@@ -1,5 +1,6 @@
 from data_output.std_logger import L
 
+
 class Evaluation:
 
     def __init__(self, name='Evaluator', model_type='models'):

@@ -13,7 +13,7 @@ class DistributedGridSearch:
         self.rank = self.comm.Get_rank()
         self.cpus_per_node = 12
         self.skmodel = estimator
-        self.param_grid = param_grid
+        self.param_grid = ParameterGrid(param_grid)
         self.cv = cv
 
     def merge_dicts(self, dicts):
@@ -49,10 +49,6 @@ class DistributedGridSearch:
         for job in range(len(self.param_grid)):
             temp = []
             for jobs_per_node in range(self.cpus_per_node):
-                print(len(self.param_grid))
-                print(self.param_grid)
-                print(self.param_grid[0])
-
                 temp.append(self.param_grid[job])
             print(temp) 
             temp = self.merge_dicts(temp)

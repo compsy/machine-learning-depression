@@ -11,26 +11,28 @@ class DistributedModelRunner:
         self.rank = self.comm.Get_rank()
         L.info('This is node %d/%d' % (self.rank, self.size))
         self.models = models
-        #self.models = ['a', 'b']
+        self.is_root = True if self.rank == 0 else False
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
-        L.info('Fabbing models')
-
-        state = True if self.rank == 0 else False
-
-        if (self.rank == 0):
-            data = []
+        L.info('Fabricating models')
+        if self.is_root:
+            self.data = []
             for i in range(len(self.models)):
-                if i == len(data):
-                    data.append([])
-                data[i].append(self.models[i])
+                if i == len(self.data):
+                    self.data.append([])
+                self.data[i].append(self.models[i])
         else:
-            data = np.empty(len(self.models))
+            self.data = np.empty(len(self.models))
 
+        return self.data
+
+    def run_calculations(self, fabricated_models):
+        # Be sure eveyone gets here, before running the calculations
         self.comm.Barrier()
-        if (self.rank == 0): L.info('Running %d models on %d nodes.' % (len(data), self.size))
+        if self.is_root: L.info('Running %d models on %d nodes.' % (len(fabricated_models), self.size))
 
-        data = self.comm.scatter(data, root=0)
+        # Distribute the data to all workers
+        data = self.comm.scatter(fabricated_models, root=0)
 
         #model = data
         my_data = []
@@ -44,44 +46,13 @@ class DistributedModelRunner:
 
         self.comm.Barrier()
 
-        if self.rank == 0: L.info('!!Trained all models!!')
+        if self.is_root: L.info('Trained all %d models' % len(self.models))
+        if self.is_root: L.info('Gathering data from all worker nodes')
 
         data = self.comm.gather(data, root=0)
 
-        if not state: return (state, data)
+        if not self.is_root: return (self.is_root, None)
 
         data = [val for sublist in data for val in sublist]
-        L.info(data)
-        L.info(len(data))
+        return(self.is_root, data)
 
-        return(state, data)
-
-
-    def run_calculations(self, fabricated_models):
-
-        if (self.rank == 0):
-            data = []
-            for i in range(len(fabricated_models)):
-                if i == len(data):
-                    data.append([])
-                data[i].append(fabricated_models[i])
-        else:
-            data = None
-
-        self.comm.Barrier()
-
-        L.info(data)
-        if (self.rank == 0): L.info('Running %d models on %d nodes' % (len(data), self.size))
-
-        data = self.comm.scatter(data, root=0)
-
-        L.info('Yes here! from %d' % self.rank)
-
-        for model in data[self.rank]:
-            L.info('Training from MPI model runner on node %d' % self.rank)
-            model.train()
-        self.comm.Barrier()
-
-        if self.rank == 0: L.info('!!Trained all models!!')
-
-        return self.comm.gather(data, root=0)

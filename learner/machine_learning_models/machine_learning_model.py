@@ -8,7 +8,7 @@ from machine_learning_evaluation.f1_evaluation import F1Evaluation
 from machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
 from data_output.std_logger import L
 from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
-
+from distributed_grid_search import DistributedGridSearch
 
 class MachineLearningModel:
 
@@ -93,7 +93,8 @@ class MachineLearningModel:
         return type(self).__name__
 
     def grid_search(self, param_grid):
-        self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
+        self.skmodel = DistributedGridSearch(estimator=self.skmodel, param_grid=param_grid, cv=8)
+        # self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
         return self.skmodel
 
     ## Override

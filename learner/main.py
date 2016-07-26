@@ -23,6 +23,7 @@ from data_transformers.variable_transformer import VariableTransformer
 from factories.questionnaire_factory import QuestionnaireFactory
 from machine_learning_models.sync_model_runner import SyncModelRunner
 from machine_learning_models.distributed_model_runner import DistributedModelRunner
+from machine_learning_models.distributed_sync_model_runner import DistributedSyncModelRunner
 
 from machine_learning_models.classification.naive_bayes_model import NaiveBayesModel
 from machine_learning_models.models.bagging_model import BaggingClassificationModel, BaggingModel
@@ -302,8 +303,6 @@ if __name__ == '__main__':
         L.info('We are also adding polynomial features')
         x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
 
-    # Plot an overview of the density estimations of the variables used in the actual model calculation.
-    # data_density_plotter.plot(x_data, X_NAMES)
 
     y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
@@ -316,20 +315,26 @@ if __name__ == '__main__':
     # Convert ydata 2d matrix (x * 1) to 1d array (x). Needed for the classifcation things
     y_data = np.ravel(y_data)
 
-    # Export all used data to a CSV file
-    # CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
 
     if HPC:
         model_runner = DistributedModelRunner(models)
     else:
         model_runner = SyncModelRunner(models)
 
-    state, fabricated_models = model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
+    fabricated_models = model_runner.fabricate_models(x_data, y_data, X_NAMES, Y_NAMES, VERBOSITY)
 
-    if not state:
-        exit(0)
     # Train all models, the fitted parameters will be saved inside the models
-    #fabricated_models = model_runner.run_calculations(fabricated_models=fabricated_models)
+    is_root, fabricated_models = model_runner.run_calculations(fabricated_models=fabricated_models)
+
+    # Kill all worker nodes
+    if not is_root:
+        exit(0)
+
+    # Plot an overview of the density estimations of the variables used in the actual model calculation.
+    data_density_plotter.plot(x_data, X_NAMES)
+
+    # Export all used data to a CSV file
+    CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
 
     # Generate learning curve plots
     if CLASSIFICATION:

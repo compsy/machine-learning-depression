@@ -8,6 +8,7 @@ class SyncModelRunner:
         self.models = models
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
+        L.info('Fabricating models')
         created_models = []
         for model in self.models:
             created_models.append(model(np.copy(x), np.copy(y), x_names, y_names, verbosity))
@@ -17,4 +18,5 @@ class SyncModelRunner:
         for model in fabricated_models:
             L.info('Training from syncmodelrunner')
             model.train()
-        return fabricated_models
+
+        return (True, fabricated_models)

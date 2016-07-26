@@ -24,7 +24,7 @@ class DistributedGridSearch:
         # Sync all nodes
 
         print('!!!!!!!!!!!!!!!!!iJA RUNNING !!!!!!!!!!')
-        self.send(obj=1, dest=0)
+        self.comm.send(obj=1, dest=0)
         if self.rank == 0:
             a = 0
             while(self.comm.recv()):

@@ -36,10 +36,10 @@ class DistributedGridSearch:
         L.info('Approaching barrier')
         self.comm.Barrier()
         if self.rank == 0:
-            L.info('Starting master')
+            L.info('\tStarting master')
             self.master()
         else:
-            L.info('Starting slave')
+            L.info('\t\tStarting slave')
             self.slave(X, y)
 
     def master(self):
@@ -71,7 +71,9 @@ class DistributedGridSearch:
             # sys.stdout.flush()
         L.info('\tQueue is empty, continueing')
         models = None
-        models = self.comm.gather(models, root=0)
+        other = self.comm.gather(models, root=0)
+        print(models)
+        print(other)
         best_model = None
         best_score = float('-inf')
         
@@ -88,6 +90,8 @@ class DistributedGridSearch:
                 continue
             for sub_model in model:
                 good_models += 1
+                L.info(sub_model[0])
+                L.info(sub_model[1])
                 if sub_model[0] > best_score:
                     best_score = sub_model[0]
                     best_model = sub_model[1]

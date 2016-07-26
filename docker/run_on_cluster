@@ -1,6 +1,6 @@
 #!/bin/bash
 server_name=peregrine
-dryrun=""
+dryrun="lalala"
 while [[ $# -gt 1 ]]
 do
 key="$1"

@@ -22,6 +22,7 @@ class DistributedGridSearch:
 
     def fit(self, X, y):
         # Sync all nodes
+        if(self.rank == 0): L.info('Starting the barrier')
         self.comm.Barrier()
         if self.rank == 0:
             self.master()

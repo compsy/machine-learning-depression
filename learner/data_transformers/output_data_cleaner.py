@@ -7,7 +7,7 @@ class OutputDataCleaner(DataTransformer):
     def clean(self, data, incorrect_indices):
         return np.delete(data, incorrect_indices, axis=0)
 
-    def find_incomplete_rows(self, data, header):
+    def find_incomplete_rows(self, data, header, print_info=False):
         incorrect_indices = []
         missing_value_hash = {}
         missing_indices = {}
@@ -32,7 +32,7 @@ class OutputDataCleaner(DataTransformer):
                 incorrect_indices.append(index)
             index += 1
 
-        L.info('The following keys have the most missings:')
+        if print_info: L.info('The following keys have the most missings:')
         items = sorted(missing_value_hash.items(), key=lambda k_v: (k_v[1], k_v[0]), reverse=True)
         variables_that_are_gone = set()
         for key, value in items:
@@ -41,5 +41,5 @@ class OutputDataCleaner(DataTransformer):
 
             variables_that_are_gone = variables_that_are_gone | (set(current_indices).difference(variables_that_are_gone))
 
-            L.info("--> %s (of which %d are new) \t %s" % (value, new_removed_vars, key))
+            if print_info: L.info("--> %s (of which %d are new) \t %s" % (value, new_removed_vars, key))
         return incorrect_indices

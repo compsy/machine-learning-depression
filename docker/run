@@ -2,6 +2,7 @@
 COMMAND=""
 BRANCH="master"
 HPC=false
+DRY=false
 
 while [[ $# -gt 1 ]]
 do
@@ -18,6 +19,10 @@ case $key in
     ;;
     -h|--hpc)
     HPC=true
+    shift # past argument
+    ;;
+    -d|--dry-run)
+    DRY=true
     shift # past argument
     ;;
     --default)
@@ -57,12 +62,14 @@ if [ $HPC ]; then
   cd $docker/cluster
   mv submit.sh ~
   cd ~
-  sbatch submit.sh | cut -d" " -f 4 | tee last_job
-  while ! ls slurm* 1> /dev/null 2>&1
-  do
-    sleep 5
-  done
-  tail -f slurm*
+  if [ ! $DRY ]; then
+    sbatch submit.sh | cut -d" " -f 4 | tee last_job
+    while ! ls slurm* 1> /dev/null 2>&1
+    do
+      sleep 5
+    done
+    tail -f slurm*
+  fi
 else
   echo "Running in docker mode"
   echo "Mounting exports location on "
@@ -74,6 +81,8 @@ else
   rm -rf $loc/*
 
   docker pull frbl/icpe-machine-learning
-  docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $COMMAND
+  if [ ! $DRY ]; then
+    docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $COMMAND
+  fi
 fi
 

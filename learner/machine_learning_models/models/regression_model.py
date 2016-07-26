@@ -36,6 +36,7 @@ class LogisticRegressionModel(MachineLearningModel):
         if grid_search:
             parameter_grid = {'penalty': ['l1', 'l2'], 'C': np.logspace(0, 2, 5)}
 
+
             self.grid_search([parameter_grid])
 
         super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification')

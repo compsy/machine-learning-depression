@@ -83,7 +83,7 @@ class DistributedGridSearch:
         L.info('Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv(9, 0), StopIteration):
             L.info('Picking up a task on node %d' % self.rank)
-            model = GridSearchCV(estimator=self.skmodel.copy(), param_grid=task, n_jobs=-1, verbose=1, cv=self.cv)
+            model = GridSearchCV(estimator=self.skmodel, param_grid=task, n_jobs=-1, verbose=1, cv=self.cv)
 
             model = model.fit(X=X, y=y)
 

@@ -65,7 +65,7 @@ class MachineLearningModel:
             raise NotImplementedError('Skmodel is none!')
 
         L.info('Training ' + self.given_name)
-        self.skmodel = self.skmodel.fit(X=self.x_train, y=self.y_train)
+        self.skmodel = self.dismodel.fit(X=self.x_train, y=self.y_train)
         self.was_trained = True
 
         if isinstance(self.skmodel, GridSearchCV):
@@ -95,9 +95,9 @@ class MachineLearningModel:
         return type(self).__name__
 
     def grid_search(self, param_grid):
-        self.skmodel = DistributedGridSearch(estimator=self.skmodel.copy(), param_grid=param_grid, cv=8)
+        self.dismodel = DistributedGridSearch(estimator=self.skmodel, param_grid=param_grid, cv=8)
         # self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
-        return self.skmodel
+        return self.dismodel
 
     ## Override
     def predict_for_roc(self, x_data):

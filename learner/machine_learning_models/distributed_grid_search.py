@@ -22,7 +22,14 @@ class DistributedGridSearch:
 
     def fit(self, X, y):
         # Sync all nodes
-        if(self.rank == 0): L.info('Starting the barrier')
+        self.send(obj=1, dest=0)
+        if self.rank == 0:
+            a = 0
+            while(self.comm.recv()):
+                a +=  1
+                print('%d of %d' % (a, self.size))
+
+        self.comm.Barrier()
         if self.rank == 0:
             self.master()
         else:
@@ -46,7 +53,7 @@ class DistributedGridSearch:
         while(not self.queue.empty):
             obj = self.queue.get()
             self.comm.recv(source=MPI.ANY_SOURCE, status=status)
-            self.send(obj=obj, dest=status.Get_source())
+            self.comm.send(obj=obj, dest=status.Get_source())
             percent = ((position + 1) * 100) // (n_tasks + n_workers)
             sys.stdout.write('\rProgress: [%-50s] %3i%% ' %
                     ('=' * (percent // 2), percent))

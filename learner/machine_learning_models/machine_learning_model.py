@@ -95,10 +95,11 @@ class MachineLearningModel:
         return type(self).__name__
 
     def grid_search(self, param_grid):
-        self.skmodel = DistributedGridSearch(estimator=self.skmodel, param_grid=param_grid, cv=8)
+        self.skmodel = DistributedGridSearch(estimator=self.skmodel.copy(), param_grid=param_grid, cv=8)
         # self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
         return self.skmodel
 
     ## Override
     def predict_for_roc(self, x_data):
         return self.skmodel.decision_function(x_data)
+

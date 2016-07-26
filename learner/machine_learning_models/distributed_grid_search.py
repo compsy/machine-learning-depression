@@ -66,7 +66,7 @@ class DistributedGridSearch:
             sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             sys.stdout.flush()
 
-        models = comm.gather(root=MPI.ROOT)
+        models = self.comm.gather(root=MPI.ROOT)
         best_model = None
         best_score = float('-inf')
         for model in models:
@@ -79,7 +79,7 @@ class DistributedGridSearch:
     def slave(self, X, y):
         models = []
         # Ask for work until we receive StopIteration
-        for task in iter(lambda: comm.sendrecv(dest=0), StopIteration):
+        for task in iter(lambda: self.comm.sendrecv(dest=0), StopIteration):
             L.info('Picking up a task on node %d' % self.rank)
             model = GridSearchCV(estimator=self.skmodel, param_grid=self.param_grid, n_jobs=-1, verbose=1, cv=self.cv)
             model = model.fit(X=X, y=y)
@@ -89,5 +89,5 @@ class DistributedGridSearch:
             models.append(model)
 
         # Collective report to parent
-        comm.gather(sendobj=models, root=0)
+        self.comm.gather(sendobj=models, root=0)
         exit(0)

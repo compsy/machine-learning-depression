@@ -53,14 +53,16 @@ git pull
 git checkout $BRANCH
 cd ..
 
-learner="$(pwd)/$gitdir/learner"
-location="$(pwd)/$gitdir/"
-docker="$(pwd)/$gitdir/docker"
+pre_dir=$(pwd)
+
+learner="$pre_dir/$gitdir/learner"
+location="$pre_dir/$gitdir/"
+docker="$pre_dir/$gitdir/docker"
 
 if [ $HPC ]; then
-  echo $(pwd)
   cp -r ~/data $location
   cd $docker/cluster
+  echo $(pwd)
   mv submit.sh ~
   cd ~
   if [ ! $DRY ]; then

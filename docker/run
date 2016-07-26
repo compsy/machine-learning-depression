@@ -7,7 +7,7 @@ DRY=false
 while [[ $# -gt 1 ]]
 do
 key="$1"
-
+echo $key
 case $key in
     -b|--branch)
     BRANCH="$2"
@@ -34,7 +34,7 @@ case $key in
 esac
 shift # past argument or value
 done
-
+echo $HPC
 if [ $HPC ]; then
   module load git
 fi

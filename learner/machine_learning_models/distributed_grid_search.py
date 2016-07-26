@@ -98,10 +98,11 @@ class DistributedGridSearch:
 
             # only add the best model
             model = (model.best_score_, model.best_estimator_)
+            L.info('\t\t\t!!!!!!!!!! Appending model with score %d' % model.best_score_)
             models.append(model)
 
         # Collective report to parent
-        L.info('Finished calculating')
+        L.info('Finished calculating, calculated %d models' % len(models))
         self.comm.gather(sendobj=models, root=0)
 
         exit(0)

@@ -74,6 +74,7 @@ if [ $HPC ]; then
     done
     tail -f slurm*
   else
+    export PYTHONWARNINGS="ignore"
     ./submit.sh
   fi
 else

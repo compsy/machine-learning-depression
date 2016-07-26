@@ -64,7 +64,7 @@ class SupportVectorClassificationModel(MachineLearningModel):
         simple_grid = {'kernel': ['poly'], 'degree': [2], 'C': [6000000]}
 
         param_grid = [poly_grid, rbf_grid, linear_grid, sigmoid_grid]
-        self.grid_search(param_grid)
+        self.grid_search([sigmoid_grid])
 
         super().__init__(x, y, x_names, y_names, model_type='classification')
 

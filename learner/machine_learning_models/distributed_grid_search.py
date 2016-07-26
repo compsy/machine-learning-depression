@@ -46,7 +46,7 @@ class DistributedGridSearch:
 
         temp = []
         for job in range(len(self.param_grid)):
-            if job % self.cpus_per_node == 0 and job != 0:
+            if (job % self.cpus_per_node == 0 and job != 0) or (job == (len(self.param_grid)-1)):
                 self.queue.put(temp)
                 temp = []
             current_job = self.merge_dicts([self.param_grid[job]])
@@ -62,7 +62,7 @@ class DistributedGridSearch:
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
             L.info("-------------------")
-            L.info("Master: Queue size: %d/%d (%d number of configurations)" % (self.queue.qsize(), qsize, len(self.param_grid)))
+            L.info("Master: Queue size: %d/%d (%d number of configurations, %d nodes )" % (self.queue.qsize(), qsize, len(self.param_grid), self.size))
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()

@@ -80,7 +80,7 @@ class DistributedGridSearch:
     def slave(self, X, y):
         models = []
         # Ask for work until we receive StopIteration
-        for task in iter(lambda: self.comm.sendrecv(sendobj=None, int_dest=0), StopIteration):
+        for task in iter(lambda: self.comm.sendrecv(None, 0), StopIteration):
             L.info('Picking up a task on node %d' % self.rank)
             model = GridSearchCV(estimator=self.skmodel, param_grid=self.param_grid, n_jobs=-1, verbose=1, cv=self.cv)
             model = model.fit(X=X, y=y)

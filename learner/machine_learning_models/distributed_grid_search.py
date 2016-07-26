@@ -48,7 +48,6 @@ class DistributedGridSearch:
         temp = []
         for job in range(len(self.param_grid)):
             if job % self.cpus_per_node == 0 and job != 0:
-                temp = self.merge_dicts(temp)
                 self.queue.put(temp)
                 temp = []
             temp.append(self.param_grid[job])
@@ -62,7 +61,8 @@ class DistributedGridSearch:
             obj = self.queue.get()
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
-            L.info("Queue size: %d" % self.queue.qsize())
+            L.info("-------------------")
+            L.info("Master: Queue size: %d" % self.queue.qsize())
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()
@@ -80,17 +80,16 @@ class DistributedGridSearch:
     def slave(self, X, y):
         models = []
         # Ask for work until we receive StopIteration
-        L.info('Waiting for data..')
+        L.info('Slave: Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv(9, 0), StopIteration):
-            L.info('Picking up a task on node %d, task size: %d' % (self.rank, len(task.keys())))
-            L.info(task)
-            model = GridSearchCV(estimator=self.skmodel, param_grid=task, n_jobs=-1, verbose=1, cv=self.cv)
+            L.info('Slave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
+            for subtask in task:
+                model = GridSearchCV(estimator=self.skmodel, param_grid=subtask, n_jobs=-1, verbose=1, cv=self.cv)
+                model = model.fit(X=X, y=y)
 
-            model = model.fit(X=X, y=y)
-
-            # only add the best model
-            model = (model.best_score_, model.best_estimator_)
-            models.append(model)
+                # only add the best model
+                model = (model.best_score_, model.best_estimator_)
+                models.append(model)
 
         # Collective report to parent
         self.comm.gather(sendobj=models, root=0)

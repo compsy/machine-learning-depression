@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
     # General settings
     VERBOSITY = 0
-    HPC = True
+    HPC = False
     # Should the analysis include polynomial features?
     POLYNOMIAL_FEATURES = False
 

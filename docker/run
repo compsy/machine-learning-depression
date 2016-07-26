@@ -34,7 +34,7 @@ case $key in
 esac
 shift # past argument or value
 done
-echo $HPC
+echo $DRY
 if [ $HPC ]; then
   module load git
 fi

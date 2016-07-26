@@ -26,8 +26,10 @@ class LinearRegressionModel(MachineLearningModel):
 class LogisticRegressionModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True):
+        super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification')
         self.skmodel = LogisticRegression(penalty='l2',
                                           C=0.1,
+                                          n_jobs=-1,
                                           verbose=verbosity,
                                           random_state=42,
                                           tol=0.000001,
@@ -35,11 +37,8 @@ class LogisticRegressionModel(MachineLearningModel):
 
         if grid_search:
             parameter_grid = {'penalty': ['l1', 'l2'], 'C': np.logspace(0, 2, 5)}
-
-
             self.grid_search([parameter_grid])
 
-        super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification')
 
     def predict_for_roc(self, x_data):
         return self.skmodel.decision_function(x_data)

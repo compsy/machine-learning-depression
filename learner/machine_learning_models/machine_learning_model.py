@@ -18,6 +18,7 @@ class MachineLearningModel:
         self.y = y
         self.x_names = x_names
         self.y_names = y_names
+        self.grid_model = None
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
@@ -65,13 +66,20 @@ class MachineLearningModel:
             raise NotImplementedError('Skmodel is none!')
 
         L.info('Training ' + self.given_name)
-        self.skmodel = self.dismodel.fit(X=self.x_train, y=self.y_train)
+        if self.grid_model is not None:
+            result = self.dismodel.fit(X=self.x_train, y=self.y_train)
+        else:
+            result = self.skmodel.fit(X=self.x_train, y=self.y_train)
+
+        # This check is needed whenever we run using MPI
+        if result != False: self.skmodel = result
         self.was_trained = True
 
         if isinstance(self.skmodel, GridSearchCV):
             self.skmodel = self.skmodel.best_estimator_
 
         L.info('Fitted ' + self.given_name)
+        return result
 
     def cv_predict(self):
         self.skmodel.fit(self.x_train, self.y_train)
@@ -95,9 +103,9 @@ class MachineLearningModel:
         return type(self).__name__
 
     def grid_search(self, param_grid):
-        self.dismodel = DistributedGridSearch(estimator=self.skmodel, param_grid=param_grid, cv=8)
+        self.grid_model = DistributedGridSearch(estimator=self.skmodel, param_grid=param_grid, cv=8)
         # self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
-        return self.dismodel
+        return self.grid_model
 
     ## Override
     def predict_for_roc(self, x_data):

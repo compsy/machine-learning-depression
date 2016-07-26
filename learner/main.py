@@ -227,14 +227,14 @@ if __name__ == '__main__':
     models = []
     if (CLASSIFICATION):
         models = [
-            # SupportVectorClassificationModel
-            LogisticRegressionModel
+            SupportVectorClassificationModel,
+            LogisticRegressionModel,
             # # BaggingClassificationModel,
             # BoostingClassificationModel,
-            # NaiveBayesModel,
-            # DummyClassifierModel,
+            NaiveBayesModel,
+            DummyClassifierModel,
             # # DummyRandomClassifierModel,
-            # ClassificationTreeModel
+            ClassificationTreeModel
             #KerasNnClassificationModel
         ]
         # Output columns

@@ -16,8 +16,11 @@ class SyncModelRunner:
         return created_models
 
     def run_calculations(self, fabricated_models):
+        result = True
         for model in fabricated_models:
             L.info('Training from syncmodelrunner')
-            model.train()
+            result = model.train()
 
-        return (True, fabricated_models)
+        # Convert the outcome to a boolean
+        result = result != False
+        return (result, fabricated_models)

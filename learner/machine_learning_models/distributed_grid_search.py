@@ -71,30 +71,24 @@ class DistributedGridSearch:
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()
+
         L.info('\tQueue is empty, continueing')
         models = []
         models = self.comm.gather(models, root=0)
-        best_model = 123
+        best_model = None
         best_score = float('-inf')
 
         L.info('\tWe received %d models' % len(models))
-        none_models = 0
-        empty_models = 0
         good_models = 0
         for model in models:
-            if model is None:
-                none_models += 1
-                continue
-            if len(model) == 0:
-                empty_models += 1
-                continue
+            if len(model) == 0: continue
             for sub_model in model:
                 good_models += 1
                 if sub_model[0] > best_score:
                     best_score = sub_model[0]
                     best_model = sub_model[1]
 
-        L.info('\tThese models had %d nones, %d emptys, and %d goods' % (none_models, empty_models, good_models))
+        L.info('\tThese models had %d good models' % (good_models))
         return best_model
 
     def slave(self, X, y):
@@ -103,7 +97,7 @@ class DistributedGridSearch:
         L.info('\t\tSlave: Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv(self.rank, 0), StopIteration):
             L.info('\t\tSlave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
-            model = GridSearchCV(estimator=self.skmodel, param_grid=task, n_jobs=-1, verbose=1, cv=self.cv)
+            model = GridSearchCV(estimator=self.skmodel, param_grid=task, n_jobs=1, verbose=1, cv=self.cv)
             model = model.fit(X=X, y=y)
 
             # only add the best model

@@ -73,7 +73,11 @@ class DistributedGridSearch:
         models = self.comm.gather(models, root=0)
         best_model = None
         best_score = float('-inf')
+
         for model in models:
+            if model is None:
+                continue
+
             if model[0] > best_score:
                 best_score = model[0]
                 best_model = model[1]

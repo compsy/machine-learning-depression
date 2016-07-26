@@ -104,6 +104,7 @@ class DistributedGridSearch:
             model = model.fit(X=X, y=y)
 
             # only add the best model
+            L.info(model)
             model = (model.best_score_, model.best_estimator_)
             L.info(model)
 

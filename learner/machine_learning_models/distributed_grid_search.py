@@ -25,17 +25,16 @@ class DistributedGridSearch:
     def fit(self, X, y):
         # Sync all nodes
 
-        self.comm.send(obj=1, dest=0)
-        if self.rank == 0:
-            a = 0
-            running = True
-            while (self.comm.recv() and running):
-                a += 1
-                print('%d of %d' % (a, self.size))
-                if a == self.size: running = False
+        # self.comm.send(obj=1, dest=0)
+        # if self.rank == 0:
+            # a = 0
+            # running = True
+            # while (self.comm.recv() and running):
+                # a += 1
+                # print('%d of %d' % (a, self.size))
+                # if a == self.size: running = False
         
         L.info('Approaching barrier')
-        self.comm.Barrier()
         if self.rank == 0:
             L.info('Starting master')
             self.master()
@@ -60,7 +59,8 @@ class DistributedGridSearch:
         status = MPI.Status()
         while (not self.queue.empty):
             obj = self.queue.get()
-            self.comm.recv(source=MPI.ANY_SOURCE, status=status)
+            recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
+            print(recv)
             self.comm.send(obj=obj, dest=status.Get_source())
             L.info(self.queue.qsize())
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
@@ -81,7 +81,7 @@ class DistributedGridSearch:
         models = []
         # Ask for work until we receive StopIteration
         L.info('Waiting for data..')
-        for task in iter(lambda: self.comm.sendrecv(None, 0), StopIteration):
+        for task in iter(lambda: self.comm.sendrecv(9, 0), StopIteration):
             L.info('Picking up a task on node %d' % self.rank)
             model = GridSearchCV(estimator=self.skmodel, param_grid=self.param_grid, n_jobs=-1, verbose=1, cv=self.cv)
             model = model.fit(X=X, y=y)

@@ -1,5 +1,7 @@
 from sklearn.grid_search import GridSearchCV, ParameterGrid
 from queue import Queue
+from data_output.std_logger import L
+from mpi4py import MPI
 
 class DistributedGridSearch:
     def __init__(self, estimator, param_grid, cv):
@@ -64,6 +66,7 @@ class DistributedGridSearch:
         models = []
         # Ask for work until we receive StopIteration
         for task in iter(lambda: comm.sendrecv(dest=0), StopIteration):
+            L.info('Picking up a task on node %d' % self.rank)
             model = GridSearchCV(estimator=self.skmodel,
                     param_grid=self.param_grid, n_jobs=-1, verbose=1,
                     cv=self.cv)

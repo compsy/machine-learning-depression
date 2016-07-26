@@ -22,12 +22,16 @@ class DistributedGridSearch:
 
     def fit(self, X, y):
         # Sync all nodes
+
+        print('!!!!!!!!!!!!!!!!!iJA RUNNING !!!!!!!!!!')
         self.send(obj=1, dest=0)
         if self.rank == 0:
             a = 0
             while(self.comm.recv()):
                 a +=  1
+                print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 print('%d of %d' % (a, self.size))
+                print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
         self.comm.Barrier()
         if self.rank == 0:

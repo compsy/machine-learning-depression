@@ -70,7 +70,7 @@ class DistributedGridSearch:
             # sys.stdout.flush()
 
         models = None
-        models = self.comm.gather(models, root=MPI.ROOT)
+        models = self.comm.gather(models, root=0)
         best_model = None
         best_score = float('-inf')
         for model in models:

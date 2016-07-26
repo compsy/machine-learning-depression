@@ -21,7 +21,7 @@ class FourDKLQuestionnaire(Questionnaire):
         ]
 
     def som_score(self, participant):
-        L.warn('Before using this function, test whether the correct variables are used for calculating this score!')
+        # L.warn('Before using this function, test whether the correct variables are used for calculating this score!')
         dat = self.get_row(participant)
 
         # If there are no values > 0, we return nan

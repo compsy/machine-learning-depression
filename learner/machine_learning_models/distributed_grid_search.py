@@ -57,7 +57,7 @@ class DistributedGridSearch:
             self.queue.put(StopIteration)
 
         status = MPI.Status()
-        while (not self.queue.empty):
+        while not self.queue.empty():
             obj = self.queue.get()
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             print(recv)

@@ -3,7 +3,7 @@ server_name=peregrine
 dryrun=""
 while [[ $# -gt 1 ]]
 do
-key="$1"
+$key="$1"
 echo key
 case $key in
     -s|--server)

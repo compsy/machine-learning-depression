@@ -93,5 +93,6 @@ class DistributedGridSearch:
             models.append(model)
 
         # Collective report to parent
+        L.info('Finished calculating')
         self.comm.gather(sendobj=models, root=0)
         exit(0)

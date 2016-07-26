@@ -87,3 +87,4 @@ class DistributedGridSearch:
 
         # Collective report to parent
         comm.gather(sendobj=models, root=0)
+        exit(0)

@@ -54,7 +54,7 @@ class DistributedGridSearch:
             temp.append(current_job)
 
         # Add an extra job for each node to stop at the end
-        for node in range(self.size - 2):
+        for node in range(self.size - 1):
             self.queue.put(StopIteration)
 
         qsize = self.queue.qsize()
@@ -96,4 +96,5 @@ class DistributedGridSearch:
         # Collective report to parent
         L.info('Finished calculating')
         self.comm.gather(sendobj=models, root=0)
+
         exit(0)

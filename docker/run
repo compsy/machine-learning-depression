@@ -73,6 +73,8 @@ if [ $HPC ]; then
       sleep 5
     done
     tail -f slurm*
+  else
+    ./submit.sh
   fi
 else
   echo "Running in docker mode"

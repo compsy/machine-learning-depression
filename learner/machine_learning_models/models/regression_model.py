@@ -34,7 +34,7 @@ class LogisticRegressionModel(MachineLearningModel):
                                           max_iter=100000)
 
         if grid_search:
-            parameter_grid = {'penalty': ['l1', 'l2'], 'C': np.logspace(0, 2, 10)}
+            parameter_grid = {'penalty': ['l1', 'l2'], 'C': np.logspace(0, 2, 5)}
 
             self.grid_search([parameter_grid])
 

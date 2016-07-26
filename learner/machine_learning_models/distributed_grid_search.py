@@ -55,14 +55,14 @@ class DistributedGridSearch:
         # Add an extra job for each node to stop at the end
         for node in range(self.size):
             self.queue.put(StopIteration)
-
+        qsize = self.queue.qsize()
         status = MPI.Status()
         while not self.queue.empty():
             obj = self.queue.get()
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
             L.info("-------------------")
-            L.info("Master: Queue size: %d" % self.queue.qsize())
+            L.info("Master: Queue size: %d/%d" % (self.queue.qsize(), qsize))
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()

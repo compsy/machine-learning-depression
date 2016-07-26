@@ -9,11 +9,7 @@ import numpy as np
 class SupportVectorRegressionModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
-        super().__init__(x, y, x_names, y_names, model_type='regression')
         self.skmodel = svm.SVR(verbose=verbosity)
-        self.skmodel = self.grid_search(self.skmodel)
-
-    def grid_search(self, model):
         # Radial basis function grid
         rbf_grid = {'kernel': ['rbf'],
                     'C': [1, 10, 100, 1000],
@@ -37,17 +33,16 @@ class SupportVectorRegressionModel(MachineLearningModel):
                         'gamma': logspace(0, 1, 5)}
 
         param_grid = [rbf_grid, poly_grid, linear_grid, sigmoid_grid]
-        return GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, verbose=1)
+        self.grid_search(sigmoid_grid)
+
+        super().__init__(x, y, x_names, y_names, model_type='classification')
 
 
 class SupportVectorClassificationModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
-        super().__init__(x, y, x_names, y_names, model_type='classification')
         self.skmodel = svm.SVC(verbose=verbosity, kernel='poly', degree=2, C=600000)
         self.skmodel = self.grid_search(self.skmodel)
-
-    def grid_search(self, model):
         # Radial basis function grid
         rbf_grid = {'kernel': ['rbf'],
                     'C': [1, 10, 100, 1000],
@@ -73,7 +68,9 @@ class SupportVectorClassificationModel(MachineLearningModel):
         simple_grid = {'kernel': ['poly'], 'degree': [2], 'C': [6000000]}
 
         param_grid = [poly_grid, rbf_grid, linear_grid, sigmoid_grid]
-        return GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, verbose=1)
+        self.grid_search(sigmoid_grid)
+
+        super().__init__(x, y, x_names, y_names, model_type='classification')
 
     def variable_to_validate(self):
         return 'degree'

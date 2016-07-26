@@ -38,7 +38,7 @@ class LogisticRegressionModel(MachineLearningModel):
                            'C': np.logspace(0, 2, 10)
                            }
 
-            self.grid_search([parameter_grid])
+            self.grid_search(parameter_grid)
 
         super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification')
 

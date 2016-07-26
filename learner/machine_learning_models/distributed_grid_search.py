@@ -69,7 +69,8 @@ class DistributedGridSearch:
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()
 
-        models = self.comm.gather(root=MPI.ROOT)
+        models = None
+        models = self.comm.gather(models, root=MPI.ROOT)
         best_model = None
         best_score = float('-inf')
         for model in models:

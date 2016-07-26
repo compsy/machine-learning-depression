@@ -36,8 +36,10 @@ class DistributedGridSearch:
 
         self.comm.Barrier()
         if self.rank == 0:
+            L.info('Starting master')
             self.master()
         else:
+            L.info('Starting slave')
             self.slave(X, y)
 
     def master(self):

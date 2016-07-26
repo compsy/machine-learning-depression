@@ -35,7 +35,7 @@ class DistributedGridSearch:
                 if a == self.size: running = False
         
         L.info('Approaching barrier')
-        # self.comm.Barrier()
+        self.comm.Barrier()
         if self.rank == 0:
             L.info('Starting master')
             self.master()
@@ -50,7 +50,6 @@ class DistributedGridSearch:
             temp = []
             for jobs_per_node in range(self.cpus_per_node):
                 temp.append(self.param_grid[job])
-            print(temp) 
             temp = self.merge_dicts(temp)
             self.queue.put(temp)
 
@@ -81,6 +80,7 @@ class DistributedGridSearch:
     def slave(self, X, y):
         models = []
         # Ask for work until we receive StopIteration
+        L.info('Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv(None, 0), StopIteration):
             L.info('Picking up a task on node %d' % self.rank)
             model = GridSearchCV(estimator=self.skmodel, param_grid=self.param_grid, n_jobs=-1, verbose=1, cv=self.cv)

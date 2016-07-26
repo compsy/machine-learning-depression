@@ -55,6 +55,7 @@ class DistributedGridSearch:
         # Add an extra job for each node to stop at the end
         for node in range(self.size):
             self.queue.put(StopIteration)
+
         qsize = self.queue.qsize()
         status = MPI.Status()
         while not self.queue.empty():
@@ -83,13 +84,12 @@ class DistributedGridSearch:
         L.info('Slave: Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv(9, 0), StopIteration):
             L.info('Slave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
-            for subtask in task:
-                model = GridSearchCV(estimator=self.skmodel, param_grid=subtask, n_jobs=-1, verbose=1, cv=self.cv)
-                model = model.fit(X=X, y=y)
+            model = GridSearchCV(estimator=self.skmodel, param_grid=subtask, n_jobs=-1, verbose=0, cv=self.cv)
+            model = model.fit(X=X, y=y)
 
-                # only add the best model
-                model = (model.best_score_, model.best_estimator_)
-                models.append(model)
+            # only add the best model
+            model = (model.best_score_, model.best_estimator_)
+            models.append(model)
 
         # Collective report to parent
         self.comm.gather(sendobj=models, root=0)

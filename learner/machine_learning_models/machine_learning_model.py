@@ -67,7 +67,7 @@ class MachineLearningModel:
 
         L.info('Training ' + self.given_name)
         if self.grid_model is not None:
-            result = self.dismodel.fit(X=self.x_train, y=self.y_train)
+            result = self.grid_model.fit(X=self.x_train, y=self.y_train)
         else:
             result = self.skmodel.fit(X=self.x_train, y=self.y_train)
 

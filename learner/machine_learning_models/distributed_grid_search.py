@@ -33,7 +33,6 @@ class DistributedGridSearch:
                 # a += 1
                 # print('%d of %d' % (a, self.size))
                 # if a == self.size: running = False
-        
         L.info('Approaching barrier')
         if self.rank == 0:
             L.info('Starting master')
@@ -63,7 +62,7 @@ class DistributedGridSearch:
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
             L.info("-------------------")
-            L.info("Master: Queue size: %d/%d" % (self.queue.qsize(), qsize))
+            L.info("Master: Queue size: %d/%d (%d number of configurations)" % (self.queue.qsize(), qsize, len(self.param_grid)))
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()

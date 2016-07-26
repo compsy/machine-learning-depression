@@ -50,7 +50,8 @@ class DistributedGridSearch:
             if job % self.cpus_per_node == 0 and job != 0:
                 self.queue.put(temp)
                 temp = []
-            temp.append(self.param_grid[job])
+            current_job = self.merge_dicts(self.param_grid[job])
+            temp.append(current_job)
 
         # Add an extra job for each node to stop at the end
         for node in range(self.size):
@@ -84,7 +85,7 @@ class DistributedGridSearch:
         for task in iter(lambda: self.comm.sendrecv(9, 0), StopIteration):
             L.info('Slave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
             for subtask in task:
-                model = GridSearchCV(estimator=self.skmodel, param_grid=[subtask], n_jobs=-1, verbose=1, cv=self.cv)
+                model = GridSearchCV(estimator=self.skmodel, param_grid=subtask, n_jobs=-1, verbose=1, cv=self.cv)
                 model = model.fit(X=X, y=y)
 
                 # only add the best model

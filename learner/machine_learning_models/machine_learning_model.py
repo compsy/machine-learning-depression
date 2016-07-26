@@ -8,7 +8,7 @@ from machine_learning_evaluation.f1_evaluation import F1Evaluation
 from machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
 from data_output.std_logger import L
 from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
-from distributed_grid_search import DistributedGridSearch
+from machine_learning_models.distributed_grid_search import DistributedGridSearch
 
 class MachineLearningModel:
 

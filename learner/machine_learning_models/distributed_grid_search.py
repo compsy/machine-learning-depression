@@ -45,12 +45,13 @@ class DistributedGridSearch:
     def master(self):
         self.queue = Queue()
 
+        temp = []
         for job in range(len(self.param_grid)):
-            temp = []
-            for jobs_per_node in range(self.cpus_per_node):
-                temp.append(self.param_grid[job])
-            temp = self.merge_dicts(temp)
-            self.queue.put(temp)
+            if job % self.cpus_per_node == 0 and job != 0:
+                temp = self.merge_dicts(temp)
+                self.queue.put(temp)
+                temp = []
+            temp.append(self.param_grid[job])
 
         # Add an extra job for each node to stop at the end
         for node in range(self.size):

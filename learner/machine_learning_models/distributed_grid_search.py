@@ -79,9 +79,10 @@ class DistributedGridSearch:
                 continue
             if len(model) == 0:
                 continue
-            if model[0] > best_score:
-                best_score = model[0]
-                best_model = model[1]
+            for sub_model in model:
+                if sub_model[0] > best_score:
+                    best_score = sub_model[0]
+                    best_model = sub_model[1]
 
         return best_model
 

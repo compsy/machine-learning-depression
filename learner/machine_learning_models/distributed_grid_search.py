@@ -64,18 +64,18 @@ class DistributedGridSearch:
             obj = self.queue.get()
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
-            L.info("-------------------")
-            L.info("\t\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (self.queue.qsize(), qsize, recv,len(self.param_grid), self.size))
+            L.info("\t-------------------")
+            L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (self.queue.qsize(), qsize, recv,len(self.param_grid), self.size))
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()
-        L.info('\t\tQueue is empty, continueing')
+        L.info('\tQueue is empty, continueing')
         models = None
         models = self.comm.gather(models, root=0)
         best_model = None
         best_score = float('-inf')
         
-        L.info('We received %d models' % len(models))
+        L.info('\tWe received %d models' % len(models))
         none_models = 0
         empty_models = 0
         good_models = 0
@@ -91,7 +91,7 @@ class DistributedGridSearch:
                 if sub_model[0] > best_score:
                     best_score = sub_model[0]
                     best_model = sub_model[1]
-        L.info('These models had %d nones, %d emptys, and %d goods' % (none_models, empty_models, good_models))
+        L.info('\tThese models had %d nones, %d emptys, and %d goods' % (none_models, empty_models, good_models))
         return best_model
 
     def slave(self, X, y):
@@ -105,11 +105,13 @@ class DistributedGridSearch:
 
             # only add the best model
             model = (model.best_score_, model.best_estimator_)
+            L.info(model)
+
             L.info('\t\t\t!!!!!!!!!! Appending model with score %d' % model[0])
             models.append(model)
 
         # Collective report to parent
-        L.info('Finished calculating, calculated %d models' % len(models))
+        L.info('\t\tFinished calculating, calculated %d models' % len(models))
         self.comm.gather(sendobj=models, root=0)
-
+        L.info('\t\tByebye')
         exit(0)

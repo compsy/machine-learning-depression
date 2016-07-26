@@ -76,6 +76,3 @@ class DistributedGridSearch:
         # Collective report to parent
         comm.gather(sendobj=models, root=0)
 
-a = {'kernel': ['a','b','c','d','e'], 'test': [1,2,3,4,5], 'test2':[6,7,8], 'test3':[9,0,11]}
-param_grid = ParameterGrid(a)
-DistributedGridSearch(param_grid)

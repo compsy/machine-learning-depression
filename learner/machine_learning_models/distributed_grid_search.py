@@ -62,9 +62,10 @@ class DistributedGridSearch:
             obj = self.queue.get()
             self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
-            percent = ((position + 1) * 100) // (n_tasks + n_workers)
-            sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
-            sys.stdout.flush()
+            L.info(self.queue.qsize())
+            # percent = ((position + 1) * 100) // (n_tasks + n_workers)
+            # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
+            # sys.stdout.flush()
 
         models = self.comm.gather(root=MPI.ROOT)
         best_model = None
@@ -79,7 +80,7 @@ class DistributedGridSearch:
     def slave(self, X, y):
         models = []
         # Ask for work until we receive StopIteration
-        for task in iter(lambda: self.comm.sendrecv(dest=0, source=self.rank), StopIteration):
+        for task in iter(lambda: self.comm.sendrecv(sendobj=None, int_dest=0), StopIteration):
             L.info('Picking up a task on node %d' % self.rank)
             model = GridSearchCV(estimator=self.skmodel, param_grid=self.param_grid, n_jobs=-1, verbose=1, cv=self.cv)
             model = model.fit(X=X, y=y)

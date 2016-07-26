@@ -65,6 +65,7 @@ if [ $HPC ]; then
   echo $(pwd)
   mv submit.sh ~
   cd ~
+  chmod +x submit.sh
   if [ ! $DRY ]; then
     sbatch submit.sh | cut -d" " -f 4 | tee last_job
     while ! ls slurm* 1> /dev/null 2>&1

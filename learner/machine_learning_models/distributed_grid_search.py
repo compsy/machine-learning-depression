@@ -68,7 +68,7 @@ class DistributedGridSearch:
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()
-
+        L.info('\t\tQueue is empty, continueing')
         models = None
         models = self.comm.gather(models, root=0)
         best_model = None

@@ -11,7 +11,7 @@ case $key in
     shift # past argument
     ;;
     -d|--dry-run)
-    dryrun="-d"
+    dryrun="-d true"
     shift # past argument
     ;;
     --default)

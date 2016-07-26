@@ -46,7 +46,7 @@ class DistributedGridSearch:
     def master(self):
         self.queue = Queue()
 
-        for job in range(len(param_grid)):
+        for job in range(len(self.param_grid)):
             temp = []
             for jobs_per_node in range(self.cpus_per_node):
                 temp.append(self.param_grid[job])

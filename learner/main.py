@@ -5,7 +5,6 @@ import random
 from data_output.std_logger import L
 from sklearn.ensemble.bagging import BaggingClassifier
 from sklearn.preprocessing import normalize, scale
-from mpi4py import MPI
 
 from data_input import spss_reader
 from data_output.csv_exporter import CsvExporter
@@ -92,12 +91,15 @@ def calculate_true_false_ratio(y_data):
 
 
 if __name__ == '__main__':
-    L.setup()
     random.seed(42)
 
     # General settings
     VERBOSITY = 0
+
+    # Are we running on the HPC?
     HPC = False
+
+    L.setup(True)
     # Should the analysis include polynomial features?
     POLYNOMIAL_FEATURES = False
 
@@ -166,7 +168,7 @@ if __name__ == '__main__':
         'a4dkl-4dkld05',
         'a4dkl-4dkld06',
         'a4dkl-4dkld07',
-        'a4dkl-4dkld08',
+    'a4dkl-4dkld08',
         'a4dkl-4dkld09',
         'a4dkl-4dkld10',
         'a4dkl-4dkld11',
@@ -226,28 +228,24 @@ if __name__ == '__main__':
     ##### Define the models we should run
     models = []
     if (CLASSIFICATION):
-        models = [
-            SupportVectorClassificationModel,
-            LogisticRegressionModel,
-            # # BaggingClassificationModel,
-            # BoostingClassificationModel,
-            NaiveBayesModel,
-            DummyClassifierModel,
-            # # DummyRandomClassifierModel,
-            ClassificationTreeModel
-            #KerasNnClassificationModel
-        ]
+        models.append(SupportVectorClassificationModel)
+        models.append(LogisticRegressionModel)
+        # models.append(BaggingClassificationModel)
+        # models.append(BoostingClassificationModel)
+        models.append(NaiveBayesModel)
+        models.append(DummyClassifierModel)
+        models.append(DummyRandomClassifierModel)
+        models.append(ClassificationTreeModel)
+        # models.append(KerasNnClassificationModel)
         # Output columns
         Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
     else:  # Regression
-        models = [
-            # KerasNnModel,
-            LinearRegressionModel,
-            SupportVectorRegressionModel,
-            RegressionTreeModel,
-            BoostingModel,
-            BaggingModel
-        ]
+        # models.append(KerasNnModel)
+        models.append(LinearRegressionModel)
+        models.append(SupportVectorRegressionModel)
+        models.append(RegressionTreeModel)
+        models.append(BoostingModel)
+        models.append(BaggingModel)
         # Output columns
         Y_NAMES = np.array(['cids-followup-somScore'])
         #Y_NAMES = np.array(['cids-followup-severity'])

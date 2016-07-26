@@ -1,19 +1,27 @@
 import logging
 import warnings
 import time
-
+from mpi4py import MPI
 
 class L:
 
     @staticmethod
-    def setup():
+    def setup(logger_hpc):
         date = time.strftime("%y%m%d-%H%M")
         FORMAT = '%(asctime)-15s -> %(message)s'
         logging.basicConfig(filename='../exports/' + date + '_output.log', format=FORMAT, level=logging.INFO)
-        L.info('Starting Machine Learning')
+        global logger_hpc
+
+        if not logger_hpc:
+            L.info('Starting Machine Learning')
 
     @staticmethod
-    def info(text):
+    def info(text, force=False):
+        if logger_hpc and not force:
+            rank = MPI.COMM_WORLD.Get_rank()
+            if rank != 0:
+                return
+
         print(text)
         logging.info(text)
 

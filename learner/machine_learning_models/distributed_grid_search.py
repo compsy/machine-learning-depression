@@ -50,6 +50,7 @@ class DistributedGridSearch:
             temp = []
             for jobs_per_node in range(self.cpus_per_node):
                 temp.append(self.param_grid[job])
+            print(temp) 
             temp = self.merge_dicts(temp)
             self.queue.put(temp)
 

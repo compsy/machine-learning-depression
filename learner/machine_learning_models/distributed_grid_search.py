@@ -34,6 +34,7 @@ class DistributedGridSearch:
                 # print('%d of %d' % (a, self.size))
                 # if a == self.size: running = False
         L.info('Approaching barrier')
+        self.comm.Barrier()
         if self.rank == 0:
             L.info('Starting master')
             self.master()

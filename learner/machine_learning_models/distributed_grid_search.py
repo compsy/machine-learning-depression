@@ -70,10 +70,8 @@ class DistributedGridSearch:
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()
         L.info('\tQueue is empty, continueing')
-        models = None
-        other = self.comm.gather(models, root=0)
-        print(models)
-        print(other)
+        models = []
+        models = self.comm.gather(models, root=0)
         best_model = None
         best_score = float('-inf')
         

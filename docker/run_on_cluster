@@ -1,9 +1,10 @@
 #!/bin/bash
 server_name=peregrine
-dryrun="lalala"
+dryrun=""
 while [[ $# -gt 1 ]]
 do
 key="$1"
+echo key
 case $key in
     -s|--server)
     server_name="$2"

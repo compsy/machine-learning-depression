@@ -67,7 +67,7 @@ if [ $HPC ]; then
   cd ~
   chmod +x submit.sh
   export PYTHONWARNINGS="ignore"
-  if [ ! $DRY ]; then
+  if [ "$DRY"=false ]; then
     sbatch submit.sh | cut -d" " -f 4 | tee last_job
     while ! ls slurm* 1> /dev/null 2>&1
     do

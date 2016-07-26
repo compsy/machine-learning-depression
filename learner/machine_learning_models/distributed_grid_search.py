@@ -37,10 +37,12 @@ class DistributedGridSearch:
         self.comm.Barrier()
         if self.rank == 0:
             L.info('\tStarting master')
-            self.master()
+            return self.master()
+
         else:
             L.info('\t\tStarting slave')
             self.slave(X, y)
+            return False
 
     def master(self):
         self.queue = Queue()
@@ -74,7 +76,7 @@ class DistributedGridSearch:
         models = self.comm.gather(models, root=0)
         best_model = 123
         best_score = float('-inf')
-        
+
         L.info('\tWe received %d models' % len(models))
         none_models = 0
         empty_models = 0
@@ -88,11 +90,10 @@ class DistributedGridSearch:
                 continue
             for sub_model in model:
                 good_models += 1
-                L.info(sub_model[0])
-                L.info(sub_model[1])
                 if sub_model[0] > best_score:
                     best_score = sub_model[0]
                     best_model = sub_model[1]
+
         L.info('\tThese models had %d nones, %d emptys, and %d goods' % (none_models, empty_models, good_models))
         return best_model
 
@@ -110,7 +111,7 @@ class DistributedGridSearch:
             model = (model.best_score_, model.best_estimator_)
             L.info(model)
 
-            L.info('\t\t\t!!!!!!!!!! Appending model with score %d' % model[0])
+            L.info('\t\t\t!!!!!!!!!! Appending model with score %f' % model[0])
             models.append(model)
 
         # Collective report to parent

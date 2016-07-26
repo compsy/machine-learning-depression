@@ -58,6 +58,7 @@ location="$(pwd)/$gitdir/"
 docker="$(pwd)/$gitdir/docker"
 
 if [ $HPC ]; then
+  echo $(pwd)
   cp -r ~/data $location
   cd $docker/cluster
   mv submit.sh ~

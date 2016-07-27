@@ -47,11 +47,11 @@ class SupportVectorClassificationModel(MachineLearningModel):
         rbf_grid = {'kernel': ['rbf'], 'C': [1, 10, 100, 1000], 'gamma': np.logspace(0, 1, 5)}
 
         # Polynomial function grid
-        poly_grid = {'kernel': ['poly'],
-                     'C': [1, 10, 100, 1000],
-                     'degree': [1, 2, 3, 4, 5],
-                     'coef0': np.logspace(0, 1, 5),
-                     'gamma': np.logspace(0, 1, 5)}
+        #poly_grid = {'kernel': ['poly'],
+        #             'C': [1, 10, 100, 1000],
+        #             'degree': [1, 2, 3, 4, 5],
+        #             'coef0': np.logspace(0, 1, 5),
+        #             'gamma': np.logspace(0, 1, 5)}
 
         # Linear function grid
         linear_grid = {'kernel': ['linear'], 'C': [0.1, 1, 10, 100]}
@@ -62,9 +62,8 @@ class SupportVectorClassificationModel(MachineLearningModel):
                         'coef0': np.logspace(0, 1, 5),
                         'gamma': np.logspace(0, 1, 5)}
 
-        simple_grid = {'kernel': ['poly'], 'degree': [2], 'C': [6000000]}
-
-        param_grid = [poly_grid, rbf_grid, linear_grid, sigmoid_grid]
+        #param_grid = [poly_grid, rbf_grid, linear_grid, sigmoid_grid]
+        param_grid = [rbf_grid, linear_grid, sigmoid_grid]
         self.grid_search(param_grid)
 
 

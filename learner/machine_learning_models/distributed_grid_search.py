@@ -67,9 +67,9 @@ class DistributedGridSearch:
         status = MPI.Status()
         number_of_running_procs = self.size -1
         while not self.queue.empty():
-            obj = self.queue.get()
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             if recv[1] == 'next':
+                obj = self.queue.get()
                 self.comm.send(obj=obj, dest=status.Get_source())
                 L.info("\t-------------------")
                 L.info("\tMaster: Queue size: %d/%d (last job by node %d(%d), %d number of configurations, %d/%d running nodes)" % (self.queue.qsize(), qsize, recv[0], status.Get_source(),len(self.param_grid), number_of_running_procs, self.size))

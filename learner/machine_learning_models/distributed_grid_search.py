@@ -68,7 +68,7 @@ class DistributedGridSearch:
 
         # Get the queue of jobs to create
         queue = self.create_job_queue(shuffle=True)
-        qsize = self.queue.qsize()
+        qsize = queue.qsize()
 
         status = MPI.Status()
         running_procs = set()
@@ -80,7 +80,7 @@ class DistributedGridSearch:
                 self.comm.send(obj=obj, dest=status.Get_source())
                 L.info("\t-------------------")
                 L.info("\tMaster: Sending to node %d:" % status.Get_source())
-                L.info("\tMaster: Queue size: %d/%d (last job by node %d(%d), %d number of configurations, %d/%d running nodes)" % (self.queue.qsize(), qsize, recv[0], status.Get_source(),len(self.param_grid), len(running_procs), self.size))
+                L.info("\tMaster: Queue size: %d/%d (last job by node %d(%d), %d number of configurations, %d/%d running nodes)" % (queue.qsize(), qsize, recv[0], status.Get_source(),len(self.param_grid), len(running_procs), self.size))
                 L.info("\tMaster: %s nodes are still running" % running_procs)
                 L.info("\t-------------------")
             else:

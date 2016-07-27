@@ -48,7 +48,8 @@ class DistributedGridSearch:
         self.queue = Queue()
 
         temp = []
-        shuffled_range = random.shuffle(list(range(len(self.param_grid))))
+        shuffled_range = list(range(len(self.param_grid)))
+        random.shuffle(shuffled_range)
 
         for job in shuffled_range:
             if (job % self.cpus_per_node == 0 and job != 0) or (job == (len(self.param_grid)-1)):

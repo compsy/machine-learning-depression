@@ -2,7 +2,7 @@ from sklearn.grid_search import GridSearchCV, ParameterGrid
 from queue import Queue
 from data_output.std_logger import L
 from mpi4py import MPI
-
+import random
 
 class DistributedGridSearch:
 
@@ -48,7 +48,9 @@ class DistributedGridSearch:
         self.queue = Queue()
 
         temp = []
-        for job in range(len(self.param_grid)):
+        shuffled_range = random.shuffle(range(len(self.param_grid)))
+
+        for job in shuffled_range:
             if (job % self.cpus_per_node == 0 and job != 0) or (job == (len(self.param_grid)-1)):
                 self.queue.put(temp)
                 temp = []
@@ -62,12 +64,16 @@ class DistributedGridSearch:
 
         qsize = self.queue.qsize()
         status = MPI.Status()
+        number_of_running_procs = self.size -1
         while not self.queue.empty():
             obj = self.queue.get()
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
-            self.comm.send(obj=obj, dest=status.Get_source())
-            L.info("\t-------------------")
-            L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (self.queue.qsize(), qsize, recv,len(self.param_grid), self.size))
+            if recv[1] == 'next':
+                self.comm.send(obj=obj, dest=status.Get_source())
+                L.info("\t-------------------")
+                L.info("\tMaster: Queue size: %d/%d (last job by node %d(%d), %d number of configurations, %d/%d running nodes)" % (self.queue.qsize(), qsize, recv[0], status.Get_source(),len(self.param_grid), number_of_running_procs, self.size))
+            else:
+                number_of_running_procs -= 1
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()
@@ -95,7 +101,7 @@ class DistributedGridSearch:
         models = []
         # Ask for work until we receive StopIteration
         L.info('\t\tSlave: Waiting for data..')
-        for task in iter(lambda: self.comm.sendrecv(self.rank, 0), StopIteration):
+        for task in iter(lambda: self.comm.sendrecv((self.rank,'next'), 0), StopIteration):
             L.info('\t\tSlave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
             model = GridSearchCV(estimator=self.skmodel, param_grid=task, n_jobs=-1, verbose=0, cv=self.cv)
             model = model.fit(X=X, y=y)
@@ -108,6 +114,7 @@ class DistributedGridSearch:
             L.info('\t\t\t!!!!!!!!!! Appending model with score %f' % model[0])
             models.append(model)
 
+        self.comm.send((self.rank, 'stop'))
         # Collective report to parent
         L.info('\t\tFinished calculating, calculated %d models' % len(models), force=True)
         self.comm.gather(sendobj=models, root=0)

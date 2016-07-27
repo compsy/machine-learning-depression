@@ -79,7 +79,7 @@ class DistributedGridSearch:
                 running_procs.add(recv[0])
                 self.comm.send(obj=obj, dest=status.Get_source())
                 L.info("\t-------------------")
-                L.info("\tMaster: Sending to node %d:" % status.Get_source())
+                L.info("\tMaster: Sending to node %d: %s" % (status.Get_source(), obj))
                 L.info("\tMaster: Queue size: %d/%d (last job by node %d(%d), %d number of configurations, %d/%d running nodes)" % (queue.qsize(), qsize, recv[0], status.Get_source(),len(self.param_grid), len(running_procs), self.size))
                 L.info("\tMaster: %s nodes are still running" % running_procs)
                 L.info("\t-------------------")
@@ -126,7 +126,7 @@ class DistributedGridSearch:
 
         self.comm.send(obj=(self.rank, 'stop'), dest=0)
         # Collective report to parent
-        L.info('\t\tFinished calculating, calculated %d models' % len(models), force=True)
+        L.info('\t\tFinished calculating (node %d), calculated %d models' % (self.rank, len(models)), force=True)
         self.comm.gather(sendobj=models, root=0)
         L.info('\t\tByebye')
         #exit(0)

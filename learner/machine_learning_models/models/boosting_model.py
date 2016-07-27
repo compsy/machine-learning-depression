@@ -13,7 +13,7 @@ class BoostingModel(MachineLearningModel):
 class BoostingClassificationModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True):
-        self.skmodel = GradientBoostingClassifier(verbose=verbosity, n_estimators=100, max_depth=5)
+        self.skmodel = GradientBoostingClassifier(verbose=verbosity, n_estimators=1000, max_depth=5)
         if grid_search:
             parameter_grid = {
                 'max_depth': np.logspace(0, 2, 20),

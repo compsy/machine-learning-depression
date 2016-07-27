@@ -65,11 +65,12 @@ class DistributedGridSearch:
 
         qsize = self.queue.qsize()
         status = MPI.Status()
-        running_procs = []
+        running_procs = set()
         while not self.queue.empty():
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             if recv[1] == 'next':
                 obj = self.queue.get()
+                running_procs.add(recv[0])
                 L.info("\t-------------------")
                 self.comm.send(obj=obj, dest=status.Get_source())
                 L.info("\tMaster: Sending to node %d:" % status.Get_source())
@@ -78,7 +79,7 @@ class DistributedGridSearch:
                 L.info("\tMaster: %s nodes are still running" % running_procs)
                 L.info("\t-------------------")
             else:
-                running_procs.append(recv[0])
+                running_procs.remove(recv[0])
             # percent = ((position + 1) * 100) // (n_tasks + n_workers)
             # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
             # sys.stdout.flush()

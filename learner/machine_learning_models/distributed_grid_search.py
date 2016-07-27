@@ -75,7 +75,7 @@ class DistributedGridSearch:
         while not queue.empty():
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             if recv[1] == 'next':
-                obj = self.queue.get()
+                obj = queue.get()
                 running_procs.add(recv[0])
                 self.comm.send(obj=obj, dest=status.Get_source())
                 L.info("\t-------------------")

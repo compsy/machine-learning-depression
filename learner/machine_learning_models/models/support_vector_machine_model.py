@@ -63,7 +63,7 @@ class SupportVectorClassificationModel(MachineLearningModel):
                         'gamma': np.logspace(0, 1, 5)}
 
         param_grid = [poly_grid, rbf_grid, linear_grid, sigmoid_grid]
-        #param_grid = [rbf_grid, linear_grid, sigmoid_grid]
+        param_grid = [poly_grid]
         self.grid_search(param_grid)
 
 

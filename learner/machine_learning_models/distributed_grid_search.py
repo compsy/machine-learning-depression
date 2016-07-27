@@ -75,8 +75,7 @@ class DistributedGridSearch:
                 L.info("\tMaster: Sending to node %d:" % status.Get_source())
                 L.info(obj)
                 L.info("\tMaster: Queue size: %d/%d (last job by node %d(%d), %d number of configurations, %d/%d running nodes)" % (self.queue.qsize(), qsize, recv[0], status.Get_source(),len(self.param_grid), len(running_procs), self.size))
-                procs = ','.join(running_procs)
-                L.info("\tMaster: %s nodes are still running" % procs)
+                L.info("\tMaster: %s nodes are still running" % running_procs)
                 L.info("\t-------------------")
             else:
                 running_procs.append(recv[0])

@@ -30,7 +30,7 @@ from machine_learning_models.models.dummy_model import DummyClassifierModel, Dum
 from machine_learning_models.models.regression_model import LinearRegressionModel, LogisticRegressionModel
 from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
 from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, SupportVectorClassificationModel
-# from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
+from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
 
 from models import participant
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
@@ -236,7 +236,7 @@ if __name__ == '__main__':
         models.append(DummyClassifierModel)
         models.append(DummyRandomClassifierModel)
         models.append(ClassificationTreeModel)
-        # models.append(KerasNnClassificationModel)
+        models.append(KerasNnClassificationModel)
         # Output columns
         Y_NAMES = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
     else:  # Regression

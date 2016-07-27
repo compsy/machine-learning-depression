@@ -44,16 +44,15 @@ class DistributedGridSearch:
             self.slave(X, y)
             return False
 
-    def master(self):
-        self.queue = Queue()
+    def create_job_queue(self, shuffle):
+        queue = Queue()
+        shuffled_range = list(range(len(self.param_grid)))
+        if shuffle: random.shuffle(shuffled_range)
 
         temp = []
-        shuffled_range = list(range(len(self.param_grid)))
-        random.shuffle(shuffled_range)
-
         for job in shuffled_range:
-            if (job % self.cpus_per_node == 0 and job != 0) or (job == (len(self.param_grid)-1)):
-                if len(temp) is not 0: self.queue.put(temp)
+            if (job % self.cpus_per_node == 0 and job != 0) or (job == (len(self.param_grid) - 1)):
+                if len(temp) is not 0: queue.put(temp)
                 temp = []
             current_job = self.merge_dicts([self.param_grid[job]])
             # current_job = self.param_grid[job]
@@ -61,30 +60,34 @@ class DistributedGridSearch:
 
         # Add an extra job for each node to stop at the end
         for node in range(self.size - 1):
-            self.queue.put(StopIteration)
+            queue.put(StopIteration)
 
+        return queue
+
+    def master(self):
+
+        # Get the queue of jobs to create
+        queue = self.create_job_queue(shuffle=True)
         qsize = self.queue.qsize()
+
         status = MPI.Status()
         running_procs = set()
-        while not self.queue.empty():
+        while not queue.empty():
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             if recv[1] == 'next':
                 obj = self.queue.get()
                 running_procs.add(recv[0])
-                L.info("\t-------------------")
                 self.comm.send(obj=obj, dest=status.Get_source())
+                L.info("\t-------------------")
                 L.info("\tMaster: Sending to node %d:" % status.Get_source())
-                L.info(obj)
                 L.info("\tMaster: Queue size: %d/%d (last job by node %d(%d), %d number of configurations, %d/%d running nodes)" % (self.queue.qsize(), qsize, recv[0], status.Get_source(),len(self.param_grid), len(running_procs), self.size))
                 L.info("\tMaster: %s nodes are still running" % running_procs)
                 L.info("\t-------------------")
             else:
-                running_procs.remove(recv[0])
-            # percent = ((position + 1) * 100) // (n_tasks + n_workers)
-            # sys.stdout.write('\rProgress: [%-50s] %3i%% ' % ('=' * (percent // 2), percent))
-            # sys.stdout.flush()
+                if recv[0] in running_procs: running_procs.remove(recv[0])
 
         L.info('\tQueue is empty, continueing')
+
         models = []
         models = self.comm.gather(models, root=0)
         best_model = None
@@ -101,6 +104,7 @@ class DistributedGridSearch:
                     best_model = sub_model[1]
 
         L.info('\tThese models had %d good models' % (good_models))
+        L.info('\tThe score of the best model was %0.3f' % best_score)
         return best_model
 
     def slave(self, X, y):

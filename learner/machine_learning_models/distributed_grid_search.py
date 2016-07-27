@@ -11,7 +11,7 @@ class DistributedGridSearch:
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.rank = self.comm.Get_rank()
-        self.cpus_per_node = 12
+        self.cpus_per_node = 1
         self.skmodel = estimator
         self.param_grid = ParameterGrid(param_grid)
         self.cv = cv
@@ -109,7 +109,7 @@ class DistributedGridSearch:
             models.append(model)
 
         # Collective report to parent
-        L.info('\t\tFinished calculating, calculated %d models' % len(models))
+        L.info('\t\tFinished calculating, calculated %d models' % len(models), force=True)
         self.comm.gather(sendobj=models, root=0)
         L.info('\t\tByebye')
-        exit(0)
+        #exit(0)

@@ -16,6 +16,12 @@ class DistributedModelRunner:
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
         L.info('Fabricating models')
+        self.x = x
+        self.y = y
+        self.x_names = x_names
+        self.y_names = y_names
+        self.verbosity = verbosity
+
         if self.is_root:
             self.data = []
             for i in range(len(self.models)):
@@ -39,7 +45,7 @@ class DistributedModelRunner:
         my_data = []
         for model in data:
             L.info('Training from MPI model runner on node %d' % self.rank)
-            model = model(np.copy(x), np.copy(y), x_names, y_names, verbosity)
+            model = model(np.copy(self.x), np.copy(self.y), self.x_names, self.y_names, self.verbosity)
             model.train()
             my_data.append(model)
 

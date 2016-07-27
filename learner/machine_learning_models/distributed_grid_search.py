@@ -115,7 +115,7 @@ class DistributedGridSearch:
             L.info('\t\t\t!!!!!!!!!! Appending model with score %f' % model[0])
             models.append(model)
 
-        self.comm.send((self.rank, 'stop'))
+        self.comm.send(obj=(self.rank, 'stop'), dest=0)
         # Collective report to parent
         L.info('\t\tFinished calculating, calculated %d models' % len(models), force=True)
         self.comm.gather(sendobj=models, root=0)

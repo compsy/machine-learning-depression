@@ -6,7 +6,7 @@ class GridSearchMine(BaseSearchCV):
                  n_jobs=1, iid=True, refit=True, cv=None, verbose=0,
                  pre_dispatch='2*n_jobs', error_score='raise'):
 
-        super(GridSearchCV, self).__init__(
+        super(GridSearchMine, self).__init__(
             estimator, scoring, fit_params, n_jobs, iid,
             refit, cv, verbose, pre_dispatch, error_score)
         self.param_grid = param_grid

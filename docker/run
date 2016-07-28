@@ -1,11 +1,13 @@
 #!/bin/bash
 COMMAND=""
 BRANCH="master"
+HPC=false
+DRY=false
 
 while [[ $# -gt 1 ]]
 do
 key="$1"
-
+echo $key
 case $key in
     -b|--branch)
     BRANCH="$2"
@@ -13,6 +15,14 @@ case $key in
     ;;
     -c|--command)
     COMMAND="$2"
+    shift # past argument
+    ;;
+    -h|--hpc)
+    HPC=true
+    shift # past argument
+    ;;
+    -d|--dry-run)
+    DRY=true
     shift # past argument
     ;;
     --default)
@@ -24,14 +34,10 @@ case $key in
 esac
 shift # past argument or value
 done
-
-echo "Mounting exports location on "
-echo $loc
-loc="$(pwd)/exports"
-mkdir -p $loc
-echo $loc
-echo "Removing $loc contents"
-rm -rf $loc/*
+echo $DRY
+if [ $HPC ]; then
+  module load git
+fi
 
 gitdir="ICPE_machine_learning_workgroup"
 if [ ! -d "$gitdir" ]; then
@@ -47,6 +53,43 @@ git pull
 git checkout $BRANCH
 cd ..
 
-learner="$(pwd)/$gitdir/learner"
-docker pull frbl/icpe-machine-learning
-docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $COMMAND
+pre_dir=$(pwd)
+
+learner="$pre_dir/$gitdir/learner"
+location="$pre_dir/$gitdir/"
+docker="$pre_dir/$gitdir/docker"
+
+if [ $HPC ]; then
+  cp -r ~/data $location
+  cd $docker/cluster
+  echo $(pwd)
+  mv submit.sh ~
+  cd ~
+  chmod +x submit.sh
+  export PYTHONWARNINGS="ignore"
+  if [ $DRY = false ]; then
+    sbatch submit.sh | cut -d" " -f 4 | tee last_job
+    while ! ls slurm* 1> /dev/null 2>&1
+    do
+      sleep 5
+    done
+    tail -f slurm*
+  else
+    ./submit.sh
+  fi
+else
+  echo "Running in docker mode"
+  echo "Mounting exports location on "
+  echo $loc
+  loc="$(pwd)/exports"
+  mkdir -p $loc
+  echo $loc
+  echo "Removing $loc contents"
+  rm -rf $loc/*
+
+  docker pull frbl/icpe-machine-learning
+  if [ ! $DRY ]; then
+    docker run --rm -it -v $loc:/exports -v $learner:/usr/src/app/learner --name icpe frbl/icpe-machine-learning $COMMAND
+  fi
+fi
+

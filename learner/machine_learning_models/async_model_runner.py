@@ -3,6 +3,7 @@ from threading import Thread
 import numpy as np
 from data_output.std_logger import L
 
+
 class AsyncModelRunner:
 
     def __init__(self, models, workers=8):

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.learning_curve import learning_curve
 from data_output.std_logger import L
 
+
 class LearningCurvePlotter(Plotter):
 
     def plot(self, model, ylim=None, cv=10, n_jobs=-1, train_sizes=np.linspace(.1, 1.0, 50)):

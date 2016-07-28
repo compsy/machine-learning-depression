@@ -9,5 +9,4 @@ class F1Evaluation(Evaluation):
         self.pos_label = 0
 
     def evaluate(self, y_true, y_pred):
-        return f1_score(y_true = y_true, y_pred = y_pred,
-                        pos_label=self.pos_label)
+        return f1_score(y_true=y_true, y_pred=y_pred, pos_label=self.pos_label)

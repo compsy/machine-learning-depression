@@ -8,20 +8,22 @@ from machine_learning_evaluation.f1_evaluation import F1Evaluation
 from machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
 from data_output.std_logger import L
 from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
+from machine_learning_models.distributed_grid_search import DistributedGridSearch
 
 
 class MachineLearningModel:
 
     def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0):
-        self.skmodel = self.skmodel or None
         self.x = x
         self.y = y
         self.x_names = x_names
         self.y_names = y_names
+        self.grid_model = None
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
-        self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(), RootMseEvaluation()]
+        self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(),
+                            RootMseEvaluation()]
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
@@ -61,16 +63,23 @@ class MachineLearningModel:
             return True
 
         if (self.skmodel is None):
-            raise NotImplementedError
+            raise NotImplementedError('Skmodel is none!')
 
         L.info('Training ' + self.given_name)
+        if self.grid_model is not None:
+            result = self.grid_model.fit(X=self.x_train, y=self.y_train)
+        else:
+            result = self.skmodel.fit(X=self.x_train, y=self.y_train)
+
+        # This check is needed whenever we run using MPI
+        if result != False: self.skmodel = result
         self.was_trained = True
-        self.skmodel = self.skmodel.fit(X=self.x_train, y=self.y_train)
 
         if isinstance(self.skmodel, GridSearchCV):
             self.skmodel = self.skmodel.best_estimator_
 
         L.info('Fitted ' + self.given_name)
+        return result
 
     def cv_predict(self):
         self.skmodel.fit(self.x_train, self.y_train)
@@ -94,9 +103,11 @@ class MachineLearningModel:
         return type(self).__name__
 
     def grid_search(self, param_grid):
-        self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
-        return self.skmodel
+        self.grid_model = DistributedGridSearch(estimator=self.skmodel, param_grid=param_grid, cv=8)
+        # self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
+        return self.grid_model
 
     ## Override
     def predict_for_roc(self, x_data):
         return self.skmodel.decision_function(x_data)
+

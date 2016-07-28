@@ -2,6 +2,7 @@ from ..questionnaire import Questionnaire
 import numpy as np
 from data_output.std_logger import L
 
+
 class FourDKLQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
@@ -21,7 +22,7 @@ class FourDKLQuestionnaire(Questionnaire):
         ]
 
     def som_score(self, participant):
-        L.warn('Before using this function, test whether the correct variables are used for calculating this score!')
+        # L.warn('Before using this function, test whether the correct variables are used for calculating this score!')
         dat = self.get_row(participant)
 
         # If there are no values > 0, we return nan

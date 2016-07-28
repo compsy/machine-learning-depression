@@ -1,7 +1,6 @@
 from models.questionnaires import ids_questionnaire, four_dkl_distress_questionnaire, demographic_questionnaire, bai_questionnaire, \
     masq_questionnaire, cidi_depression_derived, cidi_anxiety_derived, four_dkl_physical_complaints_questionnaire
 
-
 # Dataset    Description
 # N1_x100    DOB, age, gender, nationality and education of respondents
 # N1_x201    Drug usage
@@ -58,8 +57,6 @@ class QuestionnaireFactory:
                                                measurement_moment='c',
                                                reader=reader),
 
-
-
             # N1_x232    4DKL (distress)
             four_dkl_distress_questionnaire.FourDKLQuestionnaire(name="4dkl",
                                                                  filename="N1_A232R.SAV",
@@ -72,10 +69,9 @@ class QuestionnaireFactory:
 
             # N1_x255    4DKL (physical complaints)
             four_dkl_physical_complaints_questionnaire.FourDKLPhysicalComplaintsQuestionnaire(name="4dkl-ph",
-                                                                 filename="N1_A255D.sav",
-                                                                 measurement_moment='a',
-                                                                 reader=reader),
-
+                                                                                              filename="N1_A255D.sav",
+                                                                                              measurement_moment='a',
+                                                                                              reader=reader),
             four_dkl_physical_complaints_questionnaire.FourDKLPhysicalComplaintsQuestionnaire(name="4dkl-ph-followup",
                                                                                               filename="N1_C255D.sav",
                                                                                               measurement_moment='c',

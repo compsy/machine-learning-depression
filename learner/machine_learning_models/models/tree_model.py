@@ -18,7 +18,7 @@ class RegressionTreeModel(MachineLearningModel):
         self.skmodel = DecisionTreeRegressor(max_depth=5)
 
         if grid_search:
-            parameter_grid = {'max_depth': np.logspace(0, 50000, 15),
+            parameter_grid = {'max_depth': np.logspace(0, 3, 15),
                               'max_features': ['auto', 'sqrt', 'log2', None],}
             self.grid_search([parameter_grid])
 

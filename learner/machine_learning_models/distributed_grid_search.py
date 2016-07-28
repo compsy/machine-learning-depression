@@ -42,7 +42,6 @@ class DistributedGridSearch:
             return self.master()
 
         else:
-            L.info('\t\tStarting slave')
             self.slave(X, y)
             return False
 

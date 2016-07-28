@@ -155,8 +155,8 @@ class Driver:
         used_data = self.output_data_cleaner.clean(used_data, incorrect_rows)
 
         # Split the dataframe into a x and y dataset.
-        x_data = self.output_data_splitter.split(self.used_data, selected_header, x_names)
-        y_data = self.output_data_splitter.split(self.data, selected_header, y_names)
+        x_data = self.output_data_splitter.split(used_data, selected_header, x_names)
+        y_data = self.output_data_splitter.split(used_data, selected_header, y_names)
         # y_data = output_data_cleaner.clean(self.output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
         x_data = self.transform_variables(x_data, x_names)

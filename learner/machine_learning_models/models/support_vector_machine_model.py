@@ -36,7 +36,6 @@ class SupportVectorRegressionModel(MachineLearningModel):
         self.grid_search(param_grid)
 
 
-
 class SupportVectorClassificationModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity):
@@ -66,10 +65,8 @@ class SupportVectorClassificationModel(MachineLearningModel):
         param_grid = [poly_grid]
         self.grid_search(param_grid)
 
-
     def variable_to_validate(self):
         return 'degree'
 
     def predict_for_roc(self, x_data):
         return self.skmodel.decision_function(x_data)
-

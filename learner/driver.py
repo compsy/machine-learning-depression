@@ -35,6 +35,7 @@ from machine_learning_models.models.support_vector_machine_model import SupportV
 from models import participant
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
+
 class Driver:
     """ The main class that runs the application
     Parameters
@@ -60,8 +61,15 @@ class Driver:
         By default we cache the loaded data, should we force busting this cache?
     """
 
-    def __init__(self, verbosity=0, hpc=False, hpc_log=True, polynomial_features=False,
-            normalize=False, scale=True, classification=True, force_no_caching=False):
+    def __init__(self,
+                 verbosity=0,
+                 hpc=False,
+                 hpc_log=True,
+                 polynomial_features=False,
+                 normalize=False,
+                 scale=True,
+                 classification=True,
+                 force_no_caching=False):
 
         random.seed(42)
 
@@ -91,7 +99,6 @@ class Driver:
         self.data_preprocessor_polynomial = DataPreprocessorPolynomial()
         self.variable_transformer = VariableTransformer(x_names)
 
-
         ##### Define the models we should run
         classification_models = []
         classification_models.append(BoostingClassificationModel)
@@ -116,18 +123,20 @@ class Driver:
         classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
         regression_y_names = np.array(['cids-followup-somScore'])
 
-
-        header, data = self.get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=self.FORCE_NO_CACHING)
+        header, data = self.get_file_data('cache.pkl',
+                                          spss_reader=spss_reader,
+                                          force_to_not_use_cache=self.FORCE_NO_CACHING)
         # First read demographic data
         # N1_A100R = spss_reader.read_file("N1_A100R.sav")
         # self.participants = self.create_participants(N1_A100R)
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
         x_data, y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, classification_y_names)
-        is_root, classification_fabricated_models = self.calculate(classification_models, x_data, y_data, x_names, classification_y_names)
+        is_root, classification_fabricated_models = self.calculate(classification_models, x_data, y_data, x_names,
+                                                                   classification_y_names)
 
         x_data, y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, regression_y_names)
-        is_root, regresssion_fabricated_models = self.calculate(regression_models, x_data, y_data, x_names, regression_y_names)
-
+        is_root, regresssion_fabricated_models = self.calculate(regression_models, x_data, y_data, x_names,
+                                                                regression_y_names)
 
         # Kill all worker nodes
         if not is_root:
@@ -179,7 +188,6 @@ class Driver:
         # Train all models, the fitted parameters will be saved inside the models
         return model_runner.run_calculations(fabricated_models=fabricated_models)
 
-
     def transform_variables(self, x_data, x_names):
         if self.NORMALIZE:
             L.info('We are also normalizing the features')
@@ -199,7 +207,8 @@ class Driver:
 
     def create_output(self, models, used_data, selected_header, model_type='classification'):
         if self.CLASSIFICATION:
-            L.info('In the output set, %d participants (%0.2f percent) is true' % self.calculate_true_false_ratio(y_data))
+            L.info('In the output set, %d participants (%0.2f percent) is true' %
+                   self.calculate_true_false_ratio(y_data))
 
         # Export all used data to a CSV file
         CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
@@ -221,8 +230,8 @@ class Driver:
             if model_type == 'classification':
                 self.confusion_matrix_plotter.plot(model, model.y_test, y_test_pred)
             else:
-                self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
-
+                self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train,
+                                                            y_train_pred)
 
     def create_participants(self, data):
         participants = {}
@@ -232,26 +241,22 @@ class Driver:
 
         return participants
 
-
     def read_cache(self, cache_name):
         with open(cache_name, 'rb') as input:
             header = pickle.load(input)
             data = pickle.load(input)
             return (header, data)
 
-
     def write_cache(self, header, data, cache_name):
         with open(cache_name, 'wb') as output:
             pickle.dump(header, output, pickle.HIGHEST_PROTOCOL)
             pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
-
 
     def print_header(self, header):
         L.info('Available headers:')
         for col in header:
             L.info('\t' + col)
         L.br()
-
 
     def get_file_data(self, file_name, spss_reader, force_to_not_use_cache=False):
         header, data = (None, None)
@@ -265,7 +270,6 @@ class Driver:
             self.write_cache(header, data, file_name)
         return (header, data)
 
-
     def calculate_true_false_ratio(self, y_data):
         trues = 0
         falses = 0
@@ -276,7 +280,6 @@ class Driver:
                 trues += 1
 
         return (trues, (trues / (trues + falses)) * 100)
-
 
     def construct_x_names(self):
         """

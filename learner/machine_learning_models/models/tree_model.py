@@ -36,7 +36,6 @@ class ClassificationTreeModel(MachineLearningModel):
             }
             self.grid_search([parameter_grid])
 
-
     def predict_for_roc(self, x_data):
         return self.skmodel.predict_log_proba(x_data)[:, 1]
 

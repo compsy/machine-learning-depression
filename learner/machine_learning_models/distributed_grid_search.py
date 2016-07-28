@@ -5,6 +5,7 @@ from mpi4py import MPI
 from machine_learning_models.grid_search_mine import GridSearchMine
 import random
 
+
 class DistributedGridSearch:
 
     def __init__(self, estimator, param_grid, cv):
@@ -28,12 +29,12 @@ class DistributedGridSearch:
 
         # self.comm.send(obj=1, dest=0)
         # if self.rank == 0:
-            # a = 0
-            # running = True
-            # while (self.comm.recv() and running):
-                # a += 1
-                # print('%d of %d' % (a, self.size))
-                # if a == self.size: running = False
+        # a = 0
+        # running = True
+        # while (self.comm.recv() and running):
+        # a += 1
+        # print('%d of %d' % (a, self.size))
+        # if a == self.size: running = False
         L.info('Approaching barrier')
         self.comm.Barrier()
         if self.rank == 0:

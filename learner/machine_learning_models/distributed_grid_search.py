@@ -74,6 +74,7 @@ class DistributedGridSearch:
         status = MPI.Status()
         running_procs = set()
         wt = MPI.Wtime()
+        total_wait_time = 0
         while not queue.empty():
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             if recv == 'next':
@@ -87,10 +88,11 @@ class DistributedGridSearch:
                 # L.info("\t-------------------")
             else:
                 if status.Get_source() in running_procs: running_procs.remove(status.Get_source())
+                total_wait_time += recv
 
         wt = MPI.Wtime() - wt
         L.info(wt)
-        L.info('\tQueue is empty, continueing')
+        L.info('\tQueue is empty, continueing (%f time spent uselessly, or %f per node)' % (total_wait_time, (total_wait_time/(self.size -1))) )
 
         models = []
         models = self.comm.gather(models, root=0)
@@ -113,22 +115,21 @@ class DistributedGridSearch:
 
     def slave(self, X, y):
         models = []
+        my_wait_time =0
+        prev = MPI.Wtime()
         # Ask for work until we receive StopIteration
         # L.info('\t\tSlave: Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
+            my_wait_time += (MPI.Wtime() - prev)
             # L.info('\t\tSlave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
             model = GridSearchMine(estimator=self.skmodel, param_grid=task, n_jobs=-1, verbose=0, cv=self.cv)
             model = model.fit(X=X, y=y)
-
-            # only add the best model
-            # L.info(model)
             model = (model.best_score_, model.best_estimator_)
-            # L.info(model)
-
-            # L.info('\t\t\t!!!!!!!!!! Appending model with score %f' % model[0])
             models.append(model)
+            prev = MPI.Wtime()
 
-        self.comm.send(obj='stop', dest=0)
+        my_wait_time += (MPI.Wtime() - prev)
+        self.comm.send(obj=my_wait_time, dest=0)
         # Collective report to parent
         # L.info('\t\tFinished calculating (node %d), calculated %d models' % (self.rank, len(models)), force=True)
         self.comm.gather(sendobj=models, root=0)

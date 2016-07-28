@@ -114,7 +114,7 @@ class Driver:
         regression_models = []
         # regressionmodels.append(KerasNnModel)
         regression_models.append(LinearRegressionModel)
-        regression_models.append(SupportVectorRegressionModel)
+        # regression_models.append(SupportVectorRegressionModel)
         regression_models.append(RegressionTreeModel)
         regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)

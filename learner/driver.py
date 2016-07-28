@@ -82,14 +82,15 @@ class Driver:
         self.confusion_matrix_plotter = ConfusionMatrixPlotter()
         self.data_density_plotter = DataDensityPlotter()
 
+        x_names = self.construct_x_names()
+
         spss_reader = SpssReader()
         single_output_frame_creator = SingleOutputFrameCreator()
         output_data_cleaner = OutputDataCleaner()
         output_data_splitter = OutputDataSplitter()
         data_preprocessor_polynomial = DataPreprocessorPolynomial()
-        self.variable_transformer = VariableTransformer(X_NAMES)
+        self.variable_transformer = VariableTransformer(x_names)
 
-        X_NAMES = self.construct_x_names()
 
         ##### Define the models we should run
         classification_models = []
@@ -133,7 +134,7 @@ class Driver:
             exit(0)
 
         # Plot an overview of the density estimations of the variables used in the actual model calculation.
-        self.data_density_plotter.plot(x_data, X_NAMES)
+        self.data_density_plotter.plot(x_data, x_names)
         self.create_output(classification_fabricated_models, model_type='classification')
         self.create_output(regression_fabricated_models, model_type='regression')
 
@@ -158,7 +159,7 @@ class Driver:
         y_data = output_data_splitter.split(self.data, selected_header, y_names)
         # y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
-        x_data = transform_variables(x_data)
+        x_data = transform_variables(x_data, x_names)
 
         L.info("The used data for the prediction has shape: %s %s" % np.shape(x_data))
         L.info("The values to predict have the shape: %s %s" % np.shape(y_data))
@@ -179,7 +180,7 @@ class Driver:
         return model_runner.run_calculations(fabricated_models=fabricated_models)
 
 
-    def transform_variables(self, x_data):
+    def transform_variables(self, x_data, x_names):
         if self.NORMALIZE:
             L.info('We are also normalizing the features')
             x_data = normalize(x_data)
@@ -190,7 +191,7 @@ class Driver:
 
         if self.POLYNOMIAL_FEATURES:
             L.info('We are also adding polynomial features')
-            x_data = data_preprocessor_polynomial.process(x_data, X_NAMES)
+            x_data = data_preprocessor_polynomial.process(x_data, x_names)
 
         # Logtransform the data
         # self.variable_transformer.log_transform(x_data, 'aids-somScore')

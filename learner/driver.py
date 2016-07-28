@@ -108,7 +108,7 @@ class Driver:
         classification_models.append(DummyClassifierModel)
         classification_models.append(DummyRandomClassifierModel)
         classification_models.append(ClassificationTreeModel)
-        #classification_models.append(BaggingClassificationModel)
+        classification_models.append(BaggingClassificationModel)
         # classification_models.append(KerasNnClassificationModel)
 
         regression_models = []

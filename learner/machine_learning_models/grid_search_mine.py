@@ -10,7 +10,6 @@ class GridSearchMine(BaseSearchCV):
             estimator, scoring, fit_params, n_jobs, iid,
             refit, cv, verbose, pre_dispatch, error_score)
         self.param_grid = param_grid
-        _check_param_grid(param_grid)
 
     def fit(self, X, y=None):
         """Run fit with all sets of parameters.

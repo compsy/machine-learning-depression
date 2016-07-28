@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --time=0:30:00
 #SBATCH --nodes=32
-#SBATCH --ntasks-per-node=12
-#SBATCH --cpus-per-task=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=12
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=peregrine@compsy.nl
 #SBATCH --job-name=python_cpu
@@ -18,5 +18,5 @@ cd $gitdir
 cd learner
 echo "Running main.py"
 export MPLBACKEND="agg"
-mpirun python -m cProfile main.py
+mpirun python main.py
 

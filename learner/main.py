@@ -23,7 +23,7 @@ from factories.questionnaire_factory import QuestionnaireFactory
 from machine_learning_models.sync_model_runner import SyncModelRunner
 from machine_learning_models.distributed_model_runner import DistributedModelRunner
 
-from machine_learning_models.classification.naive_bayes_model import NaiveBayesModel
+from machine_learning_models.models.naive_bayes_model import NaiveBayesModel
 from machine_learning_models.models.bagging_model import BaggingClassificationModel, BaggingModel
 from machine_learning_models.models.boosting_model import BoostingClassificationModel, BoostingModel
 from machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel

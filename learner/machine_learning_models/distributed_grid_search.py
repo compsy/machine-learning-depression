@@ -2,6 +2,7 @@ from sklearn.grid_search import GridSearchCV, ParameterGrid
 from queue import Queue
 from data_output.std_logger import L
 from mpi4py import MPI
+from machine_learning_models.grid_search_mine import GridSearchMine
 import random
 
 class DistributedGridSearch:
@@ -11,7 +12,7 @@ class DistributedGridSearch:
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.rank = self.comm.Get_rank()
-        self.cpus_per_node = 1
+        self.cpus_per_node = 12
         self.skmodel = estimator
         self.param_grid = ParameterGrid(param_grid)
         self.cv = cv
@@ -54,8 +55,8 @@ class DistributedGridSearch:
             if (job % self.cpus_per_node == 0 and job != 0) or (job == (len(self.param_grid) - 1)):
                 if len(temp) is not 0: queue.put(temp)
                 temp = []
-            current_job = self.merge_dicts([self.param_grid[job]])
-            # current_job = self.param_grid[job]
+            # current_job = self.merge_dicts([self.param_grid[job]])
+            current_job = self.param_grid[job]
             temp.append(current_job)
 
         # Add an extra job for each node to stop at the end
@@ -116,7 +117,7 @@ class DistributedGridSearch:
         # L.info('\t\tSlave: Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
             # L.info('\t\tSlave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
-            model = GridSearchCV(estimator=self.skmodel, param_grid=task, n_jobs=1, verbose=0, cv=self.cv)
+            model = GridSearchMine(estimator=self.skmodel, param_grid=task, n_jobs=-1, verbose=0, cv=self.cv)
             model = model.fit(X=X, y=y)
 
             # only add the best model

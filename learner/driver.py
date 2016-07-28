@@ -116,7 +116,7 @@ class Driver:
         regression_y_names = np.array(['cids-followup-somScore'])
 
 
-        header, data = self.get_file_data('cache.pkl', spss_reader=self.spss_reader, force_to_not_use_cache=self.FORCE_NO_CACHING)
+        header, data = self.get_file_data('cache.pkl', spss_reader=spss_reader, force_to_not_use_cache=self.FORCE_NO_CACHING)
         # First read demographic data
         # N1_A100R = spss_reader.read_file("N1_A100R.sav")
         # self.participants = self.create_participants(N1_A100R)

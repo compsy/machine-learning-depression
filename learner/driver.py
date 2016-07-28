@@ -6,7 +6,7 @@ from data_output.std_logger import L
 from sklearn.ensemble.bagging import BaggingClassifier
 from sklearn.preprocessing import normalize, scale
 
-from data_input import spss_reader
+from data_input.spss_reader import SpssReader
 from data_output.csv_exporter import CsvExporter
 from data_output.plotters.actual_vs_prediction_plotter import ActualVsPredictionPlotter
 from data_output.plotters.data_density_plotter import DataDensityPlotter
@@ -82,7 +82,7 @@ class Driver:
         self.confusion_matrix_plotter = ConfusionMatrixPlotter()
         self.data_density_plotter = DataDensityPlotter()
 
-        spss_reader = spss_reader.SpssReader()
+        spss_reader = SpssReader()
         single_output_frame_creator = SingleOutputFrameCreator()
         output_data_cleaner = OutputDataCleaner()
         output_data_splitter = OutputDataSplitter()

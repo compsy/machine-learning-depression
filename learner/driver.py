@@ -108,7 +108,7 @@ class Driver:
         classification_models.append(DummyClassifierModel)
         classification_models.append(DummyRandomClassifierModel)
         classification_models.append(ClassificationTreeModel)
-        classification_models.append(BaggingClassificationModel)
+        # classification_models.append(BaggingClassificationModel)
         # classification_models.append(KerasNnClassificationModel)
 
         regression_models = []
@@ -117,7 +117,7 @@ class Driver:
         regression_models.append(SupportVectorRegressionModel)
         regression_models.append(RegressionTreeModel)
         regression_models.append(BoostingModel)
-        regression_models.append(BaggingModel)
+        # regression_models.append(BaggingModel)
 
         # Output columns
         classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])

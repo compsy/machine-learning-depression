@@ -7,9 +7,9 @@ class L:
 
     @staticmethod
     def setup(logger_hpc):
-        date = time.strftime("%y%m%d-%H%M")
-        FORMAT = '%(asctime)-15s -> %(message)s'
-        logging.basicConfig(filename='../exports/' + date + '_output.log', format=FORMAT, level=logging.INFO)
+        #date = time.strftime("%y%m%d-%H%M")
+        #FORMAT = '%(asctime)-15s -> %(message)s'
+        #logging.basicConfig(filename='../exports/' + date + '_output.log', format=FORMAT, level=logging.INFO)
         global logger_on_hpc
         logger_on_hpc = logger_hpc
         if not logger_hpc:
@@ -23,19 +23,19 @@ class L:
                 return
 
         print(text)
-        logging.info(text)
+        #logging.info(text)
 
     @staticmethod
     def br():
         print('')
-        logging.info('')
+        #logging.info('')
 
     @staticmethod
     def debug(text):
         print(text)
-        logging.debug(text)
+        #logging.debug(text)
 
     @staticmethod
     def warn(text):
         warnings.warn(text)
-        logging.debug(text)
+        #logging.debug(text)

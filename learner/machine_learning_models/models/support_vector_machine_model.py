@@ -49,7 +49,7 @@ class SupportVectorClassificationModel(MachineLearningModel):
         # Polynomial function grid
         poly_grid = {'kernel': ['poly'],
                      'C': [1, 10, 100, 1000],
-                     'degree': [1, 2, 3, 4, 5],
+                     'degree': [2, 3, 4, 5],
                      'coef0': np.logspace(0, 1, 5),
                      'gamma': np.logspace(0, 1, 5)}
 

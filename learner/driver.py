@@ -85,10 +85,10 @@ class Driver:
         x_names = self.construct_x_names()
 
         spss_reader = SpssReader()
-        single_output_frame_creator = SingleOutputFrameCreator()
-        output_data_cleaner = OutputDataCleaner()
-        output_data_splitter = OutputDataSplitter()
-        data_preprocessor_polynomial = DataPreprocessorPolynomial()
+        self.single_output_frame_creator = SingleOutputFrameCreator()
+        self.output_data_cleaner = OutputDataCleaner()
+        self.output_data_splitter = OutputDataSplitter()
+        self.data_preprocessor_polynomial = DataPreprocessorPolynomial()
         self.variable_transformer = VariableTransformer(x_names)
 
 
@@ -145,19 +145,19 @@ class Driver:
         selected_header = np.append(x_names, y_names)
 
         # Select the data we will use in the present experiment (used_data = both x and y)
-        used_data = output_data_splitter.split(data, header, selected_header)
+        used_data = self.output_data_splitter.split(data, header, selected_header)
         # Determine which of this set are not complete
-        incorrect_rows = output_data_cleaner.find_incomplete_rows(used_data, selected_header)
+        incorrect_rows = self.output_data_cleaner.find_incomplete_rows(used_data, selected_header)
 
         L.info('From the loaded data %d rows are incomplete and will be removed!' % len(incorrect_rows))
 
         # Remove the incorrect cases
-        used_data = output_data_cleaner.clean(used_data, incorrect_rows)
+        used_data = self.output_data_cleaner.clean(used_data, incorrect_rows)
 
         # Split the dataframe into a x and y dataset.
-        x_data = output_data_splitter.split(self.used_data, selected_header, x_names)
-        y_data = output_data_splitter.split(self.data, selected_header, y_names)
-        # y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
+        x_data = self.output_data_splitter.split(self.used_data, selected_header, x_names)
+        y_data = self.output_data_splitter.split(self.data, selected_header, y_names)
+        # y_data = output_data_cleaner.clean(self.output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
         x_data = self.transform_variables(x_data, x_names)
 
@@ -191,7 +191,7 @@ class Driver:
 
         if self.POLYNOMIAL_FEATURES:
             L.info('We are also adding polynomial features')
-            x_data = data_preprocessor_polynomial.process(x_data, x_names)
+            x_data = self.data_preprocessor_polynomial.process(x_data, x_names)
 
         # Logtransform the data
         # self.variable_transformer.log_transform(x_data, 'aids-somScore')
@@ -261,7 +261,7 @@ class Driver:
             #self.print_header(header)
         else:
             questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
-            data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
+            data, header = (self.single_output_frame_creator.create_single_frame(questionnaires, participants))
             self.write_cache(header, data, file_name)
         return (header, data)
 

@@ -18,5 +18,5 @@ cd $gitdir
 cd learner
 echo "Running main.py"
 export MPLBACKEND="agg"
-mpirun python main.py
+mpirun python -m cProfile main.py
 

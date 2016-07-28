@@ -122,11 +122,11 @@ class Driver:
         # N1_A100R = spss_reader.read_file("N1_A100R.sav")
         # self.participants = self.create_participants(N1_A100R)
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
-        x_data, y_data, used_data, selected_header  = get_data(data, header, x_names, classification_y_names)
-        is_root, classification_fabricated_models = calculate(classification_models, x_data, y_data, x_names, classification_y_names)
+        x_data, y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, classification_y_names)
+        is_root, classification_fabricated_models = self.calculate(classification_models, x_data, y_data, x_names, classification_y_names)
 
-        x_data, y_data, used_data, selected_header = get_data(data, header, x_names, regression_y_names)
-        is_root, regresssion_fabricated_models = calculate(regression_models, x_data, y_data, x_names, regression_y_names)
+        x_data, y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, regression_y_names)
+        is_root, regresssion_fabricated_models = self.calculate(regression_models, x_data, y_data, x_names, regression_y_names)
 
 
         # Kill all worker nodes
@@ -159,7 +159,7 @@ class Driver:
         y_data = output_data_splitter.split(self.data, selected_header, y_names)
         # y_data = output_data_cleaner.clean(output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
-        x_data = transform_variables(x_data, x_names)
+        x_data = self.transform_variables(x_data, x_names)
 
         L.info("The used data for the prediction has shape: %s %s" % np.shape(x_data))
         L.info("The values to predict have the shape: %s %s" % np.shape(y_data))
@@ -199,7 +199,7 @@ class Driver:
 
     def create_output(self, models, used_data, selected_header, model_type='classification'):
         if self.CLASSIFICATION:
-            L.info('In the output set, %d participants (%0.2f percent) is true' % calculate_true_false_ratio(y_data))
+            L.info('In the output set, %d participants (%0.2f percent) is true' % self.calculate_true_false_ratio(y_data))
 
         # Export all used data to a CSV file
         CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
@@ -257,12 +257,12 @@ class Driver:
         header, data = (None, None)
         L.info('Converting data to single dataframe...')
         if not force_to_not_use_cache and os.path.isfile(file_name):
-            header, data = read_cache(file_name)
-            #print_header(header)
+            header, data = self.read_cache(file_name)
+            #self.print_header(header)
         else:
             questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
             data, header = (single_output_frame_creator.create_single_frame(questionnaires, participants))
-            write_cache(header, data, file_name)
+            self.write_cache(header, data, file_name)
         return (header, data)
 
 

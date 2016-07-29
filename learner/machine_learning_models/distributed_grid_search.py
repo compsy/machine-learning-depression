@@ -107,29 +107,21 @@ class DistributedGridSearch:
     def slave(self, X, y):
         models = []
 
-        #comm = MPI.Comm.Get_parent()
         my_X = np.copy(X)
         my_y = np.copy(y)
-        my_run_time = 0
+        run_time = 0
+
         # Ask for work until we receive StopIteration
-        print('\t\tSlave: Waiting for data..')
+        print('\t\tSlave: Started my new job, now waiting for data..')
         for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
-        #for task in iter(lambda: self.comm.recv(source=0), StopIteration):
             start = MPI.Wtime()
             grid = [self.param_grid[y] for y in task]
-            model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv)
             print('\t\tSlave %d: Received job: %s' % (self.rank, task))
-            model = model.fit(X=my_X, y=my_y)
+            model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv).fit(X=my_X, y=my_y)
             print('\t\tSlave %d: finished calculation' % self.rank)
-            model = (model.best_score_, model.best_estimator_)
-            models.append(model)
+            models.append((model.best_score_, model.best_estimator_))
+            run_time += MPI.Wtime() - start
 
-            my_run_time += MPI.Wtime() - start
-         #   self.comm.send(obj='next', dest=0)
-
-        print('\t\tSlave %d: took %0.0f seconds' % (self.rank, my_run_time))
+        print('\t\tSlave %d: took %0.0f seconds' % (self.rank, run_time))
         # Collective report to parent
-        # L.info('\t\tFinished calculating (node %d), calculated %d models' % (self.rank, len(models)), force=True)
         self.comm.gather(sendobj=models, root=0)
-        # L.info('\t\tByebye')
-        #exit(0)

@@ -74,7 +74,7 @@ class DistributedGridSearch:
         wt = MPI.Wtime()
         total_wait_time = []
 
-        while not queue.empty() and not send_queue.empty():
+        while not queue.empty() or not send_queue.empty():
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
 
             # If it receives a next, reply with a job

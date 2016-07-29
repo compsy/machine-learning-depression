@@ -39,13 +39,15 @@ class DistributedGridSearch:
 
         temp = []
         for job in shuffled_range:
-            if (job % self.cpus_per_node == 0 and job != 0) or (job == (len(self.param_grid) - 1)):
-                if len(temp) is not 0: queue.put(temp)
-                temp = []
-            # current_job = self.merge_dicts([self.param_grid[job]])
-            #current_job = self.param_grid[job]
-            #temp.append(current_job)
             temp.append(job)
+            # current_job = self.merge_dicts([self.param_grid[job]])
+            # current_job = self.param_grid[job]
+            # temp.append(current_job)
+            if (len(temp) == self.cpus_per_node):
+                queue.put(temp)
+                temp = []
+
+        if len(temp) is not 0: queue.put(temp)
 
         # Add an extra job for each node to stop at the end
         for node in range(self.size - 1):

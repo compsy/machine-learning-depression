@@ -82,7 +82,7 @@ class DistributedGridSearch:
 
         wt = MPI.Wtime() - wt
         L.info(wt)
-        L.info('\tQueue is empty, continueing (%f time spent uselessly, or %f per node)' % (total_wait_time, (total_wait_time/(self.size -1))) )
+        L.info('\tQueue is empty, continueing (%f time spent good, or %f per node)' % (total_wait_time, (total_wait_time/(self.size -1))) )
 
         models = []
         models = self.comm.gather(models, root=0)
@@ -105,22 +105,26 @@ class DistributedGridSearch:
 
     def slave(self, X, y):
         models = []
-        my_wait_time =0
+        my_wait_time=0
+        my_run_time=0
         prev = MPI.Wtime()
+        prev_run=0
         # Ask for work until we receive StopIteration
         # L.info('\t\tSlave: Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
             my_wait_time += (MPI.Wtime() - prev)
+            prev_run = MPI.Wtime()
             grid = [self.param_grid[y] for y in task]
             # L.info('\t\tSlave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
             model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv)
             model = model.fit(X=X, y=y)
             model = (model.best_score_, model.best_estimator_)
             models.append(model)
+            my_run_time += MPI.Wtime() - prev_run
             prev = MPI.Wtime()
 
         my_wait_time += (MPI.Wtime() - prev)
-        self.comm.send(obj=my_wait_time, dest=0)
+        self.comm.send(obj=my_run_time, dest=0)
         # Collective report to parent
         # L.info('\t\tFinished calculating (node %d), calculated %d models' % (self.rank, len(models)), force=True)
         self.comm.gather(sendobj=models, root=0)

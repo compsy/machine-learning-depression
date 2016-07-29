@@ -121,7 +121,8 @@ class DistributedGridSearch:
         prev_run=0
         # Ask for work until we receive StopIteration
         print('\t\tSlave: Waiting for data..')
-        for task in iter(lambda: self.comm.recv(source=0), StopIteration):
+        for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
+        #for task in iter(lambda: self.comm.recv(source=0), StopIteration):
             my_wait_time += (MPI.Wtime() - prev)
             prev_run = MPI.Wtime()
             grid = [self.param_grid[y] for y in task]
@@ -132,7 +133,7 @@ class DistributedGridSearch:
             models.append(model)
             my_run_time += MPI.Wtime() - prev_run
             prev = MPI.Wtime()
-            self.comm.send(obj='next', dest=0)
+         #   self.comm.send(obj='next', dest=0)
 
         my_wait_time += (MPI.Wtime() - prev)
         self.comm.send(obj=my_run_time, dest=0)

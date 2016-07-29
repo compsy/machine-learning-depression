@@ -75,6 +75,7 @@ class DistributedGridSearch:
         total_wait_time = []
 
         while not queue.empty() or not send_queue.empty():
+            L.info('\tWaiting for worker...')
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
 
             # If it receives a next, reply with a job
@@ -119,7 +120,7 @@ class DistributedGridSearch:
         prev = MPI.Wtime()
         prev_run=0
         # Ask for work until we receive StopIteration
-        # L.info('\t\tSlave: Waiting for data..')
+        print('\t\tSlave: Waiting for data..')
         for task in iter(lambda: self.comm.recv(source=0), StopIteration):
             my_wait_time += (MPI.Wtime() - prev)
             prev_run = MPI.Wtime()

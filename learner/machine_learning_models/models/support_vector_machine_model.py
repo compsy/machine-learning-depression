@@ -33,6 +33,7 @@ class SupportVectorRegressionModel(MachineLearningModel):
                         'gamma': logspace(0, 1, 5)}
 
         param_grid = [rbf_grid, poly_grid, linear_grid, sigmoid_grid]
+        param_grid = [rbf_grid, poly_grid, sigmoid_grid]
         self.grid_search(param_grid)
 
 
@@ -61,7 +62,8 @@ class SupportVectorClassificationModel(MachineLearningModel):
                         'coef0': np.logspace(0, 1, 5),
                         'gamma': np.logspace(0, 1, 5)}
 
-        param_grid = [poly_grid, rbf_grid, linear_grid, sigmoid_grid]
+        #param_grid = [poly_grid, rbf_grid, linear_grid, sigmoid_grid]
+        param_grid = [poly_grid, rbf_grid, sigmoid_grid]
         # param_grid = [poly_grid]
         self.grid_search(param_grid)
 

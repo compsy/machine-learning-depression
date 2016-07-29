@@ -14,6 +14,7 @@ class DistributedGridSearch:
         # Number of nodes
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
+        self.workers = self.size -1
         self.rank = self.comm.Get_rank()
         self.cpus_per_node = 12
         self.skmodel = estimator
@@ -40,12 +41,11 @@ class DistributedGridSearch:
         if shuffle: random.shuffle(shuffled_range)
 
         work_division = self.cpus_per_node
-        if(self.cpus_per_node >= (len(self.param_grid) * self.size)):
-            work_division = math.ceil(len(self.param_grid) / self.size)
+        if(self.cpus_per_node * self.workers > len(self.param_grid)):
+            work_division = math.ceil(len(self.param_grid) / self.workers)
 
         temp = []
         for job in shuffled_range:
-            if job in [227, 2, 18, 154, 280, 76, 402, 503, 266, 292, 319, 481]: continue
             temp.append(job)
             # current_job = self.merge_dicts([self.param_grid[job]])
             # current_job = self.param_grid[job]
@@ -57,7 +57,7 @@ class DistributedGridSearch:
         if len(temp) is not 0: queue.put(temp)
 
         # Add an extra job for each node to stop at the end
-        for node in range(self.size - 1):
+        for node in range(self.workers):
             queue.put(StopIteration)
 
         return queue
@@ -66,26 +66,30 @@ class DistributedGridSearch:
 
         # Get the queue of jobs to create
         queue = self.create_job_queue(shuffle=True)
+        send_queue = Queue()
         qsize = queue.qsize()
 
         status = MPI.Status()
         # running_procs = set()
         wt = MPI.Wtime()
         total_wait_time = []
-        while not queue.empty():
+
+        while not queue.empty() and not send_queue.empty():
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
+
+            # If it receives a next, reply with a job
             if recv == 'next':
+                send_queue.put(status.Get_source())
                 obj = queue.get()
-                # running_procs.add(status.Get_source())
                 self.comm.send(obj=obj, dest=status.Get_source())
                 L.info("\t-------------------")
                 L.info("\tMaster: Sending to node %d: %s" % (status.Get_source(), obj))
-                L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (queue.qsize(), qsize, status.Get_source(),len(self.param_grid), self.size))
+                L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (queue.qsize(), qsize, status.Get_source(),len(self.param_grid), self.workers))
                 L.info("\t-------------------")
             else:
-                # if status.Get_source() in running_procs: running_procs.remove(status.Get_source())
+                L.info("\tMaxter: Done: %d in %0.2f seconds" % (send_queue.get(), recv))
                 total_wait_time.append(recv)
-        total_wait_time.append(self.comm.recv(source=MPI.ANY_SOURCE, status=status))
+
         wt = MPI.Wtime() - wt
         L.info('\tQueue is empty, it contained %d items which took %0.2f seconds (%0.2f minutes) continueing (%s time spent good)' % (qsize, wt, (wt/60), total_wait_time))
 
@@ -116,7 +120,7 @@ class DistributedGridSearch:
         prev_run=0
         # Ask for work until we receive StopIteration
         # L.info('\t\tSlave: Waiting for data..')
-        for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
+        for task in iter(lambda: self.comm.recv(source=0), StopIteration):
             my_wait_time += (MPI.Wtime() - prev)
             prev_run = MPI.Wtime()
             grid = [self.param_grid[y] for y in task]
@@ -127,6 +131,7 @@ class DistributedGridSearch:
             models.append(model)
             my_run_time += MPI.Wtime() - prev_run
             prev = MPI.Wtime()
+            self.comm.send(obj='next', dest=0)
 
         my_wait_time += (MPI.Wtime() - prev)
         self.comm.send(obj=my_run_time, dest=0)

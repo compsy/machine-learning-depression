@@ -41,7 +41,7 @@ class DistributedGridSearch:
         if shuffle: random.shuffle(shuffled_range)
 
         work_division = self.cpus_per_node
-        if(self.cpus_per_node * self.workers > len(self.param_grid)):
+        if(self.cpus_per_node > len(self.param_grid)):
             work_division = math.ceil(len(self.param_grid) / self.workers)
 
         temp = []

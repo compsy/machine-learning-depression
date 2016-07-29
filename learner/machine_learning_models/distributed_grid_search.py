@@ -117,6 +117,8 @@ class DistributedGridSearch:
         #for task in iter(lambda: self.comm.recv(source=0), StopIteration):
             start = MPI.Wtime()
             grid = [self.param_grid[y] for y in task]
+            if task[0] == 420:
+                print(grid)
             model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv)
             print('\t\tSlave %d: Received job: %s' % (self.rank, task))
             model = model.fit(X=my_X, y=my_y)

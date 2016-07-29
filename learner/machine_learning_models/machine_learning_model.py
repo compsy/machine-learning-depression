@@ -103,8 +103,8 @@ class MachineLearningModel:
         return type(self).__name__
 
     def grid_search(self, param_grid):
-        #self.grid_model = DistributedGridSearch(estimator=self.skmodel, param_grid=param_grid, cv=8)
-        self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
+        self.grid_model = DistributedGridSearch(estimator=self.skmodel, param_grid=param_grid, cv=8)
+        #self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
         return self.grid_model
 
     ## Override

@@ -1,6 +1,7 @@
 from driver import Driver
 
 if __name__ == '__main__':
+    print('Main called, lets do this guys!')
     Driver(verbosity=0,
            hpc=False,
            hpc_log=True,

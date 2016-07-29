@@ -29,8 +29,9 @@ from machine_learning_models.models.boosting_model import BoostingClassification
 from machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
 from machine_learning_models.models.regression_model import LinearRegressionModel, LogisticRegressionModel
 from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
-from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, SupportVectorClassificationModel
-#from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
+from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, \
+    SupportVectorClassificationModel
+# from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
 
 from models import participant
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
@@ -83,6 +84,8 @@ class Driver:
         self.CLASSIFICATION = classification
         self.FORCE_NO_CACHING = force_no_caching
 
+        x_names = self.construct_x_names()
+
         self.actual_vs_prediction_plotter = ActualVsPredictionPlotter()
         self.learning_curve_plotter = LearningCurvePlotter()
         self.validation_curve_plotter = ValidationCurvePlotter()
@@ -90,9 +93,7 @@ class Driver:
         self.confusion_matrix_plotter = ConfusionMatrixPlotter()
         self.data_density_plotter = DataDensityPlotter()
 
-        x_names = self.construct_x_names()
-
-        spss_reader = SpssReader()
+        self.spss_reader = SpssReader()
         self.single_output_frame_creator = SingleOutputFrameCreator()
         self.output_data_cleaner = OutputDataCleaner()
         self.output_data_splitter = OutputDataSplitter()
@@ -101,7 +102,7 @@ class Driver:
 
         ##### Define the models we should run
         classification_models = []
-        classification_models.append(BoostingClassificationModel)
+        #classification_models.append(BoostingClassificationModel)
         classification_models.append(SupportVectorClassificationModel)
         classification_models.append(LogisticRegressionModel)
         classification_models.append(NaiveBayesModel)
@@ -114,7 +115,7 @@ class Driver:
         regression_models = []
         # regressionmodels.append(KerasNnModel)
         regression_models.append(LinearRegressionModel)
-        # regression_models.append(SupportVectorRegressionModel)
+        regression_models.append(SupportVectorRegressionModel)
         regression_models.append(RegressionTreeModel)
         regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
@@ -123,20 +124,22 @@ class Driver:
         classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
         regression_y_names = np.array(['cids-followup-somScore'])
 
+        participants = self.create_participants()
         header, data = self.get_file_data('cache.pkl',
-                                          spss_reader=spss_reader,
+                                          participants=participants,
                                           force_to_not_use_cache=self.FORCE_NO_CACHING)
-        # First read demographic data
-        # N1_A100R = spss_reader.read_file("N1_A100R.sav")
-        # self.participants = self.create_participants(N1_A100R)
+
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
-        x_data, y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, classification_y_names)
-        is_root, classification_fabricated_models = self.calculate(classification_models, x_data, y_data, x_names,
+        x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
+                                                                                         classification_y_names)
+        is_root, classification_fabricated_models = self.calculate(classification_models, x_data, classification_y_data,
+                                                                   x_names,
                                                                    classification_y_names)
 
-        x_data, y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, regression_y_names)
-        is_root, regresssion_fabricated_models = self.calculate(regression_models, x_data, y_data, x_names,
-                                                                regression_y_names)
+        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
+                                                                                     regression_y_names)
+        is_root, regression_fabricated_models = self.calculate(regression_models, x_data, regression_y_data, x_names,
+                                                               regression_y_names)
 
         # Kill all worker nodes
         if not is_root:
@@ -144,8 +147,10 @@ class Driver:
 
         # Plot an overview of the density estimations of the variables used in the actual model calculation.
         self.data_density_plotter.plot(x_data, x_names)
-        self.create_output(classification_fabricated_models, model_type='classification')
-        self.create_output(regression_fabricated_models, model_type='regression')
+        self.create_output(classification_fabricated_models, classification_y_data, used_data, selected_header,
+                           model_type='classification')
+        self.create_output(regression_fabricated_models, regression_y_data, used_data, selected_header,
+                           model_type='regression')
 
     def get_usable_data(self, data, header, x_names, y_names):
         L.info('Loaded data with %d rows and %d columns' % np.shape(data))
@@ -205,22 +210,21 @@ class Driver:
         # self.variable_transformer.log_transform(x_data, 'aids-somScore')
         return x_data
 
-    def create_output(self, models, used_data, selected_header, model_type='classification'):
-        if self.CLASSIFICATION:
+    def create_output(self, models, y_data, used_data, selected_header, model_type='classification'):
+        if model_type == 'classification':
             L.info('In the output set, %d participants (%0.2f percent) is true' %
                    self.calculate_true_false_ratio(y_data))
+
+            # Generate learning curve plots
+            self.roc_curve_plotter.plot(models)
 
         # Export all used data to a CSV file
         CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
 
-        # Generate learning curve plots
-        if self.CLASSIFICATION:
-            self.roc_curve_plotter.plot(fabricated_models)
-
-        for model in fabricated_models:
+        for model in models:
             1
-            #learning_curve_plotter.plot(model)
-            #validation_curve_plotter.plot(model, variable_to_validate='n_estimators')
+            # learning_curve_plotter.plot(model)
+            # validation_curve_plotter.plot(model, variable_to_validate='n_estimators')
 
         for model in models:
             model.print_evaluation()
@@ -233,7 +237,8 @@ class Driver:
                 self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train,
                                                             y_train_pred)
 
-    def create_participants(self, data):
+    def create_participants(self):
+        data = self.spss_reader.read_file("N1_A100R.sav")
         participants = {}
         for index, entry in data.iterrows():
             p = participant.Participant(entry['pident'], entry['Sexe'], entry['Age'])
@@ -258,14 +263,14 @@ class Driver:
             L.info('\t' + col)
         L.br()
 
-    def get_file_data(self, file_name, spss_reader, force_to_not_use_cache=False):
+    def get_file_data(self, file_name, participants, force_to_not_use_cache=False):
         header, data = (None, None)
         L.info('Converting data to single dataframe...')
         if not force_to_not_use_cache and os.path.isfile(file_name):
             header, data = self.read_cache(file_name)
-            #self.print_header(header)
+            # self.print_header(header)
         else:
-            questionnaires = QuestionnaireFactory.construct_questionnaires(spss_reader)
+            questionnaires = QuestionnaireFactory.construct_questionnaires(self.spss_reader)
             data, header = (self.single_output_frame_creator.create_single_frame(questionnaires, participants))
             self.write_cache(header, data, file_name)
         return (header, data)
@@ -332,7 +337,7 @@ class Driver:
             'abai-somaticScaleScore',
 
             # # 4dkl
-            #'a4dkl-somScore',
+            # 'a4dkl-somScore',
             'a4dkl-4dkld01',
             'a4dkl-4dkld02',
             'a4dkl-4dkld03',

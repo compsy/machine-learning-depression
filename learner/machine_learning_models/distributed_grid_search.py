@@ -25,22 +25,9 @@ class DistributedGridSearch:
         return result
 
     def fit(self, X, y):
-        # Sync all nodes
-
-        # self.comm.send(obj=1, dest=0)
-        # if self.rank == 0:
-        # a = 0
-        # running = True
-        # while (self.comm.recv() and running):
-        # a += 1
-        # print('%d of %d' % (a, self.size))
-        # if a == self.size: running = False
-        L.info('Approaching barrier')
-        self.comm.Barrier()
         if self.rank == 0:
             L.info('\tStarting master')
             return self.master()
-
         else:
             self.slave(X, y)
             return False
@@ -56,8 +43,9 @@ class DistributedGridSearch:
                 if len(temp) is not 0: queue.put(temp)
                 temp = []
             # current_job = self.merge_dicts([self.param_grid[job]])
-            current_job = self.param_grid[job]
-            temp.append(current_job)
+            #current_job = self.param_grid[job]
+            #temp.append(current_job)
+            temp.append(job)
 
         # Add an extra job for each node to stop at the end
         for node in range(self.size - 1):
@@ -72,14 +60,14 @@ class DistributedGridSearch:
         qsize = queue.qsize()
 
         status = MPI.Status()
-        running_procs = set()
+        # running_procs = set()
         wt = MPI.Wtime()
         total_wait_time = 0
         while not queue.empty():
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             if recv == 'next':
                 obj = queue.get()
-                running_procs.add(status.Get_source())
+                # running_procs.add(status.Get_source())
                 self.comm.send(obj=obj, dest=status.Get_source())
                 # L.info("\t-------------------")
                 # L.info("\tMaster: Sending to node %d: %s" % (status.Get_source(), obj))
@@ -87,7 +75,7 @@ class DistributedGridSearch:
                 # L.info("\tMaster: %s nodes are still running" % running_procs)
                 # L.info("\t-------------------")
             else:
-                if status.Get_source() in running_procs: running_procs.remove(status.Get_source())
+                # if status.Get_source() in running_procs: running_procs.remove(status.Get_source())
                 total_wait_time += recv
 
         wt = MPI.Wtime() - wt
@@ -121,8 +109,9 @@ class DistributedGridSearch:
         # L.info('\t\tSlave: Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
             my_wait_time += (MPI.Wtime() - prev)
+            grid = [self.param_grid[y] for y in task]
             # L.info('\t\tSlave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
-            model = GridSearchMine(estimator=self.skmodel, param_grid=task, n_jobs=-1, verbose=0, cv=self.cv)
+            model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv)
             model = model.fit(X=X, y=y)
             model = (model.best_score_, model.best_estimator_)
             models.append(model)

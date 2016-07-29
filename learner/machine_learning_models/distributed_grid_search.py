@@ -109,12 +109,12 @@ class DistributedGridSearch:
     def slave(self, X, y):
         models = []
 
-        comm = MPI.Comm.Get_parent()
+        #comm = MPI.Comm.Get_parent()
 
         my_run_time = 0
         # Ask for work until we receive StopIteration
         print('\t\tSlave: Waiting for data..')
-        for task in iter(lambda: comm.sendrecv('next', 0), StopIteration):
+        for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
         #for task in iter(lambda: self.comm.recv(source=0), StopIteration):
             print('\t\tSlave %d: Received job: %s' % (self.rank, task))
             start = MPI.Wtime()

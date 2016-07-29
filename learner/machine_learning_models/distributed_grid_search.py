@@ -4,6 +4,8 @@ from data_output.std_logger import L
 from mpi4py import MPI
 from machine_learning_models.grid_search_mine import GridSearchMine
 import random
+import math
+
 
 
 class DistributedGridSearch:
@@ -37,13 +39,17 @@ class DistributedGridSearch:
         shuffled_range = list(range(len(self.param_grid)))
         if shuffle: random.shuffle(shuffled_range)
 
+        work_division = self.cpus_per_node
+        if(self.cpus_per_node >= (len(self.param_grid) * self.size)):
+            work_division = math.ceil(len(self.param_grid) / self.size)
+
         temp = []
         for job in shuffled_range:
             temp.append(job)
             # current_job = self.merge_dicts([self.param_grid[job]])
             # current_job = self.param_grid[job]
             # temp.append(current_job)
-            if (len(temp) == self.cpus_per_node):
+            if (len(temp) == work_division):
                 queue.put(temp)
                 temp = []
 
@@ -71,17 +77,16 @@ class DistributedGridSearch:
                 obj = queue.get()
                 # running_procs.add(status.Get_source())
                 self.comm.send(obj=obj, dest=status.Get_source())
-                # L.info("\t-------------------")
-                # L.info("\tMaster: Sending to node %d: %s" % (status.Get_source(), obj))
-                # L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d/%d running nodes)" % (queue.qsize(), qsize, status.Get_source(),len(self.param_grid), len(running_procs), self.size))
-                # L.info("\tMaster: %s nodes are still running" % running_procs)
-                # L.info("\t-------------------")
+                L.info("\t-------------------")
+                L.info("\tMaster: Sending to node %d: %s" % (status.Get_source(), obj))
+                L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (queue.qsize(), qsize, status.Get_source(),len(self.param_grid), self.size))
+                L.info("\t-------------------")
             else:
                 # if status.Get_source() in running_procs: running_procs.remove(status.Get_source())
                 total_wait_time.append(recv)
 
         wt = MPI.Wtime() - wt
-        L.info('\tQueue is empty, it took %0.2f seconds (%d minutes) continueing (%s time spent good)' % (wt, (wt/60), total_wait_time))
+        L.info('\tQueue is empty, it contained %d items which took %0.2f seconds (%0.2f minutes) continueing (%s time spent good)' % (qsize, wt, (wt/60), total_wait_time))
 
         models = []
         models = self.comm.gather(models, root=0)

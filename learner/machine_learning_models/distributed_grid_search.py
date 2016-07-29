@@ -43,7 +43,7 @@ class DistributedGridSearch:
             # current_job = self.merge_dicts([self.param_grid[job]])
             # current_job = self.param_grid[job]
             # temp.append(current_job)
-            if (len(temp) == len(self.param_grid) / self.size):
+            if (len(temp) == self.cpus_per_node):
                 queue.put(temp)
                 temp = []
 

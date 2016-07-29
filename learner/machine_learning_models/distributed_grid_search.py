@@ -131,7 +131,7 @@ class DistributedGridSearch:
             my_run_time += MPI.Wtime() - start
          #   self.comm.send(obj='next', dest=0)
 
-        print('\t\tSlave %d: took %0.0f' % my_run_time)
+        print('\t\tSlave %d: took %0.0f' % (self.rank, my_run_time))
         # Collective report to parent
         # L.info('\t\tFinished calculating (node %d), calculated %d models' % (self.rank, len(models)), force=True)
         self.comm.gather(sendobj=models, root=0)

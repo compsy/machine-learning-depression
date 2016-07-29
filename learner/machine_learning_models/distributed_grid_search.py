@@ -66,7 +66,7 @@ class DistributedGridSearch:
     def master(self):
 
         # Get the queue of jobs to create
-        queue = self.create_job_queue(shuffle=True)
+        queue = self.create_job_queue(shuffle=False)
         qsize = queue.qsize()
 
         status = MPI.Status()

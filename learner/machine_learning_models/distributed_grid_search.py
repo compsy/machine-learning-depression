@@ -29,6 +29,7 @@ class DistributedGridSearch:
         return result
 
     def fit(self, X, y):
+        self.comm.Barrier()
         if self.rank == 0:
             L.info('\tStarting master')
             return self.master()
@@ -114,16 +115,14 @@ class DistributedGridSearch:
         print('\t\tSlave: Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
         #for task in iter(lambda: self.comm.recv(source=0), StopIteration):
-            print('\t\tSlave %d: Received job: %s' % (self.rank, task))
             start = MPI.Wtime()
             grid = [self.param_grid[y] for y in task]
             model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv)
-            print('\t\tSlave %d: Starting calculation' % self.rank)
+            print('\t\tSlave %d: Received job: %s' % (self.rank, task))
             model = model.fit(X=my_X, y=my_y)
             print('\t\tSlave %d: finished calculation' % self.rank)
             model = (model.best_score_, model.best_estimator_)
             models.append(model)
-            print('\t\tSlave %d: Gimme next' % self.rank)
 
             my_run_time += MPI.Wtime() - start
          #   self.comm.send(obj='next', dest=0)

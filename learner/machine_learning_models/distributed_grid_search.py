@@ -64,7 +64,7 @@ class DistributedGridSearch:
         status = MPI.Status()
         # running_procs = set()
         wt = MPI.Wtime()
-        total_wait_time = 0
+        total_wait_time = []
         while not queue.empty():
             recv = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             if recv == 'next':
@@ -78,11 +78,10 @@ class DistributedGridSearch:
                 # L.info("\t-------------------")
             else:
                 # if status.Get_source() in running_procs: running_procs.remove(status.Get_source())
-                total_wait_time += recv
+                total_wait_time.append(recv)
 
         wt = MPI.Wtime() - wt
-        L.info(wt)
-        L.info('\tQueue is empty, continueing (%f time spent good, or %f per node)' % (total_wait_time, (total_wait_time/(self.size -1))) )
+        L.info('\tQueue is empty, it took %0.2f seconds (%d minutes) continueing (%s time spent good)' % (wt, (wt/60), total_wait_time))
 
         models = []
         models = self.comm.gather(models, root=0)

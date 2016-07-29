@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --time=0:30:00
-#SBATCH --nodes=5
+#SBATCH --nodes=16
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=12
 #SBATCH --mail-type=ALL

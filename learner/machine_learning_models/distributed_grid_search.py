@@ -45,6 +45,7 @@ class DistributedGridSearch:
 
         temp = []
         for job in shuffled_range:
+            if job in [227, 2, 18, 154, 280, 76, 402, 503, 266, 292, 319, 481]: continue
             temp.append(job)
             # current_job = self.merge_dicts([self.param_grid[job]])
             # current_job = self.param_grid[job]
@@ -84,7 +85,7 @@ class DistributedGridSearch:
             else:
                 # if status.Get_source() in running_procs: running_procs.remove(status.Get_source())
                 total_wait_time.append(recv)
-
+        total_wait_time.append(self.comm.recv(source=MPI.ANY_SOURCE, status=status))
         wt = MPI.Wtime() - wt
         L.info('\tQueue is empty, it contained %d items which took %0.2f seconds (%0.2f minutes) continueing (%s time spent good)' % (qsize, wt, (wt/60), total_wait_time))
 

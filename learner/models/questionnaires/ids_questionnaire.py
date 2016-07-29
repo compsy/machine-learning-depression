@@ -5,8 +5,9 @@ from data_output.std_logger import L
 
 class IDSQuestionnaire(Questionnaire):
 
-    def __init__(self, name, filename, measurement_moment, reader):
-        function_mapping = {'somScore': self.som_score, 'severity': self.severity}
+    def __init__(self, name, filename, measurement_moment, reader, previous_questionnaire=None):
+        self.previous_questionnaire = previous_questionnaire
+        function_mapping = {'somScore': self.som_score, 'severity': self.severity, 'twice_depression': self.twice_depression}
 
         other_available_variables = [
             'ids01', 'ids02', 'ids03', 'ids04', 'ids05', 'ids06', 'ids07', 'ids08', 'ids09A', 'ids09B', 'ids09C',
@@ -22,6 +23,12 @@ class IDSQuestionnaire(Questionnaire):
             'ids10', 'ids11', 'ids12', 'ids13', 'ids14', 'ids15', 'ids16', 'ids17', 'ids18', 'ids19', 'ids20', 'ids21',
             'ids22', 'ids23', 'ids24', 'ids25', 'ids26', 'ids27', 'ids28'
         ]
+
+    def twice_depression(self, participant):
+        if self.previous_questionnaire is not None:
+            return self.severity(participant) > 0 and self.previous_questionnaire.severity(participant)
+        return np.NaN
+
 
     def som_score(self, participant):
         # L.warn('Check if the sumscore calculation is correct this way')

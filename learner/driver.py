@@ -122,7 +122,8 @@ class Driver:
         # regression_models.append(BaggingModel)
 
         # Output columns
-        classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
+        #classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
+        classification_y_names = np.array(['cids-followup-twice_depression'])
         regression_y_names = np.array(['cids-followup-somScore'])
 
         participants = self.create_participants()
@@ -133,6 +134,8 @@ class Driver:
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
         x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
                                                                                          classification_y_names)
+
+
         is_root, classification_fabricated_models = self.calculate(classification_models, x_data, classification_y_data,
                                                                    x_names,
                                                                    classification_y_names)

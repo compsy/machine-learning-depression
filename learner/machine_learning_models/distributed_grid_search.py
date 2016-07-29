@@ -111,7 +111,7 @@ class DistributedGridSearch:
             my_wait_time += (MPI.Wtime() - prev)
             grid = [self.param_grid[y] for y in task]
             # L.info('\t\tSlave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
-            model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv)
+            model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=1, cv=self.cv)
             model = model.fit(X=X, y=y)
             model = (model.best_score_, model.best_estimator_)
             models.append(model)

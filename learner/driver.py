@@ -2,6 +2,7 @@ import os.path
 import pickle
 import numpy as np
 import random
+from mpi4py import MPI
 from data_output.std_logger import L
 from sklearn.ensemble.bagging import BaggingClassifier
 from sklearn.preprocessing import normalize, scale
@@ -71,7 +72,7 @@ class Driver:
                  scale=True,
                  classification=True,
                  force_no_caching=False):
-
+        print('Hello from node %d' % MPI.COMM_WORLD.Get_rank())
         random.seed(42)
 
         L.setup(hpc_log)

@@ -37,13 +37,13 @@ class DistributedGridSearch:
             self.slave(X, y)
             return False
 
-    def create_job_queue(self, shuffle):
+    def create_job_queue(self, shuffle, force_distribute=False):
         queue = Queue()
         shuffled_range = list(range(len(self.param_grid)))
         if shuffle: random.shuffle(shuffled_range)
 
         work_division = self.cpus_per_node
-        if(self.cpus_per_node * self.workers > len(self.param_grid)):
+        if self.cpus_per_node * self.workers > len(self.param_grid) and force_distribute:
             work_division = math.ceil(len(self.param_grid) / self.workers)
 
         temp = []
@@ -67,13 +67,13 @@ class DistributedGridSearch:
     def master(self):
 
         # Get the queue of jobs to create
-        queue = self.create_job_queue(shuffle=False)
+        queue = self.create_job_queue(shuffle=True)
         qsize = queue.qsize()
 
         status = MPI.Status()
         # running_procs = set()
         wt = MPI.Wtime()
-
+        L.info("\tMaster: Starting calculation of %d items, or %d parameters" % (qsize, len(self.param_grid)))
         while not queue.empty():
             obj = queue.get()
             self.comm.recv(source=MPI.ANY_SOURCE, status=status)

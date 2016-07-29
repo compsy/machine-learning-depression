@@ -85,7 +85,7 @@ class DistributedGridSearch:
                 self.comm.send(obj=obj, dest=status.Get_source())
                 L.info("\t-------------------")
                 L.info("\tMaster: Sending to node %d: %s" % (status.Get_source(), obj))
-                L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (queue.qsize(), qsize, status.Get_source(),len(self.param_grid), self.workers))
+                #L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (queue.qsize(), qsize, status.Get_source(),len(self.param_grid), self.workers))
                 L.info("\t-------------------")
             else:
                 L.info("\tMaxter: Done: %d in %0.2f seconds" % (send_queue.get(), recv))
@@ -123,11 +123,12 @@ class DistributedGridSearch:
         print('\t\tSlave: Waiting for data..')
         for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
         #for task in iter(lambda: self.comm.recv(source=0), StopIteration):
+            print('\t\tSlave %d: Received job: %s' % (self.rank, task))
             my_wait_time += (MPI.Wtime() - prev)
             prev_run = MPI.Wtime()
             grid = [self.param_grid[y] for y in task]
             # L.info('\t\tSlave: Picking up a task on node %d, task size: %d' % (self.rank, len(task)))
-            print('\t\tSlave %d: starting calculation' % self.rank)
+            print('\t\tSlave %d: Starting calculation' % self.rank)
             model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv)
             print('\t\tSlave %d: finished calculation' % self.rank)
             model = model.fit(X=X, y=y)
@@ -135,6 +136,7 @@ class DistributedGridSearch:
             models.append(model)
             my_run_time += MPI.Wtime() - prev_run
             prev = MPI.Wtime()
+            print('\t\tSlave %d: Gimme next' % self.rank)
          #   self.comm.send(obj='next', dest=0)
 
         my_wait_time += (MPI.Wtime() - prev)

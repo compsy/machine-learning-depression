@@ -63,7 +63,7 @@ if [ $HPC ]; then
   cp -r ~/data $location
   cd $docker/cluster
   echo $(pwd)
-  mv submit.sh ~
+  cp submit.sh ~
   cd ~
   chmod +x submit.sh
   export PYTHONWARNINGS="ignore"

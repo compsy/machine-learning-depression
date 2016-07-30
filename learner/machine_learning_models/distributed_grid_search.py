@@ -118,9 +118,10 @@ class DistributedGridSearch:
             grid = [self.param_grid[y] for y in task]
             print('\t\tSlave %d: Received job: %s' % (self.rank, task))
             model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv).fit(X=my_X, y=my_y)
-            print('\t\tSlave %d: finished calculation' % self.rank)
             models.append((model.best_score_, model.best_estimator_))
-            run_time += MPI.Wtime() - start
+            time = MPI.Wtime() - start
+            print('\t\tSlave %d: finished calculation in %0.1f seconds' % (self.rank, time))
+            run_time += time
 
         print('\t\tSlave %d: took %0.0f seconds' % (self.rank, run_time))
         # Collective report to parent

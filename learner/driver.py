@@ -104,7 +104,7 @@ class Driver:
         ##### Define the models we should run
         classification_models = []
         #classification_models.append(BoostingClassificationModel)
-        classification_models.append(SupportVectorClassificationModel)
+        # classification_models.append(SupportVectorClassificationModel)
         # classification_models.append(LogisticRegressionModel)
         classification_models.append(NaiveBayesModel)
         classification_models.append(DummyClassifierModel)

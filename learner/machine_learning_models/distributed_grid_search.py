@@ -74,16 +74,18 @@ class DistributedGridSearch:
         # running_procs = set()
         wt = MPI.Wtime()
         L.info("\tMaster: Starting calculation of %d items, or %d parameters" % (qsize, len(self.param_grid)))
+        times = []
         while not queue.empty():
             obj = queue.get()
-            self.comm.recv(source=MPI.ANY_SOURCE, status=status)
+            time = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
-            L.info("\tMaster: Sending to node %d: %s" % (status.Get_source(), obj))
+            L.info("\tMaster: Sending to node %d: %s (%d/%d)" % (status.Get_source(), obj, queue.size(), qsize))
+            times.append(time)
             #L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (queue.qsize(), qsize, status.Get_source(),len(self.param_grid), self.workers))
 
         wt = MPI.Wtime() - wt
 
-        L.info('\tQueue is empty, it contained %d items which took %0.2f seconds (%0.2f minutes) continueing.' % (qsize, wt, (wt/60)))
+        L.info('\tQueue is empty, it contained %d items which took %0.2f seconds (%0.2f minutes). Avg: %0.2f, Median: %0.2f, Std: %0.2f' % (qsize, wt, (wt/60), np.average(times), np.median(times), np.std(times)))
 
         models = []
         models = self.comm.gather(models, root=0)
@@ -110,19 +112,21 @@ class DistributedGridSearch:
         my_X = np.copy(X)
         my_y = np.copy(y)
         run_time = 0
-
+        total_models = 0
+        last_run_time = 0
         # Ask for work until we receive StopIteration
-        print('\t\tSlave: Started my new job, now waiting for data..')
-        for task in iter(lambda: self.comm.sendrecv('next', 0), StopIteration):
+        print('\t\tSlave %d: Started my new job, now waiting for data..' % self.rank)
+        for task in iter(lambda: self.comm.sendrecv(last_run_time, 0), StopIteration):
             start = MPI.Wtime()
+            total_models += len(task)
             grid = [self.param_grid[y] for y in task]
             print('\t\tSlave %d: Received job: %s' % (self.rank, task))
             model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv).fit(X=my_X, y=my_y)
             models.append((model.best_score_, model.best_estimator_))
-            time = MPI.Wtime() - start
+            last_run_time = MPI.Wtime() - start
             print('\t\tSlave %d: finished calculation in %0.1f seconds' % (self.rank, time))
-            run_time += time
+            run_time += last_run_time
 
-        print('\t\tSlave %d: took %0.0f seconds' % (self.rank, run_time))
+        print('\t\tSlave %d: took %0.0f seconds (avg %0.2f per model)' % (self.rank, run_time, (run_time/total_models)))
         # Collective report to parent
         self.comm.gather(sendobj=models, root=0)

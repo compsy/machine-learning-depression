@@ -74,7 +74,7 @@ class DistributedGridSearch:
 
         with open(file_name, "a") as output_file:
             output = (self.size, self.cpus_per_node, qsize, len(self.param_grid), self.cv, wall_time, np.average(times), np.median(times), np.std(times) )
-            output_file.write('%d,%d,%d,%d,%0.2f,%0.2f,%0.2f,%0.2f\n' % output)
+            output_file.write('%d,%d,%d,%d,%d,%0.2f,%0.2f,%0.2f,%0.2f\n' % output)
 
     def master(self):
 

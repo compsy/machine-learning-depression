@@ -72,7 +72,7 @@ class Driver:
                  scale=True,
                  classification=True,
                  force_no_caching=False):
-        print('Hello from node %d' % MPI.COMM_WORLD.Get_rank())
+        if(hpc): print('Hello from node %d' % MPI.COMM_WORLD.Get_rank())
         random.seed(42)
 
         L.setup(hpc_log)
@@ -146,7 +146,9 @@ class Driver:
                                                                regression_y_names)
 
         # Kill all worker nodes
-        if not is_root:
+        if hpc and MPI.COMM_WORLD.Get_rank() > 0:
+            L.info('Byebye from node %d' % MPI.COMM_WORLD.Get_rank(), force=True)
+
             exit(0)
 
         # Plot an overview of the density estimations of the variables used in the actual model calculation.
@@ -187,10 +189,10 @@ class Driver:
         return (x_data, y_data, used_data, selected_header)
 
     def calculate(self, models, x_data, y_data, x_names, y_names):
-        if self.HPC:
-            model_runner = DistributedModelRunner(models)
-        else:
-            model_runner = SyncModelRunner(models)
+        # if self.HPC:
+            # model_runner = DistributedModelRunner(models)
+        # else:
+        model_runner = SyncModelRunner(models)
 
         fabricated_models = model_runner.fabricate_models(x_data, y_data, x_names, y_names, self.VERBOSITY)
 

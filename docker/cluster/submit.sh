@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --time=2:00:00
-#SBATCH --nodes=16
+#SBATCH --time=1:00:00
+#SBATCH --nodes=32
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=23
 #SBATCH --mail-type=ALL
@@ -19,4 +19,4 @@ cd learner
 echo "Running main.py"
 export MPLBACKEND="agg"
 mpirun python3 main.py
-echo "Running main.py"
+echo "Finished main.py"

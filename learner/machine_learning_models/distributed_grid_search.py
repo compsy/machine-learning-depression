@@ -1,4 +1,5 @@
 from sklearn.grid_search import GridSearchCV, ParameterGrid
+import os.path
 from queue import Queue
 from data_output.std_logger import L
 from mpi4py import MPI
@@ -11,16 +12,17 @@ import numpy as np
 
 class DistributedGridSearch:
 
-    def __init__(self, estimator, param_grid, cv):
+    def __init__(self, ml_model, estimator, param_grid, cv):
         # Number of nodes
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.workers = self.size -1
         self.rank = self.comm.Get_rank()
-        self.cpus_per_node = 12
+        self.cpus_per_node = 23
         self.skmodel = estimator
         self.param_grid = ParameterGrid(param_grid)
         self.cv = cv
+        self.ml_model = ml_model
 
     def merge_dicts(self, dicts):
         result = {}
@@ -64,6 +66,16 @@ class DistributedGridSearch:
 
         return queue
 
+    def write_output(self, qsize, wall_time,  times):
+        file_name = ('../exports/%s.csv' % self.ml_model.given_name)
+        if not os.path.isfile(file_name):
+            with open(file_name, "w") as output_file:
+                output_file.write('"nodes", "number_of_cpus", "queue_size", "parameters", "cv", "wall_time", "average", "median", "standard_deviation"')
+
+        with open(file_name, "a") as output_file:
+            output = (self.size, self.number_of_cpus, qsize, len(self.param_grid), self.cv, wall_time, np.average(times), np.median(times), np.std(times) )
+            output_file.write('%d,%d,%d,%d,%0.2f,%0.2f,%0.2f,%0.2f' % output)
+
     def master(self):
 
         # Get the queue of jobs to create
@@ -88,6 +100,7 @@ class DistributedGridSearch:
 
         L.info('\tQueue is empty, it contained %d items which took %0.2f seconds (%0.2f minutes). Avg: %0.2f, Median: %0.2f, Std: %0.2f' % (qsize, wt, (wt/60), np.average(times), np.median(times), np.std(times)))
 
+        self.write_output(qsize, wt,  times)
         models = []
         models = self.comm.gather(models, root=0)
         best_model = None

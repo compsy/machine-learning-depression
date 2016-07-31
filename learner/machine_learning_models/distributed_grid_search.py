@@ -79,7 +79,7 @@ class DistributedGridSearch:
             obj = queue.get()
             time = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
-            L.info("\tMaster: Sending to node %d: %s (%d/%d)" % (status.Get_source(), obj, queue.size(), qsize))
+            L.info("\tMaster: Sending to node %d: %s (%d/%d)" % (status.Get_source(), obj, queue.qsize(), qsize))
             times.append(time)
             #L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (queue.qsize(), qsize, status.Get_source(),len(self.param_grid), self.workers))
 
@@ -124,7 +124,7 @@ class DistributedGridSearch:
             model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv).fit(X=my_X, y=my_y)
             models.append((model.best_score_, model.best_estimator_))
             last_run_time = MPI.Wtime() - start
-            print('\t\tSlave %d: finished calculation in %0.1f seconds' % (self.rank, time))
+            print('\t\tSlave %d: finished calculation in %0.1f seconds' % (self.rank, last_run_time))
             run_time += last_run_time
 
         print('\t\tSlave %d: took %0.0f seconds (avg %0.2f per model)' % (self.rank, run_time, (run_time/total_models)))

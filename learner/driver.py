@@ -123,7 +123,7 @@ class Driver:
 
         # Output columns
         classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
-        # classification_y_names = np.array(['cids-followup-twice_depression'])
+        classification_y_names = np.array(['cids-followup-twice_depression'])
         regression_y_names = np.array(['cids-followup-somScore'])
 
         participants = self.create_participants()

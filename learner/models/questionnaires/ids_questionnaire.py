@@ -25,8 +25,12 @@ class IDSQuestionnaire(Questionnaire):
         ]
 
     def twice_depression(self, participant):
+        result = np.NaN
         if self.previous_questionnaire is not None:
-            return self.severity(participant) > 0 and self.previous_questionnaire.severity(participant)
+            if ifself.severity(participant) > 0 and self.previous_questionnaire.severity(participant):
+                result = 1
+            else:
+                result = 0
         return np.NaN
 
 

@@ -80,7 +80,8 @@ class DistributedGridSearch:
             time = self.comm.recv(source=MPI.ANY_SOURCE, status=status)
             self.comm.send(obj=obj, dest=status.Get_source())
             L.info("\tMaster: Sending to node %d: %s (%d/%d)" % (status.Get_source(), obj, queue.qsize(), qsize))
-            times.append(time)
+            if time >= 0:
+                times.append(time)
             #L.info("\tMaster: Queue size: %d/%d (last job by node %d, %d number of configurations, %d nodes)" % (queue.qsize(), qsize, status.Get_source(),len(self.param_grid), self.workers))
 
         wt = MPI.Wtime() - wt
@@ -113,7 +114,7 @@ class DistributedGridSearch:
         my_y = np.copy(y)
         run_time = 0
         total_models = 0
-        last_run_time = 0
+        last_run_time = -1
         # Ask for work until we receive StopIteration
         print('\t\tSlave %d: Started my new job, now waiting for data..' % self.rank)
         for task in iter(lambda: self.comm.sendrecv(last_run_time, 0), StopIteration):

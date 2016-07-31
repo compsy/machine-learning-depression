@@ -105,7 +105,7 @@ class Driver:
         classification_models = []
         #classification_models.append(BoostingClassificationModel)
         classification_models.append(SupportVectorClassificationModel)
-        classification_models.append(LogisticRegressionModel)
+        # classification_models.append(LogisticRegressionModel)
         classification_models.append(NaiveBayesModel)
         classification_models.append(DummyClassifierModel)
         classification_models.append(DummyRandomClassifierModel)
@@ -116,7 +116,7 @@ class Driver:
         regression_models = []
         # regressionmodels.append(KerasNnModel)
         regression_models.append(LinearRegressionModel)
-        regression_models.append(SupportVectorRegressionModel)
+        # regression_models.append(SupportVectorRegressionModel)
         regression_models.append(RegressionTreeModel)
         regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
@@ -148,7 +148,6 @@ class Driver:
         # Kill all worker nodes
         if hpc and MPI.COMM_WORLD.Get_rank() > 0:
             L.info('Byebye from node %d' % MPI.COMM_WORLD.Get_rank(), force=True)
-
             exit(0)
 
         # Plot an overview of the density estimations of the variables used in the actual model calculation.

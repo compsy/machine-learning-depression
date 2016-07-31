@@ -31,7 +31,7 @@ class IDSQuestionnaire(Questionnaire):
                 result = 1
             else:
                 result = 0
-        return np.NaN
+        return result
 
 
     def som_score(self, participant):

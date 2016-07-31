@@ -70,10 +70,10 @@ class DistributedGridSearch:
         file_name = ('../exports/%s.csv' % self.ml_model.given_name)
         if not os.path.isfile(file_name):
             with open(file_name, "w") as output_file:
-                output_file.write('"nodes", "number_of_cpus", "queue_size", "parameters", "cv", "wall_time", "average", "median", "standard_deviation"')
+                output_file.write('"nodes", "cpus_per_node", "queue_size", "parameters", "cv", "wall_time", "average", "median", "standard_deviation"')
 
         with open(file_name, "a") as output_file:
-            output = (self.size, self.number_of_cpus, qsize, len(self.param_grid), self.cv, wall_time, np.average(times), np.median(times), np.std(times) )
+            output = (self.size, self.cpus_per_node, qsize, len(self.param_grid), self.cv, wall_time, np.average(times), np.median(times), np.std(times) )
             output_file.write('%d,%d,%d,%d,%0.2f,%0.2f,%0.2f,%0.2f' % output)
 
     def master(self):

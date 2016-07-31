@@ -126,7 +126,9 @@ class DistributedGridSearch:
             last_run_time = MPI.Wtime() - start
             print('\t\tSlave %d: finished calculation in %0.1f seconds' % (self.rank, last_run_time))
             run_time += last_run_time
-
-        print('\t\tSlave %d: took %0.0f seconds (avg %0.2f per model)' % (self.rank, run_time, (run_time/total_models)))
+        if total_models > 0:
+            print('\t\tSlave %d: took %0.0f seconds (avg %0.2f per model)' % (self.rank, run_time, (run_time/total_models)))
+        else:
+            print('\t\tSlave %d: took %0.0f seconds' % (self.rank, run_time))
         # Collective report to parent
         self.comm.gather(sendobj=models, root=0)

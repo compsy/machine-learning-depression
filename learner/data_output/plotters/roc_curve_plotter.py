@@ -26,7 +26,7 @@ class RocCurvePlotter(Plotter):
             L.info('Which uses: ' + str(model.skmodel))
 
             probas_ = model.predict_for_roc(model.x_test)
-            print(np.shape(probas))
+            print(np.shape(probas_))
             print(np.shape(model.y_test))
 
             # Compute ROC curve and area the curve

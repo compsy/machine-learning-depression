@@ -15,7 +15,13 @@ class ElasticNetModel(MachineLearningModel):
 
         if grid_search:
             parameter_grid = {
-                    'alpha': np.logspace(0, 3, 50),
-                    'l1_ratio': np.logspace(-1, 1, 50)
+                    'alpha': np.logspace(-10, 3, 500),
+                    'l1_ratio': np.logspace(-10, 0, 500)
                     }
             self.grid_search([parameter_grid])
+
+    def predict_for_roc(self, x_data):
+        # TODO: What is the difference between log_proba and proba?
+        L.info(self.skmodel.coef_)
+        L.info(self.skmodel.sparse_coef_)
+        return self.skmodel.predict_log_proba(x_data)[:, 1]

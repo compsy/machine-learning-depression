@@ -170,7 +170,7 @@ class Driver:
             L.warn('There are more than 2 types of people in the DB')
             L.warn(genders)
 
-        gender_output = (gender_output[0]/len(participants), gender_output[1]/len(participants))
+        gender_output = ((gender_output[0]/len(participants))*100, (gender_output[1]/len(participants))*100)
         ages_output = (len(participants), np.average(ages), np.median(ages), np.std(ages), min(ages), max(ages))
 
         L.info('The participants (%d) have an average age of %0.2f, median %0.2f, sd %0.2f, range %d-%d' % ages_output)

@@ -166,7 +166,7 @@ class Driver:
             ages.append(participant.age)
 
         gender_output = np.bincount(genders)
-        if len(gender_output is not 2):
+        if len(gender_output) is not 2:
             L.warn('There are more than 2 types of people in the DB')
             L.warn(genders)
 

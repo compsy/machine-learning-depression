@@ -16,7 +16,6 @@ class LinearRegressionModel(MachineLearningModel):
         self.skmodel = linear_model.LassoCV(eps=1e-2,
                                             n_alphas=300,
                                             fit_intercept=True,
-                                            normalize=True,
                                             copy_X=False,
                                             max_iter=self.MAX_ITERATIONS,
                                             verbose=verbosity)

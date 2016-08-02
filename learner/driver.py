@@ -151,15 +151,36 @@ class Driver:
             exit(0)
 
         # Plot an overview of the density estimations of the variables used in the actual model calculation.
-        self.data_density_plotter.plot(x_data, x_names)
+        self.create_descriptives(participants, x_data, x_names)
         self.create_output(classification_fabricated_models, classification_y_data, used_data, selected_header,
                            model_type='classification')
         self.create_output(regression_fabricated_models, regression_y_data, used_data, selected_header,
                            model_type='regression')
 
+    def create_descriptives(self, participants, x_data, x_names):
+        ages = []
+        genders = []
+        for participant in participants:
+            genders.append(participant.gender)
+            ages.append(participant.age)
+        
+        gender_output = np.bincount(genders)
+        if len(gender_output is not 2):
+            L.warn('There are more than 2 types of people in the DB')
+            L.warn(genders)
+
+        gender_output = (gender_output[0], gender_output[1])
+        age_output = (len(participants), np.average(ages), np.median(ages), np.std(ages))
+
+        L.info('The participants (%d) have an average age of %0.2f, median %0.2f, sd %0.2f' % ages_output)
+        L.info('The participants are %0.f percent male (%0.2f percent female)' % gender_output)
+        self.data_density_plotter.plot(x_data, x_names)
+
+
     def get_usable_data(self, data, header, x_names, y_names):
         L.info('Loaded data with %d rows and %d columns' % np.shape(data))
         L.info('We will use %s as outcome.' % y_names)
+
 
         selected_header = np.append(x_names, y_names)
 

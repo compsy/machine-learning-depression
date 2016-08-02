@@ -171,7 +171,7 @@ class Driver:
             L.warn(genders)
 
         gender_output = (gender_output[0]/len(participants), gender_output[1]/len(participants))
-        ages_output = (len(participants), np.average(ages), np.median(ages), np.std(ages), np.minimum(ages), np.maximum(ages))
+        ages_output = (len(participants), np.average(ages), np.median(ages), np.std(ages), min(ages), max(ages))
 
         L.info('The participants (%d) have an average age of %0.2f, median %0.2f, sd %0.2f, range %d-%d' % ages_output)
         L.info('The participants are %0.f percent male (%0.2f percent female)' % gender_output)

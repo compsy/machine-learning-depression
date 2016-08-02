@@ -160,10 +160,11 @@ class Driver:
     def create_descriptives(self, participants, x_data, x_names):
         ages = []
         genders = []
-        for participant in participants:
+        for index, participant_key in enumerate(participants):
+            participant = participants[participant_key]
             genders.append(participant.gender)
             ages.append(participant.age)
-        
+
         gender_output = np.bincount(genders)
         if len(gender_output is not 2):
             L.warn('There are more than 2 types of people in the DB')

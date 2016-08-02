@@ -15,8 +15,8 @@ class ElasticNetModel(MachineLearningModel):
 
         if grid_search:
             parameter_grid = {
-                    'alpha': np.logspace(-10, 3, 500),
-                    'l1_ratio': np.logspace(-10, 0, 500)
+                    'alpha': np.logspace(-10, 3, 100),
+                    'l1_ratio': np.logspace(-10, 0, 100)
                     }
             self.grid_search([parameter_grid])
 

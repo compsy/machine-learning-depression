@@ -35,6 +35,3 @@ class LogisticRegressionModel(MachineLearningModel):
         if grid_search:
             parameter_grid = {'penalty': ['l1', 'l2'], 'C': np.logspace(0, 2, 5)}
             self.grid_search([parameter_grid])
-
-    def predict_for_roc(self, x_data):
-        return self.skmodel.decision_function(x_data)

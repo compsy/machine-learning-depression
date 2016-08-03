@@ -22,6 +22,3 @@ class BoostingClassificationModel(MachineLearningModel):
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             self.grid_search([parameter_grid])
-
-    def predict_for_roc(self, x_data):
-        return self.skmodel.decision_function(x_data)

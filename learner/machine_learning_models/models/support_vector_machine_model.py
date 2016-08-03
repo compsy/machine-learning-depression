@@ -69,6 +69,3 @@ class SupportVectorClassificationModel(MachineLearningModel):
 
     def variable_to_validate(self):
         return 'degree'
-
-    def predict_for_roc(self, x_data):
-        return self.skmodel.decision_function(x_data)

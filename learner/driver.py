@@ -73,7 +73,7 @@ class Driver:
                  scale=True,
                  classification=True,
                  force_no_caching=False):
-        if(hpc): print('Hello from node %d' % MPI.COMM_WORLD.Get_rank())
+        if(hpc): print('Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
         random.seed(42)
 
         L.setup(hpc_log)

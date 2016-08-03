@@ -23,6 +23,3 @@ class BaggingClassificationModel(MachineLearningModel):
                                          n_estimators=100,
                                          bootstrap=True,
                                          max_samples=100)
-
-    def predict_for_roc(self, x_data):
-        return self.skmodel.predict_log_proba(x_data)[:, 1]

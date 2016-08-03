@@ -109,4 +109,4 @@ class MachineLearningModel:
 
     ## Override
     def predict_for_roc(self, x_data):
-        return self.skmodel.decision_function(x_data)
+        return self.skmodel.predict_proba(x_data)[:, 1]

@@ -13,8 +13,8 @@ from machine_learning_models.models.boosting_model import BoostingClassification
 
 class RegressionTreeModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True):
-        super().__init__(x, y, x_names, y_names, model_type='regression')
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+        super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
         self.skmodel = DecisionTreeRegressor(max_depth=5)
 
         if grid_search:
@@ -25,8 +25,8 @@ class RegressionTreeModel(MachineLearningModel):
 
 class ClassificationTreeModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True):
-        super().__init__(x, y, x_names, y_names, model_type='classification', verbosity=verbosity)
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+        super().__init__(x, y, x_names, y_names, model_type='classification', verbosity=verbosity, **kwargs)
         self.skmodel = DecisionTreeClassifier(max_depth=5)
 
         if grid_search:

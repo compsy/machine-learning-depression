@@ -70,7 +70,7 @@ class TestQuestionnaire:
 
     def test_variable_name(self, subject):
         variable_name = 'test'
-        result = subject.variable_name(variable_name)
+        result = subject.variable_name(variable_name, force_lower_case=False)
         expected = 'a' + variable_name
         assert result == expected
 

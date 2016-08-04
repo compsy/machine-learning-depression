@@ -65,14 +65,14 @@ class Driver:
     """
 
     def __init__(self,
-                 verbosity=0,
-                 hpc=False,
-                 hpc_log=True,
-                 polynomial_features=False,
-                 normalize=False,
-                 scale=True,
-                 classification=True,
-                 force_no_caching=False):
+                 verbosity,
+                 hpc,
+                 hpc_log,
+                 polynomial_features,
+                 normalize,
+                 scale,
+                 classification,
+                 force_no_caching):
         if(hpc): print('Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
         random.seed(42)
 
@@ -104,7 +104,6 @@ class Driver:
 
         ##### Define the models we should run
         classification_models = []
-        classification_models.append(ElasticNetModel)
         classification_models.append(ClassificationTreeModel)
         # classification_models.append(SupportVectorClassificationModel)
         # classification_models.append(BoostingClassificationModel)
@@ -119,7 +118,7 @@ class Driver:
         # regressionmodels.append(KerasNnModel)
         regression_models.append(LinearRegressionModel)
         # regression_models.append(SupportVectorRegressionModel)
-        regression_models.append(RegressionTreeModel)
+        #regression_models.append(RegressionTreeModel)
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
 
@@ -127,6 +126,7 @@ class Driver:
         classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
         classification_y_names = np.array(['cids-followup-twice_depression'])
         regression_y_names = np.array(['cids-followup-somScore'])
+
 
         participants = self.create_participants()
         header, data = self.get_file_data('cache.pkl',
@@ -137,14 +137,22 @@ class Driver:
         x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
                                                                                          classification_y_names)
 
+        # Perform feature selection algorithm
+        elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names, classification_y_names, verbosity = 0, hpc = hpc)
+        elastic_net_model.train()
+        elastic_net_model.determine_best_variables()
 
-        is_root, classification_fabricated_models = self.calculate(classification_models, x_data, classification_y_data,
+        # Calculate the actual models
+        model_runner = SyncModelRunner(classification_models, hpc=hpc)
+        is_root, classification_fabricated_models = self.calculate(model_runner, x_data, classification_y_data,
                                                                    x_names,
                                                                    classification_y_names)
 
+
         x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
                                                                                      regression_y_names)
-        is_root, regression_fabricated_models = self.calculate(regression_models, x_data, regression_y_data, x_names,
+        model_runner = SyncModelRunner(regression_models, hpc=hpc)
+        is_root, regression_fabricated_models = self.calculate(model_runner, x_data, regression_y_data, x_names,
                                                                regression_y_names)
 
         # Kill all worker nodes
@@ -153,7 +161,7 @@ class Driver:
             exit(0)
 
         # Plot an overview of the density estimations of the variables used in the actual model calculation.
-        self.create_descriptives(participants, x_data, x_names)
+        #self.create_descriptives(participants, x_data, x_names)
         self.create_output(classification_fabricated_models, classification_y_data, used_data, selected_header,
                            model_type='classification')
         self.create_output(regression_fabricated_models, regression_y_data, used_data, selected_header,
@@ -211,11 +219,7 @@ class Driver:
         y_data = np.ravel(y_data)
         return (x_data, y_data, used_data, selected_header)
 
-    def calculate(self, models, x_data, y_data, x_names, y_names):
-        # if self.HPC:
-            # model_runner = DistributedModelRunner(models)
-        # else:
-        model_runner = SyncModelRunner(models)
+    def calculate(self, model_runner, x_data, y_data, x_names, y_names):
 
         fabricated_models = model_runner.fabricate_models(x_data, y_data, x_names, y_names, self.VERBOSITY)
 
@@ -325,7 +329,7 @@ class Driver:
         """
         return np.array([  # 'pident',
             # IDS - 'aids-ids09A', 'aids-ids09B', 'aids-ids09C', are NONE for nearly everyone
-            'aids-somScore',
+            #'aids-somScore',
             'aids-ids01',
             'aids-ids02',
             'aids-ids03',
@@ -352,9 +356,9 @@ class Driver:
             'aids-ids25',
             'aids-ids26',
             'aids-ids27',
-            'aids-ids28',
+            'aids-ids28'
 
-            # # Masq
+            # Masq
             'amasq-positiveAffectScore',
             'amasq-negativeAffectScore',
             'amasq-somatizationScore',
@@ -426,6 +430,31 @@ class Driver:
             'acidi-anxiety-generalAnxietyDisorderInLifetime',
             'acidi-anxiety-numberOfCurrentAnxietyDiagnoses',
             'acidi-anxiety-lifetimeAnxietyDiagnosesPresent',
+
+
+            # # Personality
+            'aneoffi-NeuroticismeTotalScore',
+            'aneoffi-NeuroticismNegativeAffect',
+            'aneoffi-NeuroticismSelfReproach',
+            'aneoffi-NeuroticismAnxietyAlternative',
+            'aneoffi-NeuroticismDepressionAlternative',
+            'aneoffi-NeuroticismSelfreproach2Alternative',
+            'aneoffi-ExtraversionTotalScore',
+            'aneoffi-ExtraversionPositiveAffect',
+            'aneoffi-ExtraversionSociability',
+            'aneoffi-ExtraversionActivity',
+            'aneoffi-OpennessTotalScore',
+            'aneoffi-OpennessAestheticInterest',
+            'aneoffi-OpennessIntellectualInterest',
+            'aneoffi-OpennessUnconventionality',
+            'aneoffi-AgreeablenessTotalScore',
+            'aneoffi-AgreeablenessNonantagonasticOrientation',
+            'aneoffi-AgreeablenessProsocialOrientation',
+            'aneoffi-ConscientiousnessTotalScore',
+            'aneoffi-ConscientiousnessOrderliness',
+            'aneoffi-ConscientiousnessGoalStriving',
+            'aneoffi-ConscientiousnessDependability',
+
 
             # 'ademo-gender',
             'ademo-age'

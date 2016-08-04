@@ -5,6 +5,6 @@ from sklearn.naive_bayes import GaussianNB
 
 class NaiveBayesModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity):
-        super().__init__(x, y, x_names, y_names, model_type='classification')
+    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
+        super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
         self.skmodel = GaussianNB()

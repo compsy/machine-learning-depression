@@ -26,8 +26,9 @@ class IDSQuestionnaire(Questionnaire):
 
     def twice_depression(self, participant):
         result = np.NaN
+        threshold = 1
         if self.previous_questionnaire is not None:
-            if self.severity(participant) > 0 and self.previous_questionnaire.severity(participant):
+            if self.severity(participant) > threshold and self.previous_questionnaire.severity(participant) > threshold:
                 result = 1
             else:
                 result = 0
@@ -42,7 +43,7 @@ class IDSQuestionnaire(Questionnaire):
         tot = np.nan
 
         for name in self.variables_for_som_score:
-            q_name = self.variable_name(name)
+            q_name = self.variable_name(name, force_lower_case=False)
             # We can check here for values > 0 since the NESDA dataset uses values from 1 - 5?
             if q_name in dat and dat[q_name] > 0:
                 if (np.isnan(tot)): tot = 0

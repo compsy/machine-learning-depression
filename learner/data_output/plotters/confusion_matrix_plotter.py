@@ -14,7 +14,7 @@ class ConfusionMatrixPlotter(Plotter):
 
         cmap = plt.cm.Blues
         cmap = plt.cm.afmhot
-        #cmap = plt.cm.rainbow
+        cmap = plt.cm.rainbow
         np.set_printoptions(precision=2)
 
         fig, ax = plt.subplots(1, 2, figsize=(15, 15), dpi=72)

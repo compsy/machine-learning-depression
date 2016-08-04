@@ -1,5 +1,7 @@
 from models.questionnaires import ids_questionnaire, four_dkl_distress_questionnaire, demographic_questionnaire, bai_questionnaire, \
-    masq_questionnaire, cidi_depression_derived, cidi_anxiety_derived, four_dkl_physical_complaints_questionnaire
+    masq_questionnaire, cidi_depression_derived, cidi_anxiety_derived, four_dkl_physical_complaints_questionnaire, \
+    neo_ffi_questionnaire
+
 
 # Dataset    Description
 # N1_x100    DOB, age, gender, nationality and education of respondents
@@ -99,6 +101,13 @@ class QuestionnaireFactory:
                                              measurement_moment='c',
                                              reader=reader))
 
+        # N1_x240	NEO-FFI (big five personality test)
+        questionnaires.append(neo_ffi_questionnaire.NeoFfiQuestionnaire(name="neoffi",
+                                                                        filename='N1_A240D.sav',
+                                                                        measurement_moment='a',
+                                                                        reader=reader))
+
+
         # N1_x257    CIDI - depression (derived diagnosis variables)
         ## We will be using the derived file here
         questionnaires.append(cidi_depression_derived.CIDIDepressionDerived(name="cidi-depression",
@@ -120,4 +129,5 @@ class QuestionnaireFactory:
                                                 filename='N1_C259D.sav',
                                                 measurement_moment='c',
                                                 reader=reader))
+
         return questionnaires

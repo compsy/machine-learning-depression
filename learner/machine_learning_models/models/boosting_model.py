@@ -5,15 +5,15 @@ import numpy as np
 
 class BoostingModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity):
+    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
+        super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
         self.skmodel = GradientBoostingRegressor(verbose=verbosity)
-        super().__init__(x, y, x_names, y_names, model_type='regression')
 
 
 class BoostingClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True):
-        super().__init__(x, y, x_names, y_names, model_type='classification')
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+        super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
         self.skmodel = GradientBoostingClassifier(verbose=verbosity, n_estimators=1000, max_depth=5)
         if grid_search:
             parameter_grid = {

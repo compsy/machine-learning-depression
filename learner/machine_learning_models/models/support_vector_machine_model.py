@@ -8,8 +8,8 @@ import numpy as np
 
 class SupportVectorRegressionModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity):
-        super().__init__(x, y, x_names, y_names, model_type='regression')
+    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
+        super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
         self.skmodel = svm.SVR(verbose=verbosity)
         # Radial basis function grid
         rbf_grid = {'kernel': ['rbf'],
@@ -39,8 +39,8 @@ class SupportVectorRegressionModel(MachineLearningModel):
 
 class SupportVectorClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity):
-        super().__init__(x, y, x_names, y_names, model_type='classification')
+    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
+        super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
         self.skmodel = svm.SVC(verbose=verbosity, kernel='poly', degree=2, C=600000)
 
         # Radial basis function grid

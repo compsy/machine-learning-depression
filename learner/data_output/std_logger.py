@@ -8,13 +8,15 @@ class L:
 
     @staticmethod
     def setup(logger_hpc):
+        global logger_on_hpc
+        logger_on_hpc = logger_hpc
+
         if not logger_hpc:
             date = time.strftime("%y%m%d-%H%M")
             FORMAT = '%(asctime)-15s -> %(message)s'
             logging.basicConfig(filename='../exports/' + date + '_output.log', format=FORMAT, level=logging.INFO)
             L.info('Starting Machine Learning')
-        global logger_on_hpc
-        logger_on_hpc = logger_hpc
+        print(logger_on_hpc)
 
     @staticmethod
     def info(text, force=False):

@@ -11,8 +11,8 @@ import numpy as np
 class LinearRegressionModel(MachineLearningModel):
     MAX_ITERATIONS = 10000
 
-    def __init__(self, x, y, x_names, y_names, verbosity):
-        super().__init__(x, y, x_names, y_names, model_type='regression')
+    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
+        super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
         self.skmodel = linear_model.LassoCV(eps=1e-2,
                                             n_alphas=300,
                                             fit_intercept=True,
@@ -23,8 +23,8 @@ class LinearRegressionModel(MachineLearningModel):
 
 class LogisticRegressionModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True):
-        super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification')
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+        super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = LogisticRegression(penalty='l2',
                                           C=0.1,
                                           verbose=verbosity,

@@ -1,5 +1,6 @@
 import inspect
 
+from sklearn.decomposition import PCA
 
 class Questionnaire:
 
@@ -15,6 +16,10 @@ class Questionnaire:
         # Merge the two functions into one
         self.function_mapping = function_mapping.copy()
         self.function_mapping.update(raw_value_function_mapping)
+
+        #pca = PCA(n_components=2)
+        #pca.fit(x_data)
+        #print(pca.explained_variance_ratio_)
 
     def create_raw_value_function_mapping(self, other_available_variables):
         """
@@ -49,10 +54,14 @@ class Questionnaire:
 
     def get_header(self):
         col_names = self.function_mapping.keys()
-        return map(lambda name: self.variable_name(self.name + '-' + name), col_names)
+        return map(lambda name: self.variable_name(self.name + '-' + name, force_lower_case=False), col_names)
 
-    def variable_name(self, variable):
-        return self.measurement_moment + variable
+    def variable_name(self, variable, force_lower_case):
+        measurement_moment = self.measurement_moment
+        if force_lower_case:
+            measurement_moment = measurement_moment.lower()
+
+        return measurement_moment + variable
 
     def number_of_variables(self):
         return len(self.function_mapping.keys())
@@ -86,9 +95,9 @@ class Questionnaire:
 
         return res
 
-    def get_field(self, participant, field):
+    def get_field(self, participant, field, force_lower_case=False):
         dat = self.get_row(participant)
-        q_name = self.variable_name(field)
+        q_name = self.variable_name(field, force_lower_case=force_lower_case)
         if q_name in dat:
             return dat[q_name]
         return None

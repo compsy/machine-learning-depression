@@ -29,7 +29,7 @@ class FourDKLQuestionnaire(Questionnaire):
         tot = np.nan
 
         for name in self.variables_for_som_score:
-            q_name = self.variable_name(name)
+            q_name = self.variable_name(name, force_lower_case=False)
             # We can check here for values > 0 since the NESDA dataset uses values from 1 - 5?
             if q_name in dat and dat[q_name] > 0:
                 if (np.isnan(tot)): tot = 0

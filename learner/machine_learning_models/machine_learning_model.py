@@ -13,7 +13,7 @@ from machine_learning_models.distributed_grid_search import DistributedGridSearc
 
 class MachineLearningModel:
 
-    def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0):
+    def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0, hpc=False):
         self.x = x
         self.y = y
         self.x_names = x_names
@@ -22,6 +22,7 @@ class MachineLearningModel:
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
+        self.hpc = hpc
         self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(),
                             RootMseEvaluation()]
 
@@ -103,9 +104,12 @@ class MachineLearningModel:
         return type(self).__name__
 
     def grid_search(self, param_grid):
-        self.grid_model = DistributedGridSearch(ml_model=self, estimator=self.skmodel, param_grid=param_grid, cv=8)
-        #self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
-        return self.grid_model
+        if self.hpc:
+            self.grid_model = DistributedGridSearch(ml_model=self, estimator=self.skmodel, param_grid=param_grid, cv=8)
+            return self.grid_model
+        else:
+            self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
+            return self.skmodel
 
     ## Override
     def predict_for_roc(self, x_data):

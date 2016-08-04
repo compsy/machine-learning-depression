@@ -52,7 +52,7 @@ class TestIDSQuestionnaire:
         index = 0
         total = 0
         for key in subject.variables_for_som_score:
-            fake_data[subject.variable_name(key)] = index
+            fake_data[subject.variable_name(key, force_lower_case=False)] = index
             total += index - 1
             index += 1
 
@@ -70,7 +70,7 @@ class TestIDSQuestionnaire:
     def test_som_score_returns_nan(self, subject, monkeypatch, mock_participant):
         fake_data = {}
         for key in subject.variables_for_som_score:
-            fake_data[subject.variable_name(key)] = -1
+            fake_data[subject.variable_name(key, force_lower_case=False)] = -1
 
         def fake_get_row(participant):
             return fake_data

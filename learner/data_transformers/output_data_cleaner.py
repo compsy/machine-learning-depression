@@ -8,7 +8,7 @@ class OutputDataCleaner(DataTransformer):
     def clean(self, data, incorrect_indices):
         return np.delete(data, incorrect_indices, axis=0)
 
-    def find_incomplete_rows(self, data, header, print_info=False):
+    def find_incomplete_rows(self, data, header, print_info=True):
         incorrect_indices = []
         missing_value_hash = {}
         missing_indices = {}

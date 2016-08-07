@@ -41,12 +41,13 @@ class DistributedRandomGridSearch:
 
         # Actual calculation
         my_data = []
-        my_iterations = iterations
-        model = RandomizedSearchCV(estimator=self.skmodel, param_distributions=self.param_grid,
+        my_iterations = round(iterations / len(self.param_grid))
+        for param_grid in self.param_grid:
+            model = RandomizedSearchCV(estimator=self.skmodel, param_distributions=param_grid,
                                    n_jobs=-1, verbose=0, cv=self.cv, n_iter=my_iterations)
-        model = model.fit(X=my_X, y=my_y)
-        L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations))
-        my_data.append((model.best_score_, model.best_estimator_))
+            model = model.fit(X=my_X, y=my_y)
+            L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations))
+            my_data.append((model.best_score_, model.best_estimator_))
 
         iterations = my_data
 

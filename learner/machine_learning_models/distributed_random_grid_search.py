@@ -50,8 +50,7 @@ class DistributedRandomGridSearch:
                    force=True)
             my_data.append((model.best_score_, model.best_estimator_))
 
-        iterations = my_data
-        print(len(my_data))
+        iterations = self.get_best_model(my_data)
 
         self.comm.Barrier()
 
@@ -61,21 +60,20 @@ class DistributedRandomGridSearch:
 
         if not self.root: return False
         L.info(len(iterations))
-        L.info(iterations)
-        L.info(iterations[0])
 
-        best_model = None
-        best_score = float('-inf')
-        L.info('\tWe received %d models' % len(iterations))
-        good_models = 0
-        for model in iterations:
-            if len(model) == 0: continue
-            for sub_model in model:
-                good_models += 1
-                if sub_model[0] > best_score:
-                    best_score = sub_model[0]
-                    best_model = sub_model[1]
+        best_score, best_model = self.get_best_model(iterations)
 
         L.info('\tThese models had %d good models' % (good_models))
         L.info('\tThe score of the best model was %0.3f' % best_score)
         return best_model
+
+    def get_best_model(self, models):
+        best_model = None
+        best_score = float('-inf')
+        L.info('\tWe received %d models' % len(models))
+        for model in models:
+            if(model is not None):
+                if model[0] > best_score:
+                    best_score = model[0]
+                    best_model = model[1]
+        return (best_score, best_model)

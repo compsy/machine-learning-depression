@@ -85,6 +85,7 @@ class Driver:
         self.SCALE = scale
         self.CLASSIFICATION = classification
         self.FORCE_NO_CACHING = force_no_caching
+        self.FEATURE_SELECTION = True
 
         x_names = self.construct_x_names()
 
@@ -136,7 +137,7 @@ class Driver:
 
         #### Classification ####
         # Perform feature selection algorithm
-        if(FEATURE_SELECTION):
+        if(self.FEATURE_SELECTION):
             elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names,
                     classification_y_names, verbosity = 0, hpc = hpc)
             result = elastic_net_model.train()
@@ -162,7 +163,7 @@ class Driver:
         # Reset the names to the original set
         x_names = self.construct_x_names()
         # Perform feature selection algorithm
-        if(FEATURE_SELECTION):
+        if(self.FEATURE_SELECTION):
             L.info('Performing feature selection')
             elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(regression_y_data), x_names,
                     regression_y_names, verbosity = 0, hpc = hpc)
@@ -191,8 +192,8 @@ class Driver:
         self.create_output(regression_fabricated_models, regression_y_data, used_data, selected_header,
                 model_type='regression')
 
-        def create_descriptives(self, participants, x_data, x_names):
-            ages = []
+    def create_descriptives(self, participants, x_data, x_names):
+        ages = []
         genders = []
         for index, participant_key in enumerate(participants):
             participant = participants[participant_key]

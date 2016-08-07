@@ -8,4 +8,4 @@ if __name__ == '__main__':
            normalize=False,
            scale=True,
            classification=True,
-           force_no_caching=True)
+           force_no_caching=False)

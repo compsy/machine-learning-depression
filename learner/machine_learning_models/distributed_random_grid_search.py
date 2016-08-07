@@ -36,7 +36,7 @@ class DistributedRandomGridSearch:
 
         self.comm.Barrier()
 
-        L.info('Running %d iterations on %d nodes.' % (len(iterations), self.size))
+        L.info('Running %d iterations on %d nodes.' % (iterations[0], self.size))
         iterations = self.comm.scatter(iterations, root=0)
 
         # Actual calculation
@@ -46,7 +46,8 @@ class DistributedRandomGridSearch:
             model = RandomizedSearchCV(estimator=self.skmodel, param_distributions=param_grid,
                                    n_jobs=-1, verbose=0, cv=self.cv, n_iter=my_iterations)
             model = model.fit(X=my_X, y=my_y)
-            L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations))
+            L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations),
+                   force=True)
             my_data.append((model.best_score_, model.best_estimator_))
 
         iterations = my_data
@@ -58,6 +59,8 @@ class DistributedRandomGridSearch:
         iterations = self.comm.gather(iterations, root=0)
 
         if not self.root: return False
+        L.info(iterations)
+        L.info(iterations[0])
 
         best_model = None
         best_score = float('-inf')

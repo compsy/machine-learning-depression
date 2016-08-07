@@ -140,11 +140,13 @@ class Driver:
                 header, x_names, classification_y_names)
         # Perform feature selection algorithm
         if(self.FEATURE_SELECTION):
+            self.POLYNOMIAL_FEATURES = False
             L.info('Performing feature selection for regression')
             elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names,
                     classification_y_names, verbosity = 0, hpc = hpc)
             result = elastic_net_model.train()
             x_names  = elastic_net_model.determine_best_variables()
+            self.POLYNOMIAL_FEATURES = polynomial_features
 
         L.info('We are using %s as input.' % x_names)
         x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
@@ -167,11 +169,13 @@ class Driver:
                 header, x_names, regression_y_names)
         # Perform feature selection algorithm
         if(self.FEATURE_SELECTION):
+            self.POLYNOMIAL_FEATURES = False
             L.info('Performing feature selection for regression')
             elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(regression_y_data), x_names,
                     regression_y_names, verbosity = 0, hpc = hpc)
             elastic_net_model.train()
             x_names = elastic_net_model.determine_best_variables()
+            self.POLYNOMIAL_FEATURES = polynomial_features
 
         L.info('We are using %s as input.' % x_names)
         x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,

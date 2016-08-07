@@ -139,9 +139,9 @@ class Driver:
 
         # Perform feature selection algorithm
         elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names, classification_y_names, verbosity = 0, hpc = hpc)
-        if(elastic_net_model is not False):
+        result = elastic_net_model.train()
+        if(result is not False):
             print('Calculating the elastic netz!')
-            elastic_net_model.train()
             elastic_net_model.determine_best_variables()
 
         # Calculate the actual models

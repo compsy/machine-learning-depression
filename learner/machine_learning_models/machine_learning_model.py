@@ -1,5 +1,5 @@
 from sklearn.cross_validation import cross_val_score, cross_val_predict
-from sklearn.grid_search import GridSearchCV
+from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
 from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
 
@@ -9,6 +9,7 @@ from machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEva
 from data_output.std_logger import L
 from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
 from machine_learning_models.distributed_grid_search import DistributedGridSearch
+from machine_learning_models.distributed_random_grid_search import DistributedRandomGridSearch
 
 
 class MachineLearningModel:
@@ -19,12 +20,16 @@ class MachineLearningModel:
         self.x_names = x_names
         self.y_names = y_names
         self.grid_model = None
+        self.skmodel = None
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
         self.hpc = hpc
         self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(),
                             RootMseEvaluation()]
+
+        self.grid_search_type = 'random'
+        self.n_iter = 100
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
@@ -103,13 +108,29 @@ class MachineLearningModel:
     def given_name(self):
         return type(self).__name__
 
-    def grid_search(self, param_grid):
+    def grid_search(self, exhaustive_grid, random_grid):
         if self.hpc:
-            self.grid_model = DistributedGridSearch(ml_model=self, estimator=self.skmodel, param_grid=param_grid, cv=8)
-            return self.grid_model
+            if (self.grid_search_type == 'exhaustive'):
+                self.grid_model = DistributedGridSearch(ml_model=self, estimator=self.skmodel,
+                                                        param_grid=exhaustive_grid,
+                                                        cv=8)
+                return self.grid_model
+            elif (self.grid_search_type == 'random'):
+                self.grid_model = DistributedRandomGridSearch(ml_model=self, estimator=self.skmodel,
+                                                        param_grid=random_grid,
+                                                        cv=8, n_iter=self.n_iter)
+                return self.grid_model
         else:
-            self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=param_grid, n_jobs=-1, verbose=1, cv=8)
-            return self.skmodel
+            if (self.grid_search_type == 'exhaustive'):
+                self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=exhaustive_grid,
+                                            n_jobs=-1, verbose=1, cv=8)
+                return self.skmodel
+            elif (self.grid_search_type == 'random'):
+                self.skmodel = RandomizedSearchCV(estimator=self.skmodel, param_distributions=random_grid,
+                                                  n_jobs=-1, verbose=1, cv=8, n_iter=self.n_iter)
+                return self.skmodel
+
+        raise NotImplementedError('Gridsearch type: ' + self.grid_search_type + ' not implemented')
 
     ## Override
     def predict_for_roc(self, x_data):

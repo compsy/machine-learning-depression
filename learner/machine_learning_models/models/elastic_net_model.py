@@ -1,16 +1,14 @@
 from machine_learning_models.machine_learning_model import MachineLearningModel
-
-from sklearn import linear_model
-from sklearn.linear_model import ElasticNet
-
+from sklearn.linear_model import ElasticNetCV, ElasticNet
 from data_output.std_logger import L
-from machine_learning_models.models.boosting_model import BoostingClassificationModel
 import numpy as np
+from scipy.stats import expon
 
 class ElasticNetModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
         super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
+        # TODO: Change to elasticnet CV
         self.skmodel = ElasticNet(alpha=0.1,
                                   l1_ratio=0.5,
                                   max_iter=10000)
@@ -20,7 +18,12 @@ class ElasticNetModel(MachineLearningModel):
                     'alpha': np.logspace(-10, 3, 100),
                     'l1_ratio': np.logspace(-10, 0, 100)
                     }
-            self.grid_search([parameter_grid])
+
+            random_parameter_grid = {
+                'alpha': expon(scale=100),
+                'l1_ratio': expon(scale=.1)
+            }
+            self.grid_search([parameter_grid], [random_parameter_grid])
 
     def determine_best_variables(self, top=25):
         if self.was_trained:

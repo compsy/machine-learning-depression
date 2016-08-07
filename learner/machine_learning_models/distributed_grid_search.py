@@ -24,12 +24,6 @@ class DistributedGridSearch:
         self.cv = cv
         self.ml_model = ml_model
 
-    def merge_dicts(self, dicts):
-        result = {}
-        for key in dicts[0].keys():
-            result[key] = [d[key] for d in dicts]
-        return result
-
     def fit(self, X, y):
         self.comm.Barrier()
         if self.rank == 0:
@@ -51,9 +45,6 @@ class DistributedGridSearch:
         temp = []
         for job in shuffled_range:
             temp.append(job)
-            # current_job = self.merge_dicts([self.param_grid[job]])
-            # current_job = self.param_grid[job]
-            # temp.append(current_job)
             if (len(temp) == work_division):
                 queue.put(temp)
                 temp = []
@@ -77,7 +68,6 @@ class DistributedGridSearch:
             output_file.write('%d,%d,%d,%d,%d,%0.2f,%0.2f,%0.2f,%0.2f\n' % output)
 
     def master(self):
-
         # Get the queue of jobs to create
         queue = self.create_job_queue(shuffle=True, force_distribute=True)
         qsize = queue.qsize()

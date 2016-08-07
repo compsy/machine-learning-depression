@@ -5,7 +5,7 @@ from scipy.stats import expon, halflogistic
 
 class SupportVectorModel(MachineLearningModel):
     def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
-        super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
+        super().__init__(x, y, x_names, y_names, **kwargs)
         # Radial basis function grid
         rbf_grid = {'kernel': ['rbf'],
                     'C': [1, 10, 100, 1000],

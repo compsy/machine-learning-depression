@@ -68,8 +68,7 @@ class DistributedRandomGridSearch:
             best_model = None
 
         # Send the model to all clients
-        self.comm.bcast(best_model, root=0)
-        self.comm.Barrier()
+        best_model = self.comm.bcast(best_model, root=0)
         if best_model is not None: print('Have a model!')
         return best_model
 

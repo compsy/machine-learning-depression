@@ -2,8 +2,8 @@ from driver import Driver
 
 if __name__ == '__main__':
     Driver(verbosity=0,
-           hpc=False,
-           hpc_log=False,
+           hpc=True,
+           hpc_log=True,
            polynomial_features=True,
            normalize=False,
            scale=True,

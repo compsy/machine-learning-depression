@@ -136,11 +136,11 @@ class Driver:
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
         #### Classification ####
-        x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
-                header, x_names, classification_y_names)
         # Perform feature selection algorithm
         if(self.FEATURE_SELECTION):
             self.POLYNOMIAL_FEATURES = False
+            x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
+                    header, x_names, classification_y_names)
             L.info('Performing feature selection for regression')
             elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names,
                     classification_y_names, verbosity = 0, hpc = hpc)
@@ -165,11 +165,11 @@ class Driver:
         #### Regression ####
         # Reset the names to the original set
         x_names = self.construct_x_names()
-        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
-                header, x_names, regression_y_names)
         # Perform feature selection algorithm
         if(self.FEATURE_SELECTION):
             self.POLYNOMIAL_FEATURES = False
+            x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
+                header, x_names, regression_y_names)
             L.info('Performing feature selection for regression')
             elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(regression_y_data), x_names,
                     regression_y_names, verbosity = 0, hpc = hpc)
@@ -227,7 +227,7 @@ class Driver:
 
 
         selected_header = np.append(x_names, y_names)
-        print(selected_header)
+
         # Select the data we will use in the present experiment (used_data = both x and y)
         used_data = self.output_data_splitter.split(data, header, selected_header)
         # Determine which of this set are not complete

@@ -51,6 +51,7 @@ class DistributedRandomGridSearch:
             my_data.append((model.best_score_, model.best_estimator_))
 
         iterations = my_data
+        print(len(my_data))
 
         self.comm.Barrier()
 
@@ -59,6 +60,7 @@ class DistributedRandomGridSearch:
         iterations = self.comm.gather(iterations, root=0)
 
         if not self.root: return False
+        L.info(len(iterations))
         L.info(iterations)
         L.info(iterations[0])
 

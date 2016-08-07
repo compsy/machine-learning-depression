@@ -173,6 +173,7 @@ class Driver:
                     regression_y_names, verbosity = 0, hpc = hpc)
             elastic_net_model.train()
             x_names = elastic_net_model.determine_best_variables()
+            L.info(x_names)
 
         x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
                 header, x_names, regression_y_names)

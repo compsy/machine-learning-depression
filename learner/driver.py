@@ -32,7 +32,7 @@ from machine_learning_models.models.regression_model import LinearRegressionMode
 from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
 from machine_learning_models.models.elastic_net_model import ElasticNetModel
 from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, \
-    SupportVectorClassificationModel
+        SupportVectorClassificationModel
 # from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
 
 from models import participant
@@ -65,14 +65,14 @@ class Driver:
     """
 
     def __init__(self,
-                 verbosity,
-                 hpc,
-                 hpc_log,
-                 polynomial_features,
-                 normalize,
-                 scale,
-                 classification,
-                 force_no_caching):
+            verbosity,
+            hpc,
+            hpc_log,
+            polynomial_features,
+            normalize,
+            scale,
+            classification,
+            force_no_caching):
         if(hpc): print('Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
         random.seed(42)
 
@@ -100,7 +100,6 @@ class Driver:
         self.output_data_cleaner = OutputDataCleaner()
         self.output_data_splitter = OutputDataSplitter()
         self.data_preprocessor_polynomial = DataPreprocessorPolynomial()
-        self.variable_transformer = VariableTransformer(x_names)
 
         ##### Define the models we should run
         classification_models = []
@@ -130,32 +129,55 @@ class Driver:
 
         participants = self.create_participants()
         header, data = self.get_file_data('cache.pkl',
-                                          participants=participants,
-                                          force_to_not_use_cache=self.FORCE_NO_CACHING)
+                participants=participants,
+                force_to_not_use_cache=self.FORCE_NO_CACHING)
 
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
-        x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
-                                                                                         classification_y_names)
 
+        #### Classification ####
         # Perform feature selection algorithm
-        elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names, classification_y_names, verbosity = 0, hpc = hpc)
-        result = elastic_net_model.train()
-        if(result is not False):
-            print('Calculating the elastic netz!')
-            elastic_net_model.determine_best_variables()
+        if(FEATURE_SELECTION):
+            elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names,
+                    classification_y_names, verbosity = 0, hpc = hpc)
+            result = elastic_net_model.train()
+            L.info('Calculating the elastic netz!')
+            x_names  = elastic_net_model.determine_best_variables()
+            x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, result,
+                    classification_y_names)
+
+        x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
+                header, x_names, classification_y_names)
+
+        self.variable_transformer = VariableTransformer(x_names)
 
         # Calculate the actual models
         model_runner = SyncModelRunner(classification_models, hpc=hpc)
-        is_root, classification_fabricated_models = self.calculate(model_runner, x_data, classification_y_data,
-                                                                   x_names,
-                                                                   classification_y_names)
+        is_root, classification_fabricated_models = self.calculate(model_runner,
+                                                                    x_data, classification_y_data,
+                                                                    x_names,
+                                                                    classification_y_names)
 
 
-        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
-                                                                                     regression_y_names)
+        #### Regression ####
+        # Reset the names to the original set
+        x_names = self.construct_x_names()
+        # Perform feature selection algorithm
+        if(FEATURE_SELECTION):
+            L.info('Performing feature selection')
+            elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(regression_y_data), x_names,
+                    regression_y_names, verbosity = 0, hpc = hpc)
+            elastic_net_model.train()
+            x_names = elastic_net_model.determine_best_variables()
+
+        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
+                header, x_names, regression_y_names)
+
+        self.variable_transformer = VariableTransformer(x_names)
+
+        # Calculate the actual models
         model_runner = SyncModelRunner(regression_models, hpc=hpc)
         is_root, regression_fabricated_models = self.calculate(model_runner, x_data, regression_y_data, x_names,
-                                                               regression_y_names)
+                regression_y_names)
 
         # Kill all worker nodes
         if hpc and MPI.COMM_WORLD.Get_rank() > 0:
@@ -165,12 +187,12 @@ class Driver:
         # Plot an overview of the density estimations of the variables used in the actual model calculation.
         #self.create_descriptives(participants, x_data, x_names)
         self.create_output(classification_fabricated_models, classification_y_data, used_data, selected_header,
-                           model_type='classification')
+                model_type='classification')
         self.create_output(regression_fabricated_models, regression_y_data, used_data, selected_header,
-                           model_type='regression')
+                model_type='regression')
 
-    def create_descriptives(self, participants, x_data, x_names):
-        ages = []
+        def create_descriptives(self, participants, x_data, x_names):
+            ages = []
         genders = []
         for index, participant_key in enumerate(participants):
             participant = participants[participant_key]
@@ -248,9 +270,9 @@ class Driver:
     def create_output(self, models, y_data, used_data, selected_header, model_type='classification'):
         if model_type == 'classification':
             L.info('In the training set, %d participants (%0.2f percent) is true' %
-                   self.calculate_true_false_ratio(y_data))
+                    self.calculate_true_false_ratio(y_data))
             L.info('In the test set, %d participants (%0.2f percent) is true' %
-                   self.calculate_true_false_ratio(models[0].y_test))
+                    self.calculate_true_false_ratio(models[0].y_test))
 
             # Generate learning curve plots
             self.roc_curve_plotter.plot(models)
@@ -272,10 +294,10 @@ class Driver:
                 self.confusion_matrix_plotter.plot(model, model.y_test, y_test_pred)
             else:
                 self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train,
-                                                            y_train_pred)
+                        y_train_pred)
 
-    def create_participants(self):
-        data = self.spss_reader.read_file("N1_A100R.sav")
+                def create_participants(self):
+                    data = self.spss_reader.read_file("N1_A100R.sav")
         participants = {}
         for index, entry in data.iterrows():
             p = participant.Participant(entry['pident'], entry['Sexe'], entry['Age'])

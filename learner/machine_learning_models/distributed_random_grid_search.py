@@ -60,12 +60,15 @@ class DistributedRandomGridSearch:
 
         iterations = self.comm.gather(iterations, root=0)
 
-        if not self.root: return False
+        if self.root:
+            best_score, best_model = self.get_best_model(iterations)
+            L.info('\tThese models had %d good models' % (len(iterations)))
+            L.info('\tThe score of the best model was %0.3f' % best_score)
+        else:
+            best_model = None
 
-        best_score, best_model = self.get_best_model(iterations)
-
-        L.info('\tThese models had %d good models' % (len(iterations)))
-        L.info('\tThe score of the best model was %0.3f' % best_score)
+        # Send the model to all clients
+        self.comm.bcast(best_model, root=0)
         return best_model
 
     def get_best_model(self, models):

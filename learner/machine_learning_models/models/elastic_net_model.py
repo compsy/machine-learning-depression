@@ -34,10 +34,12 @@ class ElasticNetModel(MachineLearningModel):
             zipped = list(zip(data, indices))
             zipped.sort(reverse=True, key=lambda tup: abs(tup[0]))
             i = 0
+            var_names = []
             for coefficient, index in zipped:
                 i+=1
                 var_name = self.x_names[index]
+                var_names.append(var_name)
                 L.info('--> %d\t%0.5f\t%s' % (i, coefficient, var_name))
                 if(i>=top): break
 
-            return zipped
+            return var_names

@@ -14,7 +14,7 @@ from machine_learning_models.distributed_random_grid_search import DistributedRa
 
 class MachineLearningModel:
 
-    def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0, hpc=False):
+    def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0, hpc=False, n_iter=10000):
         self.x = x
         self.y = y
         self.x_names = x_names
@@ -29,7 +29,7 @@ class MachineLearningModel:
                             RootMseEvaluation()]
 
         self.grid_search_type = 'random'
-        self.n_iter = 10000
+        self.n_iter = n_iter
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)

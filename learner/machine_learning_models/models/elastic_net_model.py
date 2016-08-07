@@ -2,7 +2,7 @@ from machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn.linear_model import ElasticNetCV, ElasticNet
 from data_output.std_logger import L
 import numpy as np
-from scipy.stats import expon
+from scipy.stats import expon, halflogistic
 
 class ElasticNetModel(MachineLearningModel):
 
@@ -20,8 +20,8 @@ class ElasticNetModel(MachineLearningModel):
                     }
 
             random_parameter_grid = {
-                'alpha': expon(scale=100),
-                'l1_ratio': expon(scale=.1)
+                'alpha': halflogistic(scale=100),
+                'l1_ratio': halflogistic(scale=.1)
             }
             self.grid_search([parameter_grid], [random_parameter_grid])
 

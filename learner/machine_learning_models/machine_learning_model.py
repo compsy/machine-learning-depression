@@ -29,7 +29,7 @@ class MachineLearningModel:
                             RootMseEvaluation()]
 
         self.grid_search_type = 'random'
-        self.n_iter = 100000
+        self.n_iter = 10000
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
@@ -62,7 +62,7 @@ class MachineLearningModel:
         L.info('---------------------------------------------------------')
 
     def cv_score(self):
-        return cross_val_score(self.skmodel, self.x_test, self.y_test, cv=3)
+        return cross_val_score(self.skmodel, self.x_test, self.y_test, cv=10)
 
     def train(self):
         if (self.was_trained):
@@ -91,7 +91,7 @@ class MachineLearningModel:
         self.skmodel.fit(self.x_train, self.y_train)
         # cross_val_predict returns an array of the same size as `y` where each entry
         # is a prediction obtained by cross validated:
-        return cross_val_predict(self.skmodel, X=self.x_train, y=self.y_train, cv=8)
+        return cross_val_predict(self.skmodel, X=self.x_train, y=self.y_train, cv=10)
 
     def scoring(self):
         if (self.model_type == 'models'):
@@ -113,21 +113,21 @@ class MachineLearningModel:
             if (self.grid_search_type == 'exhaustive'):
                 self.grid_model = DistributedGridSearch(ml_model=self, estimator=self.skmodel,
                                                         param_grid=exhaustive_grid,
-                                                        cv=8)
+                                                        cv=10)
                 return self.grid_model
             elif (self.grid_search_type == 'random'):
                 self.grid_model = DistributedRandomGridSearch(ml_model=self, estimator=self.skmodel,
                                                         param_grid=random_grid,
-                                                        cv=8, n_iter=self.n_iter)
+                                                        cv=10, n_iter=self.n_iter)
                 return self.grid_model
         else:
             if (self.grid_search_type == 'exhaustive'):
                 self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=exhaustive_grid,
-                                            n_jobs=-1, verbose=1, cv=8)
+                                            n_jobs=-1, verbose=1, cv=10)
                 return self.skmodel
             elif (self.grid_search_type == 'random'):
                 self.skmodel = RandomizedSearchCV(estimator=self.skmodel, param_distributions=random_grid,
-                                                  n_jobs=-1, verbose=1, cv=8, n_iter=self.n_iter)
+                                                  n_jobs=-1, verbose=1, cv=10, n_iter=self.n_iter)
                 return self.skmodel
 
         raise NotImplementedError('Gridsearch type: ' + self.grid_search_type + ' not implemented')

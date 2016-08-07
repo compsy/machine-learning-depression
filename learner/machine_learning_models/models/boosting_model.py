@@ -1,3 +1,4 @@
+from scipy.stats import halflogistic
 from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor, GradientBoostingClassifier
 from machine_learning_models.machine_learning_model import MachineLearningModel
 import numpy as np
@@ -21,4 +22,10 @@ class BoostingClassificationModel(MachineLearningModel):
                 'learning_rate': np.logspace(0, 1, 10),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
-            self.grid_search([parameter_grid])
+
+            random_parameter_grid = {
+                'max_depth': halflogistic(scale=100),
+                'learning_rate': halflogistic(),
+                'max_features': ['auto', 'sqrt', 'log2', None],
+            }
+            self.grid_search([parameter_grid], [random_parameter_grid])

@@ -1,3 +1,5 @@
+from scipy.stats import halflogistic
+
 from machine_learning_models.machine_learning_model import MachineLearningModel
 
 from sklearn import linear_model
@@ -34,4 +36,5 @@ class LogisticRegressionModel(MachineLearningModel):
 
         if grid_search:
             parameter_grid = {'penalty': ['l1', 'l2'], 'C': np.logspace(0, 2, 5)}
-            self.grid_search([parameter_grid])
+            random_parameter_grid = {'penalty': ['l1', 'l2'], 'C': halflogistic(10)}
+            self.grid_search([parameter_grid], [random_parameter_grid])

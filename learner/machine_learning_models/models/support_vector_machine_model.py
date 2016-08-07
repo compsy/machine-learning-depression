@@ -1,7 +1,7 @@
 from machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn import svm
 from numpy import logspace
-from scipy.stats import expon
+from scipy.stats import expon, halflogistic
 
 class SupportVectorModel(MachineLearningModel):
     def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
@@ -32,22 +32,22 @@ class SupportVectorModel(MachineLearningModel):
         self.exhaustive_param_grid = [rbf_grid, poly_grid, sigmoid_grid]
 
         random_rbf_grid = {'kernel': ['rbf'],
-                           'C': expon(scale=100),
-                           'gamma': expon(scale=.1),
-                           'epsilon': expon(scale=.1),
+                           'C': halflogistic(scale=100),
+                           'gamma': halflogistic(scale=.1),
+                           'epsilon': halflogistic(scale=.1),
                            'class_weight': ['auto', None]}
 
         random_poly_grid = {'kernel': ['poly'],
-                           'C': expon(scale=100),
+                           'C': halflogistic(scale=100),
                            'degree': [2, 3, 4, 5],
-                           'gamma': expon(scale=.1),
-                           'coef0': expon(scale=.1),
+                           'gamma': halflogistic(scale=.1),
+                           'coef0': halflogistic(scale=.1),
                            'class_weight': ['auto', None]}
 
         random_sigmoid_grid = {'kernel': ['sigmoid'],
-                           'C': expon(scale=100),
-                           'gamma': expon(scale=.1),
-                           'coef0': expon(scale=.1),
+                           'C': halflogistic(scale=100),
+                           'gamma': halflogistic(scale=.1),
+                           'coef0': halflogistic(scale=.1),
                            'class_weight': ['auto', None]}
 
 

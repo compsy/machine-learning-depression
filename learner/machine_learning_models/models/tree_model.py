@@ -1,3 +1,4 @@
+from scipy.stats import halflogistic
 from sklearn import tree
 from sklearn.tree.tree import DecisionTreeClassifier
 from sklearn.externals.six import StringIO
@@ -21,7 +22,7 @@ class RegressionTreeModel(MachineLearningModel):
             parameter_grid = {'max_depth': np.logspace(0, 3, 15),
                               'max_features': ['auto', 'sqrt', 'log2', None],}
             random_parameter_grid = {
-                'max_depth': expon(scale=100),
+                'max_depth': halflogistic(scale=100),
                 'max_features': ['auto', 'sqrt', 'log2', None]
             }
             self.grid_search([parameter_grid], [random_parameter_grid])
@@ -39,7 +40,7 @@ class ClassificationTreeModel(MachineLearningModel):
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             random_parameter_grid = {
-                'max_depth': expon(scale=100),
+                'max_depth': halflogistic(scale=100),
                 'max_features': ['auto', 'sqrt', 'log2', None]
             }
             self.grid_search([parameter_grid], [random_parameter_grid])

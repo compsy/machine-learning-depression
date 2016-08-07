@@ -63,7 +63,7 @@ class DistributedRandomGridSearch:
         if self.root:
             best_score, best_model = self.get_best_model(iterations)
             L.info('\tThese models had %d good models' % (len(iterations)))
-            L.info('\tThe score of the best %s model was %0.3f' % (self.skmodel.given_name, best_score))
+            L.info('\tThe score of the best model was %0.3f' % best_score)
         else:
             best_model = None
 

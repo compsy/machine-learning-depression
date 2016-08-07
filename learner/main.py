@@ -4,7 +4,7 @@ if __name__ == '__main__':
     Driver(verbosity=0,
            hpc=True,
            hpc_log=True,
-           polynomial_features=True,
+           polynomial_features=False,
            normalize=False,
            scale=True,
            classification=True,

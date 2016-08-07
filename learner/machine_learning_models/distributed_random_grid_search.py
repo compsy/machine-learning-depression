@@ -41,7 +41,7 @@ class DistributedRandomGridSearch:
 
         # Actual calculation
         my_data = []
-        my_iterations = iterations[0]
+        my_iterations = iterations
         model = RandomizedSearchCV(estimator=self.skmodel, param_distributions=self.param_grid,
                                    n_jobs=-1, verbose=0, cv=self.cv, n_iter=my_iterations)
         model = model.fit(X=my_X, y=my_y)

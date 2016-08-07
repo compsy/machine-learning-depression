@@ -293,11 +293,10 @@ class Driver:
             if model_type == 'classification':
                 self.confusion_matrix_plotter.plot(model, model.y_test, y_test_pred)
             else:
-                self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train,
-                        y_train_pred)
+                self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
 
-                def create_participants(self):
-                    data = self.spss_reader.read_file("N1_A100R.sav")
+    def create_participants(self):
+        data = self.spss_reader.read_file("N1_A100R.sav")
         participants = {}
         for index, entry in data.iterrows():
             p = participant.Participant(entry['pident'], entry['Sexe'], entry['Age'])

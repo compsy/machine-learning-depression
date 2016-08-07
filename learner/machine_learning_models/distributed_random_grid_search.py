@@ -59,7 +59,6 @@ class DistributedRandomGridSearch:
         iterations = self.comm.gather(iterations, root=0)
 
         if not self.root: return False
-        L.info(len(iterations))
 
         best_score, best_model = self.get_best_model(iterations)
 

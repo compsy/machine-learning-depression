@@ -17,6 +17,7 @@ class SupportVectorRegressionModel(SupportVectorModel):
         # Radial basis function grid
         rbf_grid = {'kernel': ['rbf'],
                     'C': [1, 10, 100, 1000],
+                    'epsilon': logspace(0, 1, 5),
                     'gamma': logspace(0, 1, 5),
                     'class_weight': ['auto', None]}
 
@@ -71,7 +72,6 @@ class SupportVectorClassificationModel(SupportVectorModel):
         # Radial basis function grid
         rbf_grid = {'kernel': ['rbf'],
                     'C': [1, 10, 100, 1000],
-                    'epsilon': logspace(0, 1, 5),
                     'gamma': logspace(0, 1, 5),
                     'class_weight': ['auto', None]}
 
@@ -96,7 +96,6 @@ class SupportVectorClassificationModel(SupportVectorModel):
         random_rbf_grid = {'kernel': ['rbf'],
                            'C': halflogistic(scale=100),
                            'gamma': halflogistic(scale=.1),
-                           'epsilon': halflogistic(scale=.1),
                            'class_weight': ['auto', None]}
 
         random_poly_grid = {'kernel': ['poly'],

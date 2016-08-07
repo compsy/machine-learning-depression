@@ -46,6 +46,7 @@ class MachineLearningModel:
         L.info("%s - Accuracy: %0.2f (+/- %0.2f)" % (self.given_name, scores.mean(), scores.std() * 2))
 
     def print_evaluation(self):
+        L.br()
         L.info('SCORES OF MODEL: ' + self.given_name)
         L.info('---------------------------------------------------------')
         self.print_accuracy()
@@ -54,7 +55,6 @@ class MachineLearningModel:
             if evaluator.problem_type == self.model_type:
                 evaluator.print_evaluation(self, self.y_test, prediction)
         L.info('---------------------------------------------------------')
-        L.br()
 
     def cv_score(self):
         return cross_val_score(self.skmodel, self.x_test, self.y_test, cv=3)

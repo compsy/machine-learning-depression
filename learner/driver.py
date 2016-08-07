@@ -245,14 +245,16 @@ class Driver:
 
     def create_output(self, models, y_data, used_data, selected_header, model_type='classification'):
         if model_type == 'classification':
-            L.info('In the output set, %d participants (%0.2f percent) is true' %
+            L.info('In the training set, %d participants (%0.2f percent) is true' %
                    self.calculate_true_false_ratio(y_data))
+            L.info('In the test set, %d participants (%0.2f percent) is true' %
+                   self.calculate_true_false_ratio(models[0].y_test))
 
             # Generate learning curve plots
             self.roc_curve_plotter.plot(models)
 
         # Export all used data to a CSV file
-        CsvExporter.export('../exports/merged_dataframe.csv', used_data, selected_header)
+        CsvExporter.export('../exports/merged_' + model_type + '_dataframe.csv', used_data, selected_header)
 
         for model in models:
             1
@@ -356,12 +358,12 @@ class Driver:
             'aids-ids25',
             'aids-ids26',
             'aids-ids27',
-            'aids-ids28'
+            'aids-ids28',
 
             # Masq
-            'amasq-positiveAffectScore',
-            'amasq-negativeAffectScore',
-            'amasq-somatizationScore',
+            #'amasq-positiveAffectScore',
+            #'amasq-negativeAffectScore',
+            #'amasq-somatizationScore',
 
             # Bai
             'abai-totalScore',

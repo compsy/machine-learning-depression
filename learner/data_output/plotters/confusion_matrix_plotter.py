@@ -35,8 +35,8 @@ class ConfusionMatrixPlotter(Plotter):
         precision = float(cm[0, 0]) / float(cm[0, 0] + cm[1, 0])
         recall = float(cm[0, 0]) / float(cm[0, 0] + cm[0, 1])
 
-        f1 = 2.0 * ((precision * recall) / (precision + recall))
-        L.info(f1)
+        # f1 = 2.0 * ((precision * recall) / (precision + recall))
+        # L.info(f1)
 
         im = ax[0].imshow(cm, interpolation='nearest', cmap=cmap)
 

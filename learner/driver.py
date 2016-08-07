@@ -146,8 +146,6 @@ class Driver:
             L.info('Calculating the elastic netz!')
             x_names  = elastic_net_model.determine_best_variables()
             print(x_names)
-            x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, result,
-                    classification_y_names)
 
         x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
                 header, x_names, classification_y_names)
@@ -224,7 +222,7 @@ class Driver:
 
 
         selected_header = np.append(x_names, y_names)
-
+        print(selected_header)
         # Select the data we will use in the present experiment (used_data = both x and y)
         used_data = self.output_data_splitter.split(data, header, selected_header)
         # Determine which of this set are not complete

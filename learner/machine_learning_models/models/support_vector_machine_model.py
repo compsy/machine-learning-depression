@@ -58,7 +58,7 @@ class SupportVectorModel(MachineLearningModel):
 class SupportVectorRegressionModel(SupportVectorModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
-        super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
+        super().__init__(x, y, x_names, y_names, verbosity= verbosity, model_type='regression', **kwargs)
         self.skmodel = svm.SVR(verbose=verbosity)
         self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
 
@@ -66,7 +66,7 @@ class SupportVectorRegressionModel(SupportVectorModel):
 class SupportVectorClassificationModel(SupportVectorModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
-        super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
+        super().__init__(x, y, x_names, y_names, verbosity= verbosity, model_type='classification', **kwargs)
         self.skmodel = svm.SVC(verbose=verbosity, kernel='poly', degree=2, C=600000)
         self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
 

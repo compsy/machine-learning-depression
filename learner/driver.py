@@ -145,6 +145,7 @@ class Driver:
             result = elastic_net_model.train()
             L.info('Calculating the elastic netz!')
             x_names  = elastic_net_model.determine_best_variables()
+            print(x_names)
             x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, result,
                     classification_y_names)
 
@@ -173,7 +174,6 @@ class Driver:
                     regression_y_names, verbosity = 0, hpc = hpc)
             elastic_net_model.train()
             x_names = elastic_net_model.determine_best_variables()
-            print(x_names)
 
         x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
                 header, x_names, regression_y_names)

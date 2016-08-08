@@ -18,8 +18,7 @@ class SupportVectorRegressionModel(SupportVectorModel):
         rbf_grid = {'kernel': ['rbf'],
                     'C': [1, 10, 100, 1000],
                     'epsilon': logspace(0, 1, 5),
-                    'gamma': logspace(0, 1, 5),
-                    'class_weight': ['balanced', None]}
+                    'gamma': logspace(0, 1, 5)}
 
         # Polynomial function grid
         poly_grid = {'kernel': ['poly'],
@@ -42,21 +41,18 @@ class SupportVectorRegressionModel(SupportVectorModel):
         random_rbf_grid = {'kernel': ['rbf'],
                            'C': halflogistic(scale=100),
                            'gamma': halflogistic(scale=.1),
-                           'epsilon': halflogistic(scale=.1),
-                           'class_weight': ['balanced', None]}
+                           'epsilon': halflogistic(scale=.1)}
 
         random_poly_grid = {'kernel': ['poly'],
                            'C': halflogistic(scale=100),
                            'degree': [2, 3, 4, 5],
                            'gamma': halflogistic(scale=.1),
-                           'coef0': halflogistic(scale=.1),
-                           'class_weight': ['balanced', None]}
+                           'coef0': halflogistic(scale=.1)}
 
         random_sigmoid_grid = {'kernel': ['sigmoid'],
                            'C': halflogistic(scale=100),
                            'gamma': halflogistic(scale=.1),
-                           'coef0': halflogistic(scale=.1),
-                           'class_weight': ['balanced', None]}
+                           'coef0': halflogistic(scale=.1)}
 
 
         self.random_param_grid = [random_rbf_grid, random_poly_grid, random_sigmoid_grid]

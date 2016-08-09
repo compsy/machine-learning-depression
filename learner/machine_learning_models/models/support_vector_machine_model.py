@@ -64,7 +64,7 @@ class SupportVectorClassificationModel(SupportVectorModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
         super().__init__(x, y, x_names, y_names, verbosity= verbosity, model_type='classification', **kwargs)
-        self.skmodel = svm.SVC(verbose=verbosity, kernel='poly', degree=2, C=600000)
+        self.skmodel = svm.SVC(verbose=verbosity, kernel='poly', degree=2, C=600000, probability=True)
         # Radial basis function grid
         rbf_grid = {'kernel': ['rbf'],
                     'C': [1, 10, 100, 1000],

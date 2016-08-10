@@ -10,6 +10,7 @@ from data_output.std_logger import L
 from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
 from machine_learning_models.distributed_grid_search import DistributedGridSearch
 from machine_learning_models.distributed_random_grid_search import DistributedRandomGridSearch
+from machine_learning_models.randomized_search_mine import RandomizedSearchMine
 
 
 class MachineLearningModel:
@@ -126,7 +127,7 @@ class MachineLearningModel:
                                             n_jobs=-1, verbose=1, cv=10)
                 return self.skmodel
             elif (self.grid_search_type == 'random'):
-                self.skmodel = RandomizedSearchCV(estimator=self.skmodel, param_distributions=random_grid,
+                self.skmodel = RandomizedSearchMine(estimator=self.skmodel, param_distributions=random_grid,
                                                   n_jobs=-1, verbose=1, cv=10, n_iter=self.n_iter)
                 return self.skmodel
 

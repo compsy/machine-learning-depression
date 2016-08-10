@@ -71,7 +71,6 @@ class Driver:
             polynomial_features,
             normalize,
             scale,
-            classification,
             force_no_caching):
         if(hpc): print('Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
         random.seed(42)
@@ -83,7 +82,6 @@ class Driver:
         self.POLYNOMIAL_FEATURES = polynomial_features
         self.NORMALIZE = normalize
         self.SCALE = scale
-        self.CLASSIFICATION = classification
         self.FORCE_NO_CACHING = force_no_caching
         self.FEATURE_SELECTION = True
 
@@ -141,6 +139,7 @@ class Driver:
             self.POLYNOMIAL_FEATURES = False
             x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
                     header, x_names, classification_y_names)
+            CsvExporter.export('../exports/merged_' + 'test' + '_dataframe.csv', used_data, selected_header)
             L.info('Performing feature selection for regression')
             elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names,
                     classification_y_names, verbosity = 0, hpc = hpc)
@@ -224,7 +223,6 @@ class Driver:
     def get_usable_data(self, data, header, x_names, y_names):
         L.info('Loaded data with %d rows and %d columns' % np.shape(data))
         L.info('We will use %s as outcome.' % y_names)
-
 
         selected_header = np.append(x_names, y_names)
 

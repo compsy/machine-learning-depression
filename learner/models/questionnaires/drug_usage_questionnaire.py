@@ -18,5 +18,5 @@ class DrugUsageQuestionnaire(Questionnaire):
     # Social fobia
 
     def poly_drug_use(self, participant):
-        val = self.get_field(participant, 'bip01', force_lower_case=True)
+        val = self.get_field(participant, 'polyd', force_lower_case=True)
         return val if val is not None and val >= 0 else np.nan

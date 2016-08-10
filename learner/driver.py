@@ -87,7 +87,7 @@ class Driver:
         self.FORCE_NO_CACHING = force_no_caching
         self.FEATURE_SELECTION = True
 
-        x_names = self.construct_x_names()
+        x_names = QuestionnaireFactory.construct_x_names()
 
         self.actual_vs_prediction_plotter = ActualVsPredictionPlotter()
         self.learning_curve_plotter = LearningCurvePlotter()
@@ -164,7 +164,7 @@ class Driver:
 
         #### Regression ####
         # Reset the names to the original set
-        x_names = self.construct_x_names()
+        x_names = QuestionnaireFactory.construct_x_names()
         # Perform feature selection algorithm
         if(self.FEATURE_SELECTION):
             self.POLYNOMIAL_FEATURES = False
@@ -352,144 +352,3 @@ class Driver:
                 trues += 1
 
         return (trues, (trues / (trues + falses)) * 100)
-
-    def construct_x_names(self):
-        """
-          Here we select the variables to use in the prediction. The format is:
-          AB-C:
-          - A = the time of the measurement, a = intake, c = followup
-          - B = the name of the questionnaire (check QuestionnaireFactory for the correct names)
-          - C = the name of the variable. Check the name used in the <Questionnairename>questionnaire.py
-        """
-        return np.array([  # 'pident',
-            # IDS - 'aids-ids09A', 'aids-ids09B', 'aids-ids09C', are NONE for nearly everyone
-            #'aids-somScore',
-            'aids-ids01',
-            'aids-ids02',
-            'aids-ids03',
-            'aids-ids04',
-            'aids-ids05',
-            'aids-ids06',
-            'aids-ids07',
-            'aids-ids08',
-            'aids-ids10',
-            'aids-ids11',
-            'aids-ids12',
-            'aids-ids13',
-            'aids-ids14',
-            'aids-ids15',
-            'aids-ids16',
-            'aids-ids17',
-            'aids-ids18',
-            'aids-ids19',
-            'aids-ids20',
-            'aids-ids21',
-            'aids-ids22',
-            'aids-ids23',
-            'aids-ids24',
-            'aids-ids25',
-            'aids-ids26',
-            'aids-ids27',
-            'aids-ids28',
-
-            # Masq
-            #'amasq-positiveAffectScore',
-            #'amasq-negativeAffectScore',
-            #'amasq-somatizationScore',
-
-            # Bai
-            'abai-totalScore',
-            'abai-subjectiveScaleScore',
-            'abai-severityScore',
-            'abai-somaticScaleScore',
-
-            # # 4dkl
-            # 'a4dkl-somScore',
-            'a4dkl-4dkld01',
-            'a4dkl-4dkld02',
-            'a4dkl-4dkld03',
-            'a4dkl-4dkld04',
-            'a4dkl-4dkld05',
-            'a4dkl-4dkld06',
-            'a4dkl-4dkld07',
-            'a4dkl-4dkld08',
-            'a4dkl-4dkld09',
-            'a4dkl-4dkld10',
-            'a4dkl-4dkld11',
-            'a4dkl-4dkld12',
-            'a4dkl-4dkld13',
-            'a4dkl-4dkld14',
-            'a4dkl-4dkld15',
-            'a4dkl-4dkld16',
-            'a4dkl-ph-somatizationSumScore',
-            'a4dkl-ph-somatizationTrychotomization',
-            'a4dkl-ph-dichotomizationThrychotomization',
-
-            # # Cidi depression
-            'acidi-depression-minorDepressionPastMonth',
-            'acidi-depression-majorDepressionPastMonth',
-            'acidi-depression-majorDepressionPastSixMonths',
-            'acidi-depression-majorDepressionPastYear',
-            'acidi-depression-majorDepressionLifetime',
-            'acidi-depression-dysthymiaPastmonth',
-            'acidi-depression-dysthymiaPastSixMonths',
-            'acidi-depression-dysthymiaPastYear',
-            'acidi-depression-dysthymiaLifetime',
-            'acidi-depression-numberOfCurrentDepressionDiagnoses',
-            'acidi-depression-hasLifetimeDepressionDiagnoses',
-            'acidi-depression-categoriesForLifetimeDepressionDiagnoses',
-            # 'acidi-depression-numberOfMajorDepressionEpisodes',
-            # 'acidi-depression-majorDepressionType',
-
-            # # Cidi anxiety
-            'acidi-anxiety-socialFobiaPastMonth',
-            'acidi-anxiety-socialfobiaPastSixMonths',
-            'acidi-anxiety-socialFobiaPastYear',
-            'acidi-anxiety-socialfobiaInLifetime',
-            'acidi-anxiety-panicWithAgorafobiaPastMonth',
-            'acidi-anxiety-panicWithAgorafobiaPastSixMonths',
-            'acidi-anxiety-panicWithAgorafobiaPastYear',
-            'acidi-anxiety-panicWithAgorafobiaInLifetime',
-            'acidi-anxiety-panicWithoutAgorafobiaPastSixMonths',
-            'acidi-anxiety-panicWithoutAgorafobiaPastMonth',
-            'acidi-anxiety-panicWithoutAgorafobiaPastYear',
-            'acidi-anxiety-panicWithoutAgorafobiaInLifetime',
-            'acidi-anxiety-agorafobiaPastMonth',
-            'acidi-anxiety-agorafobiaPastSixMonths',
-            'acidi-anxiety-agorafobiaPastYear',
-            'acidi-anxiety-agorafobiaInLifetime',
-            'acidi-anxiety-generalAnxietyDisorderPastMonth',
-            'acidi-anxiety-generalAnxietyDisorderPastSixMonths',
-            'acidi-anxiety-generalAnxietyDisorderPastYear',
-            'acidi-anxiety-generalAnxietyDisorderInLifetime',
-            'acidi-anxiety-numberOfCurrentAnxietyDiagnoses',
-            'acidi-anxiety-lifetimeAnxietyDiagnosesPresent',
-
-
-            # # Personality
-            'aneoffi-NeuroticismeTotalScore',
-            'aneoffi-NeuroticismNegativeAffect',
-            'aneoffi-NeuroticismSelfReproach',
-            'aneoffi-NeuroticismAnxietyAlternative',
-            'aneoffi-NeuroticismDepressionAlternative',
-            'aneoffi-NeuroticismSelfreproach2Alternative',
-            'aneoffi-ExtraversionTotalScore',
-            'aneoffi-ExtraversionPositiveAffect',
-            'aneoffi-ExtraversionSociability',
-            'aneoffi-ExtraversionActivity',
-            'aneoffi-OpennessTotalScore',
-            'aneoffi-OpennessAestheticInterest',
-            'aneoffi-OpennessIntellectualInterest',
-            'aneoffi-OpennessUnconventionality',
-            'aneoffi-AgreeablenessTotalScore',
-            'aneoffi-AgreeablenessNonantagonasticOrientation',
-            'aneoffi-AgreeablenessProsocialOrientation',
-            'aneoffi-ConscientiousnessTotalScore',
-            'aneoffi-ConscientiousnessOrderliness',
-            'aneoffi-ConscientiousnessGoalStriving',
-            'aneoffi-ConscientiousnessDependability',
-
-
-            # 'ademo-gender',
-            'ademo-age'
-        ])

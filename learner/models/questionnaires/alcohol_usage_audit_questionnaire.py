@@ -2,7 +2,7 @@ from ..questionnaire import Questionnaire
 import numpy as np
 
 
-class AuditQuestionnaire(Questionnaire):
+class AlcoholUsageAuditQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
 

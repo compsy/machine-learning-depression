@@ -28,9 +28,8 @@ from machine_learning_models.models.naive_bayes_model import NaiveBayesModel
 from machine_learning_models.models.bagging_model import BaggingClassificationModel, BaggingModel
 from machine_learning_models.models.boosting_model import BoostingClassificationModel, BoostingModel
 from machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
-from machine_learning_models.models.regression_model import LinearRegressionModel, LogisticRegressionModel
+from machine_learning_models.models.regression_model import ElasticNetModel, LogisticRegressionModel
 from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
-from machine_learning_models.models.elastic_net_model import ElasticNetModel
 from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, \
         SupportVectorClassificationModel
 # from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel

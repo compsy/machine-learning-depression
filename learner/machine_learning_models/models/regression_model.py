@@ -1,26 +1,50 @@
-from scipy.stats import halflogistic
-
-from machine_learning_models.machine_learning_model import MachineLearningModel
-
-from sklearn import linear_model
 from sklearn.linear_model import LogisticRegression
-from sklearn.grid_search import GridSearchCV
-
-from machine_learning_models.models.boosting_model import BoostingClassificationModel
+from machine_learning_models.machine_learning_model import MachineLearningModel
+from sklearn.linear_model import ElasticNetCV, ElasticNet
+from data_output.std_logger import L
+from scipy.stats import expon, halflogistic, uniform
 import numpy as np
 
+class ElasticNetModel(MachineLearningModel):
 
-class LinearRegressionModel(MachineLearningModel):
-    MAX_ITERATIONS = 10000
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+        super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
+        # TODO: Change to elasticnet CV
+        self.skmodel = ElasticNet(alpha=0.1,
+                                  l1_ratio=0.5,
+                                  max_iter=10000)
 
-    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
-        super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
-        self.skmodel = linear_model.LassoCV(eps=1e-2,
-                                            n_alphas=300,
-                                            fit_intercept=True,
-                                            copy_X=False,
-                                            max_iter=self.MAX_ITERATIONS,
-                                            verbose=verbosity)
+        if grid_search:
+            parameter_grid = {
+                    'alpha': np.logspace(-10, 3, 100),
+                    'l1_ratio': np.logspace(-10, 0, 100)
+                    }
+
+            random_parameter_grid = {
+                # Uniformely between 0-1
+                'alpha': uniform(),
+                'l1_ratio': halflogistic(scale=.1)
+            }
+            self.grid_search([parameter_grid], [random_parameter_grid])
+
+    def determine_best_variables(self, top=25):
+        if self.was_trained:
+            assert len(self.skmodel.coef_) == len(self.x_names)
+            L.info('The most predictive variables are:')
+            indices = self.skmodel.sparse_coef_.indices
+            data = self.skmodel.sparse_coef_.data
+            zipped = list(zip(data, indices))
+            zipped.sort(reverse=True, key=lambda tup: abs(tup[0]))
+            i = 0
+            var_names = []
+            for coefficient, index in zipped:
+                i+=1
+                var_name = self.x_names[index]
+                var_names.append(var_name)
+                L.info('--> %d\t%0.5f\t%s' % (i, coefficient, var_name))
+                if(i>=top): break
+
+            return var_names
 
 
 class LogisticRegressionModel(MachineLearningModel):
@@ -35,6 +59,6 @@ class LogisticRegressionModel(MachineLearningModel):
                                           max_iter=100000)
 
         if grid_search:
-            parameter_grid = {'penalty': ['l1', 'l2'], 'C': np.logspace(0, 2, 5)}
+            parameter_grid = {'penalty': ['l1', 'l2'], 'C': np.logspace(-10, 2, 5)}
             random_parameter_grid = {'penalty': ['l1', 'l2'], 'C': halflogistic(10)}
             self.grid_search([parameter_grid], [random_parameter_grid])

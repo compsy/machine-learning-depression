@@ -209,6 +209,17 @@ class QuestionnaireFactory:
         """
         return np.array([  # 'pident',
             # N1_x100    DOB, age, gender, nationality and education of respondents
+            'ademo-frame01',
+            'ademo-frame02',
+            'ademo-area',
+            'ademo-educat',
+            'ademo-edu',
+            'ademo-edulvl',
+            'ademo-bthctry',
+            'ademo-natnmbr',
+            'ademo-nation1',
+            'ademo-nation2',
+            'ademo-northea',
 
             # N1_x201    Drug usage
             'adrug-usage-PolyDrugsUse',

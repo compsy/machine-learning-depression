@@ -6,5 +6,6 @@ keras
 matplotlib==1.5
 pandas==0.18
 pydotplus
-mpi4py
+mpi4py==2.0.0
 Theano
+tabulate

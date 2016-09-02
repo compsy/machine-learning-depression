@@ -3,6 +3,8 @@ import pickle
 import numpy as np
 import random
 from mpi4py import MPI
+
+from data_output.latex_table_exporter import LatexTableExporter
 from data_output.std_logger import L
 from sklearn.ensemble.bagging import BaggingClassifier
 from sklearn.preprocessing import normalize, scale
@@ -135,6 +137,7 @@ class Driver:
 
         #### Classification ####
         # Perform feature selection algorithm
+        coefficients = None
         if(self.FEATURE_SELECTION):
             self.POLYNOMIAL_FEATURES = False
             x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
@@ -143,14 +146,16 @@ class Driver:
             L.info('Performing feature selection for regression')
             elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names,
                     classification_y_names, verbosity = 0, hpc = hpc)
-            result = elastic_net_model.train()
-            x_names  = elastic_net_model.determine_best_variables()
+            elastic_net_model.train()
+            coefficients  = elastic_net_model.determine_best_variables()
+            x_names = coefficients[0:,0]
             self.POLYNOMIAL_FEATURES = polynomial_features
 
         L.info('We are using %s as input.' % x_names)
         x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
                 header, x_names, classification_y_names)
 
+        self.generate_descriptives_table(x_data, x_names, coefficients, 'classification_descriptives')
         self.variable_transformer = VariableTransformer(x_names)
 
         # Calculate the actual models
@@ -180,6 +185,7 @@ class Driver:
         x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
                 header, x_names, regression_y_names)
 
+        self.generate_descriptives_table(x_data, x_names, coefficients, 'regression_descriptives')
         self.variable_transformer = VariableTransformer(x_names)
 
         # Calculate the actual models
@@ -198,6 +204,33 @@ class Driver:
                 model_type='classification')
         self.create_output(regression_fabricated_models, regression_y_data, used_data, selected_header,
                 model_type='regression')
+
+    def generate_descriptives_table(self, x_data, x_names, coefficients, name):
+        header = []
+        header.append('#')
+        header.append('Feature')
+        header.append('SD')
+        header.append('Mean')
+
+        ranks = list(range(1,26))
+        types = []
+        for column in x_data.T:
+            unique_items = len(np.unique(column))
+            if unique_items <= 2:
+                types.append('Dichotomous')
+            elif unique_items <= 10:
+                types.append('Categorical')
+            else:
+                types.append('Discrete')
+
+        if coefficients is not None:
+            header.append('Elastic net Coefficient')
+            data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), coefficients[0:,1], types))
+        else:
+            data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), types))
+        header.append('Type')
+        LatexTableExporter.export('../exports/'+name+'.tex', data, header)
+
 
     def create_descriptives(self, participants, x_data, x_names):
         ages = []

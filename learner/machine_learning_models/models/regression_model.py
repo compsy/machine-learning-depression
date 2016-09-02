@@ -40,11 +40,11 @@ class ElasticNetModel(MachineLearningModel):
             for coefficient, index in zipped:
                 i+=1
                 var_name = self.x_names[index]
-                var_names.append(var_name)
+                var_names.append([var_name, coefficient])
                 L.info('--> %d\t%0.5f\t%s' % (i, coefficient, var_name))
                 if(i>=top): break
 
-            return var_names
+            return np.array(var_names)
 
 
 class LogisticRegressionModel(MachineLearningModel):

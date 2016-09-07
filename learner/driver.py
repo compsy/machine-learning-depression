@@ -106,7 +106,7 @@ class Driver:
         # classification_models.append(KerasNnClassificationModel)
         classification_models.append(ClassificationTreeModel)
         classification_models.append(SupportVectorClassificationModel)
-        # classification_models.append(BoostingClassificationModel)
+        classification_models.append(BoostingClassificationModel)
         classification_models.append(LogisticRegressionModel)
         classification_models.append(NaiveBayesModel)
         classification_models.append(DummyClassifierModel)

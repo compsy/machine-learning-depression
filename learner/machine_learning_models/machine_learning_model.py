@@ -2,6 +2,7 @@ from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
 from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
+import numpy as np
 
 from machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
 from machine_learning_evaluation.f1_evaluation import F1Evaluation
@@ -72,7 +73,7 @@ class MachineLearningModel:
         if (self.skmodel is None):
             raise NotImplementedError('Skmodel is none!')
 
-        L.info('Training ' + self.given_name)
+        L.info('Training ' + self.given_name + ' with data ' + np.shape(self.x_train))
         if self.grid_model is not None:
             result = self.grid_model.fit(X=self.x_train, y=self.y_train)
         else:

@@ -7,7 +7,6 @@ class LatexTableExporter:
 
     @staticmethod
     def export(filename, data, header):
-        print(tabulate(data))
         L.info('Exporting LaTex data to: ' + filename)
         f = open(filename, 'w')
         f.write(tabulate(data, header, tablefmt="latex"))

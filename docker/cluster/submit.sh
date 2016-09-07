@@ -19,5 +19,6 @@ cd $gitdir
 cd learner
 echo "Running main.py"
 export MPLBACKEND="agg"
-mpirun OMP_NUM_THREADS=23 python3 main.py -c -p -n
+export OMP_NUM_THREADS=23
+mpirun python3 main.py -c -p -n
 echo "Finished main.py"

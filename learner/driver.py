@@ -103,7 +103,7 @@ class Driver:
 
         ##### Define the models we should run
         classification_models = []
-        classification_models.append(KerasNnClassificationModel)
+        # classification_models.append(KerasNnClassificationModel)
         classification_models.append(ClassificationTreeModel)
         classification_models.append(SupportVectorClassificationModel)
         # classification_models.append(BoostingClassificationModel)
@@ -140,17 +140,8 @@ class Driver:
         # Perform feature selection algorithm
         coefficients = None
         if(self.FEATURE_SELECTION):
-            self.POLYNOMIAL_FEATURES = False
-            x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
-                    header, x_names, classification_y_names)
-            CsvExporter.export('../exports/merged_' + 'test' + '_dataframe.csv', used_data, selected_header)
-            L.info('Performing feature selection for classification')
-            elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names,
-                    classification_y_names, verbosity = 0, hpc = hpc)
-            elastic_net_model.train()
-            coefficients  = elastic_net_model.determine_best_variables()
-            x_names = coefficients[0:,0]
-            self.POLYNOMIAL_FEATURES = polynomial_features
+            coefficients = self.perform_feature_selection(data, header, x_names, classification_y_names, model_type='classification')
+            x_names = coefficients[0:, 0]
 
         L.info('We are using %s as input.' % x_names)
         x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
@@ -171,16 +162,11 @@ class Driver:
         # Reset the names to the original set
         x_names = QuestionnaireFactory.construct_x_names()
         # Perform feature selection algorithm
+        coefficients = None
         if(self.FEATURE_SELECTION):
-            self.POLYNOMIAL_FEATURES = False
-            x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
-                header, x_names, regression_y_names)
-            L.info('Performing feature selection for regression')
-            elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(regression_y_data), x_names,
-                    regression_y_names, verbosity = 0, hpc = hpc)
-            elastic_net_model.train()
-            x_names = elastic_net_model.determine_best_variables()
-            self.POLYNOMIAL_FEATURES = polynomial_features
+            coefficients = self.perform_feature_selection(data, header, x_names, regression_y_names,
+                                                          model_type='regression')
+            x_names = coefficients[0:, 0]
 
         L.info('We are using %s as input.' % x_names)
         x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
@@ -205,6 +191,20 @@ class Driver:
                 model_type='classification')
         self.create_output(regression_fabricated_models, regression_y_data, used_data, selected_header,
                 model_type='regression')
+
+    def perform_feature_selection(self, data, header, x_names, y_names, model_type):
+        temp_pol_features = self.POLYNOMIAL_FEATURES
+        self.POLYNOMIAL_FEATURES = False
+        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
+                                                                                     header, x_names,
+                                                                                     y_names)
+        L.info('Performing feature selection for ' + model_type)
+        elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(regression_y_data), x_names,
+                                            y_names, verbosity=0, hpc=self.HPC)
+        elastic_net_model.train()
+        coefficients = elastic_net_model.determine_best_variables()
+        self.POLYNOMIAL_FEATURES = temp_pol_features
+        return coefficients
 
     def generate_descriptives_table(self, x_data, x_names, coefficients, name):
         header = []

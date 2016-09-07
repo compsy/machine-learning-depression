@@ -26,7 +26,7 @@ class KerasNnModel(KerasWrapper):
         super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
 
         # Wrap the model in a scikit api
-        self.skmodel = KerasRegressor(build_fn=self.baseline_model, nb_epoch=500, batch_size=32, verbose=1)
+        self.skmodel = KerasRegressor(build_fn=self.baseline_model, nb_epoch=self.n_iter, batch_size=32, verbose=1)
 
     #def validate(self):
     # self.skmodel.evaluate(self.x_test, self.y_test, batch_size=32, verbose=1, sample_weight=None)

@@ -73,7 +73,7 @@ class MachineLearningModel:
         if (self.skmodel is None):
             raise NotImplementedError('Skmodel is none!')
 
-        L.info('Training ' + self.given_name + ' with data ' + np.shape(self.x_train))
+        L.info('Training ' + self.given_name + ' with data %s' % np.shape(self.x_train))
         if self.grid_model is not None:
             result = self.grid_model.fit(X=self.x_train, y=self.y_train)
         else:

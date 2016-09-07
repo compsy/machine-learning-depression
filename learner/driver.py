@@ -277,8 +277,9 @@ class Driver:
 
         x_data = self.transform_variables(x_data, x_names)
         if np.shape(x_data)[1] is not len(x_names):
-            L.warn('The dimension of the Xnames data is not equal to the dimension of the data')
+            L.warn('The dimension of the X names data is not equal to the dimension of the data')
             L.warn('The dimensions are: %s and %d' % (np.shape(x_data)[1], len(x_names)))
+            
         L.info("The used data for the prediction has shape: %s %s" % np.shape(x_data))
         L.info("The values to predict have the shape: %s %s" % np.shape(y_data))
 

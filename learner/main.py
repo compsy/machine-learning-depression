@@ -6,7 +6,7 @@ def main(argv):
        print('python main.py -c (use cluster) -p (use polynomial features) -n (bust cache)')
        exit(0)
    use_hpc = True if '-c' in argv else False
-   use_polynomial = True if '-p' in argv else False
+   use_polynomial = True if '-p' in argv else True
    use_force_no_caching = True if '-n' in argv else False
 
    return {

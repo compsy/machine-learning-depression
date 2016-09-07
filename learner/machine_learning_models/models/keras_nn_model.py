@@ -10,6 +10,9 @@ import numpy as np
 from pandas import DataFrame
 from data_output.std_logger import L
 
+import theano
+theano.config.openmp = True
+
 
 class KerasWrapper(MachineLearningModel):
     # Override the train function, as the keras API returns a history object, not a trained model

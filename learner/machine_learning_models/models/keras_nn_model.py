@@ -30,6 +30,7 @@ class KerasNnModel(KerasWrapper):
 
     def baseline_model(self):
         # Create the model
+        L.info(np.shape(self.x_data)[1])
         keras_model = Sequential()
         keras_model.add(Dense(output_dim=400, input_dim=np.shape(self.x_data)[1]))
         keras_model.add(Dropout(0.4))

@@ -34,7 +34,7 @@ from machine_learning_models.models.regression_model import ElasticNetModel, Log
 from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
 from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, \
         SupportVectorClassificationModel
-# from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
+from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
 
 from models import participant
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
@@ -103,6 +103,7 @@ class Driver:
 
         ##### Define the models we should run
         classification_models = []
+        classification_models.append(KerasNnClassificationModel)
         classification_models.append(ClassificationTreeModel)
         classification_models.append(SupportVectorClassificationModel)
         # classification_models.append(BoostingClassificationModel)
@@ -111,7 +112,7 @@ class Driver:
         classification_models.append(DummyClassifierModel)
         classification_models.append(DummyRandomClassifierModel)
         # classification_models.append(BaggingClassificationModel)
-        # classification_models.append(KerasNnClassificationModel)
+
 
         regression_models = []
         # regressionmodels.append(KerasNnModel)

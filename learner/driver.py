@@ -144,7 +144,7 @@ class Driver:
             x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
                     header, x_names, classification_y_names)
             CsvExporter.export('../exports/merged_' + 'test' + '_dataframe.csv', used_data, selected_header)
-            L.info('Performing feature selection for regression')
+            L.info('Performing feature selection for classification')
             elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(classification_y_data), x_names,
                     classification_y_names, verbosity = 0, hpc = hpc)
             elastic_net_model.train()
@@ -276,7 +276,9 @@ class Driver:
         # y_data = output_data_cleaner.clean(self.output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
         x_data = self.transform_variables(x_data, x_names)
-
+        if np.shape(x_data)[1] is not len(x_names):
+            L.warn('The dimension of the Xnames data is not equal to the dimension of the data')
+            L.warn('The dimensions are: %s and %d' % (np.shape(x_data)[1], len(x_names)))
         L.info("The used data for the prediction has shape: %s %s" % np.shape(x_data))
         L.info("The values to predict have the shape: %s %s" % np.shape(y_data))
 

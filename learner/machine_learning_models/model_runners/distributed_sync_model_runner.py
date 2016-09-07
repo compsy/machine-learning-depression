@@ -2,17 +2,18 @@ import numpy as np
 from data_output.std_logger import L
 from mpi4py import MPI
 
+from machine_learning_models.model_runner import ModelRunner
 
-class DistributedModelRunner:
+
+class DistributedModelRunner(ModelRunner):
 
     def __init__(self, models):
+        super().__init__(models)
         L.info('Running distributed model runner')
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.rank = self.comm.Get_rank()
         L.info('This is node %d/%d' % (self.rank, self.size))
-        self.models = models
-        #self.models = ['a', 'b']
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
         L.info('Fabbing models')

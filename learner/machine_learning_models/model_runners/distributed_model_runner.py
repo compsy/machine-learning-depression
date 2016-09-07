@@ -2,16 +2,18 @@ import numpy as np
 from data_output.std_logger import L
 from mpi4py import MPI
 
+from machine_learning_models.model_runner import ModelRunner
 
-class DistributedModelRunner:
+
+class DistributedModelRunner(ModelRunner):
 
     def __init__(self, models):
+        super().__init__(models)
         L.info('Running distributed model runner')
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.rank = self.comm.Get_rank()
         L.info('This is node %d/%d' % (self.rank, self.size))
-        self.models = models
         self.is_root = True if self.rank == 0 else False
 
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
@@ -27,7 +29,8 @@ class DistributedModelRunner:
             for i in range(len(self.models)):
                 if i == len(self.data):
                     self.data.append([])
-                self.data[i].append(self.models[i])
+                #self.data[i].append(self.models[i])
+                self.data[i].append(self.models[i](np.copy(x), np.copy(y), x_names, y_names, verbosity))
         else:
             self.data = np.empty(len(self.models))
 
@@ -45,7 +48,7 @@ class DistributedModelRunner:
         my_data = []
         for model in data:
             L.info('Training from MPI model runner on node %d' % self.rank)
-            model = model(np.copy(self.x), np.copy(self.y), self.x_names, self.y_names, self.verbosity)
+            #model(np.copy(self.x), np.copy(self.y), self.x_names, self.y_names, self.verbosity)
             model.train()
             my_data.append(model)
 

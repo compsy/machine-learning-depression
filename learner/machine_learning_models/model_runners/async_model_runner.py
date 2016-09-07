@@ -2,12 +2,13 @@ from queue import Queue
 from threading import Thread
 import numpy as np
 from data_output.std_logger import L
+from machine_learning_models.model_runner import ModelRunner
 
 
-class AsyncModelRunner:
+class AsyncModelRunner(ModelRunner):
 
     def __init__(self, models, workers=8):
-        self.models = models
+        super().__init__(models)
         self.workers = workers
 
     def runCalculations(self, x, y, x_names, y_names):

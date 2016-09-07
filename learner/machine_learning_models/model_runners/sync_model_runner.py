@@ -1,20 +1,14 @@
 from queue import Queue
 import numpy as np
 from data_output.std_logger import L
+from machine_learning_models.model_runner import ModelRunner
 
 
-class SyncModelRunner:
+class SyncModelRunner(ModelRunner):
 
     def __init__(self, models, hpc=False):
-        self.models = models
+        super().__init__(models)
         self.hpc = hpc
-
-    def fabricate_models(self, x, y, x_names, y_names, verbosity):
-        L.info('Fabricating models')
-        created_models = []
-        for model in self.models:
-            created_models.append(model(np.copy(x), np.copy(y), x_names, y_names, verbosity, hpc=self.hpc))
-        return created_models
 
     def run_calculations(self, fabricated_models):
         result = True

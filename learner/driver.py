@@ -1,41 +1,34 @@
 import os.path
 import pickle
-import numpy as np
 import random
-from mpi4py import MPI
 
-from data_output.latex_table_exporter import LatexTableExporter
-from data_output.std_logger import L
-from sklearn.ensemble.bagging import BaggingClassifier
+import numpy as np
+from mpi4py import MPI
 from sklearn.preprocessing import normalize, scale
 
 from data_input.spss_reader import SpssReader
 from data_output.csv_exporter import CsvExporter
+from data_output.latex_table_exporter import LatexTableExporter
 from data_output.plotters.actual_vs_prediction_plotter import ActualVsPredictionPlotter
+from data_output.plotters.confusion_matrix_plotter import ConfusionMatrixPlotter
 from data_output.plotters.data_density_plotter import DataDensityPlotter
 from data_output.plotters.learning_curve_plotter import LearningCurvePlotter
 from data_output.plotters.roc_curve_plotter import RocCurvePlotter
 from data_output.plotters.validation_curve_plotter import ValidationCurvePlotter
-from data_output.plotters.confusion_matrix_plotter import ConfusionMatrixPlotter
-
+from data_output.std_logger import L
 from data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
 from data_transformers.output_data_cleaner import OutputDataCleaner
 from data_transformers.output_data_splitter import OutputDataSplitter
 from data_transformers.variable_transformer import VariableTransformer
 from factories.questionnaire_factory import QuestionnaireFactory
-from machine_learning_models.sync_model_runner import SyncModelRunner
-from machine_learning_models.distributed_model_runner import DistributedModelRunner
-
-from machine_learning_models.models.naive_bayes_model import NaiveBayesModel
-from machine_learning_models.models.bagging_model import BaggingClassificationModel, BaggingModel
-from machine_learning_models.models.boosting_model import BoostingClassificationModel, BoostingModel
+from machine_learning_models.models.boosting_model import BoostingClassificationModel
 from machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
+from machine_learning_models.models.naive_bayes_model import NaiveBayesModel
 from machine_learning_models.models.regression_model import ElasticNetModel, LogisticRegressionModel
-from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
 from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, \
         SupportVectorClassificationModel
-from machine_learning_models.models.keras_nn_model import KerasNnModel, KerasNnClassificationModel
-
+from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
+from machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
 from models import participant
 from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
@@ -104,21 +97,28 @@ class Driver:
         ##### Define the models we should run
         classification_models = []
         # classification_models.append(KerasNnClassificationModel)
-        classification_models.append(ClassificationTreeModel)
-        classification_models.append(SupportVectorClassificationModel)
-        classification_models.append(BoostingClassificationModel)
-        classification_models.append(LogisticRegressionModel)
-        classification_models.append(NaiveBayesModel)
-        classification_models.append(DummyClassifierModel)
-        classification_models.append(DummyRandomClassifierModel)
+        # classification_models.append({'model': DummyClassifierModel, 'options': []})
+        # classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        # classification_models.append({'model': ClassificationTreeModel, 'options':[]})
+        # classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
+        # classification_models.append({'model': BoostingClassificationModel, 'options':[]})
+        # classification_models.append({'model': LogisticRegressionModel, 'options':[]})
+        # classification_models.append({'model': NaiveBayesModel, 'options':[]})
+
+        classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
+        classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
+        classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
+        classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
+        classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
+        classification_models.append({'model': NaiveBayesModel, 'options': ['bagging']})
         # classification_models.append(BaggingClassificationModel)
 
 
         regression_models = []
         # regressionmodels.append(KerasNnModel)
-        regression_models.append(ElasticNetModel)
-        regression_models.append(SupportVectorRegressionModel)
-        regression_models.append(RegressionTreeModel)
+        regression_models.append({'model': ElasticNetModel, 'options':[]})
+        regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
+        regression_models.append({'model': RegressionTreeModel, 'options':[]})
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
 

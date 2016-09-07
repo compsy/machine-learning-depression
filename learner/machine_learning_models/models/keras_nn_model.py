@@ -73,25 +73,20 @@ class KerasNnClassificationModel(KerasWrapper):
         super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
 
         # Wrap the model in a scikit api
-        self.skmodel = KerasClassifier(build_fn=self.baseline_model, nb_epoch=500, batch_size=64, verbose=1)
+        self.skmodel = KerasClassifier(build_fn=self.baseline_model, nb_epoch=5000, batch_size=64, verbose=1)
 
     def baseline_model(self):
         # Create the model
         keras_model = Sequential()
-        keras_model.add(Dense(output_dim=500, input_dim=len(self.x_names), init='lecun_uniform'))
-        keras_model.add(Dropout(0.4))
-        keras_model.add(Activation("relu"))
-        keras_model.add(Dense(output_dim=500, init='lecun_uniform'))
-        keras_model.add(Activation("relu"))
-        keras_model.add(Dropout(0.4))
-        keras_model.add(Dense(output_dim=100, init='lecun_uniform'))
-        keras_model.add(Activation("relu"))
-        keras_model.add(Dropout(0.4))
-        keras_model.add(Dense(output_dim=10, init='lecun_uniform'))
-        keras_model.add(Activation("relu"))
-        keras_model.add(Dropout(0.4))
-        keras_model.add(Dense(output_dim=1, init='lecun_uniform'))
-        keras_model.add(Activation("softmax"))
+        keras_model.add(Dense(output_dim=32, input_dim=len(self.x_names), init='lecun_uniform', activation='sigmoid'))
+        keras_model.add(Dropout(0.5))
+        keras_model.add(Dense(output_dim=32, input_dim=32, init='lecun_uniform', activation='sigmoid'))
+        keras_model.add(Dropout(0.5))
+        keras_model.add(Dense(output_dim=32, input_dim=32, init='lecun_uniform', activation='sigmoid'))
+        keras_model.add(Dropout(0.5))
+        keras_model.add(Dense(output_dim=16, input_dim=32, init='lecun_uniform', activation='sigmoid'))
+        keras_model.add(Dropout(0.5))
+        keras_model.add(Dense(output_dim=1, init='lecun_uniform', activation='sigmoid'))
 
         # Create the optimizer with a learning rate
         adam = Adam(lr=0.1)
@@ -102,7 +97,3 @@ class KerasNnClassificationModel(KerasWrapper):
         L.info(keras_model.to_json())
 
         return keras_model
-
-    def predict_for_roc(self, x_data):
-        # TODO: What is the difference between log_proba and proba?
-        return self.skmodel.predict_proba(x_data)[:, 1]

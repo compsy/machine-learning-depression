@@ -1,4 +1,5 @@
 import inspect
+import numpy as np
 
 from sklearn.decomposition import PCA
 
@@ -43,13 +44,12 @@ class Questionnaire:
     def create_data_hash(self, data):
         data_hashed = {}
 
-        # Some files have a capitalized version of Pident.
         key = 'pident'
-        if key not in data:
-            key = 'Pident'
-
         for index, entry in data.iterrows():
-            data_hashed[int(entry[key])] = entry
+            # Only use lowercase keys
+            temp = entry.rename(lambda keyname: keyname.lower())
+            data_hashed[int(temp[key])] = temp
+
         return data_hashed
 
     def get_header(self):
@@ -99,7 +99,10 @@ class Questionnaire:
         dat = self.get_row(participant)
         q_name = self.variable_name(field, force_lower_case=force_lower_case)
         if q_name in dat:
-            return dat[q_name]
+            val = dat[q_name]
+
+            # NOTE Return NaN if we still find a negative value here
+            return val if val is not None and val >= 0 else np.nan
         return None
 
     def get_row(self, participant):

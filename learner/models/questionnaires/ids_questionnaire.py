@@ -10,7 +10,7 @@ class IDSQuestionnaire(Questionnaire):
         function_mapping = {'somScore': self.som_score, 'severity': self.severity, 'twice_depression': self.twice_depression}
 
         other_available_variables = [
-            'ids01', 'ids02', 'ids03', 'ids04', 'ids05', 'ids06', 'ids07', 'ids08', 'ids09A', 'ids09B', 'ids09C',
+            'ids01', 'ids02', 'ids03', 'ids04', 'ids05', 'ids06', 'ids07', 'ids08', 'ids09a', 'ids09b', 'ids09c',
             'ids10', 'ids11', 'ids12', 'ids13', 'ids14', 'ids15', 'ids16', 'ids17', 'ids18', 'ids19', 'ids20', 'ids21',
             'ids22', 'ids23', 'ids24', 'ids25', 'ids26', 'ids27', 'ids28'
         ]
@@ -19,7 +19,7 @@ class IDSQuestionnaire(Questionnaire):
 
         # http://www.ids-qids.org/index2.html#SCORING
         self.variables_for_som_score = [
-            'ids01', 'ids02', 'ids03', 'ids04', 'ids05', 'ids06', 'ids07', 'ids08', 'ids09A', 'ids09B', 'ids09C',
+            'ids01', 'ids02', 'ids03', 'ids04', 'ids05', 'ids06', 'ids07', 'ids08', 'ids09a', 'ids09b', 'ids09c',
             'ids10', 'ids11', 'ids12', 'ids13', 'ids14', 'ids15', 'ids16', 'ids17', 'ids18', 'ids19', 'ids20', 'ids21',
             'ids22', 'ids23', 'ids24', 'ids25', 'ids26', 'ids27', 'ids28'
         ]

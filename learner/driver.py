@@ -147,8 +147,6 @@ class Driver:
         # Perform feature selection algorithm
         CsvExporter.export('../exports/merged_all_dataframe.csv', data, header)
 
-        fail()
-
         coefficients = None
         if(self.FEATURE_SELECTION):
             coefficients = self.perform_feature_selection(data, header, x_names, classification_y_names, model_type='classification')

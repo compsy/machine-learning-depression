@@ -28,39 +28,39 @@ class CIDIBipolarDerived(Questionnaire):
     def bipolar_disorder_i_pastmonth(self, participant):
         val = self.get_field(participant, 'bip01', force_lower_case= True)
         return val if val is not None and val >= 0 else np.nan
-    
+
     def bipolar_disorder_i_i_pastmonth(self, participant):
         val = self.get_field(participant, 'bip02', force_lower_case= True)
         return val if val is not None and val >= 0 else np.nan
-    
+
     def bipolar_disorder_i_past6months(self, participant):
         val = self.get_field(participant, 'bip03', force_lower_case= True)
         return val if val is not None and val >= 0 else np.nan
-    
+
     def bipolar_disorder_i_i_past6months(self, participant):
         val = self.get_field(participant, 'bip04', force_lower_case= True)
         return val if val is not None and val >= 0 else np.nan
-    
+
     def bipolar_disorder_i_pastyear(self, participant):
         val = self.get_field(participant, 'bip05', force_lower_case= True)
         return val if val is not None and val >= 0 else np.nan
-    
+
     def bipolar_disorder_i_i_pastyear(self, participant):
         val = self.get_field(participant, 'bip06', force_lower_case= True)
         return val if val is not None and val >= 0 else np.nan
-    
+
     def bipolar_disorder_i_inlifetime(self, participant):
         val = self.get_field(participant, 'bip07', force_lower_case= True)
         return val if val is not None and val >= 0 else np.nan
-    
+
     def bipolar_disorder_i_i_inlifetime(self, participant):
         val = self.get_field(participant, 'bip08', force_lower_case= True)
         return val if val is not None and val >= 0 else np.nan
-    
+
     def current_bipolardiagnosespresent(self, participant):
         val = self.get_field(participant, 'bip09', force_lower_case= True)
         return val if val is not None and val >= 0 else np.nan
-    
+
     def lifetime_bipolardiagnosespresent(self, participant):
         val = self.get_field(participant, 'bip10', force_lower_case=False)
         return val if val is not None and val >= 0 else np.nan

@@ -218,7 +218,7 @@ class QuestionnaireFactory:
             'ademo-bthctry',
             'ademo-natnmbr',
             'ademo-nation1',
-            'ademo-nation2',
+            'ademo-nationTwo',
             'ademo-northea',
 
             # N1_x201    Drug usage
@@ -385,6 +385,6 @@ class QuestionnaireFactory:
             # N1_x490    Saliva - measurement info
             # N1_x491    Saliva - markers (cortisol)
 
-            # 'ademo-gender',
+            'ademo-gender',
             'ademo-age'
         ])

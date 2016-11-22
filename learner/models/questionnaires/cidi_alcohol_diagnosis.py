@@ -20,34 +20,34 @@ class CidiAlcoholDiagnosis(Questionnaire):
 
     def dsmiv_diagnosis_alcohol(self, participant):
         # 0 = "Diag Indeterminate", is this considered a missing?
-        val = self.get_field(participant,'D30390')
+        val = self.get_field(participant,'d30390')
         return val if val is not None and val >= 1 else np.nan
 
     def age_onset_alcohol(self, participant):
         # 998 = "Refusal"
         # 999 = "Don't Know"
-        val = self.get_field(participant,'D30390AO')
+        val = self.get_field(participant,'d30390ao')
         return val if val is not None and val >= 0 and val < 998 else np.nan
 
     def recency_alcohol(self, participant):
-        val = self.get_field(participant,'D30390RE')
+        val = self.get_field(participant,'d30390re')
         return val if val is not None and val >= 0 else np.nan
 
     def dsmiv_diagnosis_alcohol_abuse(self, participant):
-        val = self.get_field(participant,'D30500')
+        val = self.get_field(participant,'d30500')
         return val if val is not None and val >= 0 else np.nan
 
     def age_onset_alcohol_abuse(self, participant):
         # 998 = "Refusal"
         # 999 = "Don't Know"
-        val = self.get_field(participant,'D30500AO')
+        val = self.get_field(participant,'d30500ao')
         return val if val is not None and val >= 0 and val < 998 else np.nan
 
     def recency_alcohol_abuse(self, participant):
-        val = self.get_field(participant,'D30500RE')
+        val = self.get_field(participant,'d30500re')
         return val if val is not None and val >= 0 else np.nan
 
     def alcohol_diagnose_status(self, participant):
         # -1 = "Diagnose indeterminate". I think this is considered a missing
-        val = self.get_field(participant,'lcversl', force_lower_case=True)
+        val = self.get_field(participant,'lcversl')
         return val if val is not None and val >= 0 else np.nan

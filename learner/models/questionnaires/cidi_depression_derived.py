@@ -27,6 +27,7 @@ class CIDIDepressionDerived(Questionnaire):
 
     # Depression
     def minor_depression_past_month(self, participant):
+        ##### NOTE This variable does not exist in the follow up questionnaire!!
         val = self.get_field(participant, 'cidep01')
         return val if val is not None and val >= 0 else np.nan
 
@@ -78,6 +79,7 @@ class CIDIDepressionDerived(Questionnaire):
 
     # of MDD episodes
     def number_of_major_depression_episodes(self, participant):
+        ##### NOTE This variable does not exist in the follow up questionnaire!!
         val = self.get_field(participant, 'cidep13')
 
         # Val = -2 is there were no MDD episodes
@@ -86,6 +88,7 @@ class CIDIDepressionDerived(Questionnaire):
         return val if val is not None and val >= 0 else np.nan
 
     def major_depression_type(self, participant):
+        ##### NOTE This variable does not exist in the follow up questionnaire!!
         val = self.get_field(participant, 'cidep14')
 
         # Val = -1 is there were no MDD episodes

@@ -42,10 +42,8 @@ class Driver:
         1 is on, 0 is off.
     hpc : boolean, default=False
         Should the application run each of the models on a separate node?
-        This should not be combined with distributed gridsearch.
-    hpc_log : boolean, default=True
-        Consider the logging is done on an HPC? If so, the logging of the
-        slaves is turned off
+        This should not be combined with distributed gridsearch. Also consider
+        the logging is done on an HPC? If so, the logging of the slaves is turned off
     polynomial_features : boolean, default=False
         should the data also include polynomial features?
     normalize : boolean, default=False
@@ -56,31 +54,39 @@ class Driver:
         True = we are performing classification, False = regression
     forc_no_caching : boolean, default=False
         By default we cache the loaded data, should we force busting this cache?
+    feature_selection : perform feature selection using elasticnet
     """
 
     def __init__(self,
             verbosity,
             hpc,
-            hpc_log,
             polynomial_features,
             normalize,
             scale,
-            force_no_caching):
-        if(hpc): print('Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
+            force_no_caching,
+            feature_selection):
+
+        # Set a seed for reproducability
         random.seed(42)
 
-        L.setup(hpc_log)
+        if(hpc): print('Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
 
+        # setup logging
+        L.setup(hpc)
+
+        # Define global variables
         self.VERBOSITY = verbosity
         self.HPC = hpc
         self.POLYNOMIAL_FEATURES = polynomial_features
         self.NORMALIZE = normalize
         self.SCALE = scale
         self.FORCE_NO_CACHING = force_no_caching
-        self.FEATURE_SELECTION = True
+        self.FEATURE_SELECTION = feature_selection
 
+        # Retrieve the names of the variables to use in the prediction
         x_names = QuestionnaireFactory.construct_x_names()
 
+        # Create objects to perform image plotting
         self.actual_vs_prediction_plotter = ActualVsPredictionPlotter()
         self.learning_curve_plotter = LearningCurvePlotter()
         self.validation_curve_plotter = ValidationCurvePlotter()
@@ -88,6 +94,7 @@ class Driver:
         self.confusion_matrix_plotter = ConfusionMatrixPlotter()
         self.data_density_plotter = DataDensityPlotter()
 
+        # create several objects to do data processing
         self.spss_reader = SpssReader()
         self.single_output_frame_creator = SingleOutputFrameCreator()
         self.output_data_cleaner = OutputDataCleaner()
@@ -98,32 +105,32 @@ class Driver:
         classification_models = []
         # classification_models.append(KerasNnClassificationModel)
         classification_models.append({'model': DummyClassifierModel, 'options': []})
-        classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        classification_models.append({'model': ClassificationTreeModel, 'options':[]})
-        classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
-        classification_models.append({'model': BoostingClassificationModel, 'options':[]})
-        classification_models.append({'model': LogisticRegressionModel, 'options':[]})
-        classification_models.append({'model': NaiveBayesModel, 'options':[]})
+        # classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        # classification_models.append({'model': ClassificationTreeModel, 'options':[]})
+        # classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
+        # classification_models.append({'model': BoostingClassificationModel, 'options':[]})
+        # classification_models.append({'model': LogisticRegressionModel, 'options':[]})
+        # classification_models.append({'model': NaiveBayesModel, 'options':[]})
 
-        classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
-        classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
-        classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
-        classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
-        classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
-        classification_models.append({'model': NaiveBayesModel, 'options': ['bagging']})
+        # classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
+        # classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
+        # classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
+        # classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
+        # classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
+        # classification_models.append({'model': NaiveBayesModel, 'options': ['bagging']})
         # classification_models.append(BaggingClassificationModel)
 
 
         regression_models = []
         # regressionmodels.append(KerasNnModel)
         regression_models.append({'model': ElasticNetModel, 'options':[]})
-        regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
-        regression_models.append({'model': RegressionTreeModel, 'options':[]})
+        # regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
+        # regression_models.append({'model': RegressionTreeModel, 'options':[]})
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
 
         # Output columns
-        classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
+        # classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
         classification_y_names = np.array(['cids-followup-twice_depression'])
 
         regression_y_names = np.array(['cids-followup-somScore'])
@@ -138,6 +145,10 @@ class Driver:
 
         #### Classification ####
         # Perform feature selection algorithm
+        CsvExporter.export('../exports/merged_all_dataframe.csv', data, header)
+
+        fail()
+
         coefficients = None
         if(self.FEATURE_SELECTION):
             coefficients = self.perform_feature_selection(data, header, x_names, classification_y_names, model_type='classification')

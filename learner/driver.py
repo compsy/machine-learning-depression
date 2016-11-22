@@ -105,12 +105,12 @@ class Driver:
         classification_models = []
         # classification_models.append(KerasNnClassificationModel)
         classification_models.append({'model': DummyClassifierModel, 'options': []})
-        # classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        # classification_models.append({'model': ClassificationTreeModel, 'options':[]})
-        # classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
-        # classification_models.append({'model': BoostingClassificationModel, 'options':[]})
-        # classification_models.append({'model': LogisticRegressionModel, 'options':[]})
-        # classification_models.append({'model': NaiveBayesModel, 'options':[]})
+        classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        classification_models.append({'model': ClassificationTreeModel, 'options':[]})
+        classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
+        classification_models.append({'model': BoostingClassificationModel, 'options':[]})
+        classification_models.append({'model': LogisticRegressionModel, 'options':[]})
+        classification_models.append({'model': NaiveBayesModel, 'options':[]})
 
         # classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
         # classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})

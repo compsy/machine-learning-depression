@@ -240,7 +240,8 @@ class QuestionnaireFactory:
             'amdq-MdqHirschfeldCriteriaBipolarSpectrumDisorderAdaptedCriteria',
 
             # N1_x232    4DKL (distress)
-            # 'a4dkl-somScore',
+            'a4dkl-somatizationScore',
+            'a4dkl-severity',
             'a4dkl-4dkld01',
             'a4dkl-4dkld02',
             'a4dkl-4dkld03',

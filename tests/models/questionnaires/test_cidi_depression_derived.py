@@ -246,10 +246,12 @@ class TestCidiDepressionDerived:
         ({'participant': 'participant',
           'field': 'cidep14',
           'value': 1}, 1),
+        # The expected value for -1 is 0 as -1 represents 'not having major depression'
         ({'participant': 'participant',
           'field': 'cidep14',
-          'value': -1}, np.nan),
+          'value': -1}, 0),
     ],
                              indirect=True)
     def test_major_depression_type(self, mock_get_field, expected, assert_with_nan, subject):
         assert_with_nan(subject.major_depression_type('participant'), expected)
+

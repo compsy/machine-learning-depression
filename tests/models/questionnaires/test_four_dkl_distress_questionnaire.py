@@ -24,7 +24,7 @@ class TestFourDKLQuestionnaire:
             '4dkld01', '4dkld02', '4dkld03', '4dkld04', '4dkld05', '4dkld06', '4dkld07', '4dkld08', '4dkld09',
             '4dkld10', '4dkld11', '4dkld12', '4dkld13', '4dkld14', '4dkld15', '4dkld16'
         ]
-        result = subject.variables_for_som_score
+        result = subject.variables_for_somatization_score
         assert np.array_equal(result, expected)
 
         # Test if the super class is called with the correct parameters
@@ -46,31 +46,39 @@ class TestFourDKLQuestionnaire:
             if (isinstance(current, str)): continue
             assert current in all_functions
 
-    def test_som_score_sums_scores(self, subject, monkeypatch, mock_participant):
+    def test_somatization_score_sums_scores(self, subject, monkeypatch, mock_participant):
         fake_data = {}
-        index = 0
+        index = -1
         total = 0
-        for key in subject.variables_for_som_score:
-            fake_data[subject.variable_name(key, force_lower_case=False)] = index
-            total += index
+        for key in subject.variables_for_somatization_score:
+            current = ((index + 1) % 5) +1
+            fake_data[subject.variable_name(key, force_lower_case=False)] = current
+            print(current)
+            if(current == 1):
+                current = 0
+            elif(current == 2):
+                current = 1
+            elif(current >= 3):
+                current = 2
+            print('score %d' % current)
+            total += current
             index += 1
 
         def fake_get_row(participant):
             return fake_data
 
         monkeypatch.setattr(subject, 'get_row', fake_get_row)
-        result = subject.som_score(mock_participant)
-        print(result)
+        result = subject.somatization_score(mock_participant)
         assert result == total
 
-    def test_som_score_returns_nan(self, subject, monkeypatch, mock_participant):
+    def test_somatization_score_returns_nan(self, subject, monkeypatch, mock_participant):
         fake_data = {}
-        for key in subject.variables_for_som_score:
+        for key in subject.variables_for_somatization_score:
             fake_data[subject.variable_name(key, force_lower_case=False)] = 0
 
         def fake_get_row(participant):
             return fake_data
 
         monkeypatch.setattr(subject, 'get_row', fake_get_row)
-        result = subject.som_score(mock_participant)
+        result = subject.somatization_score(mock_participant)
         assert np.isnan(result)

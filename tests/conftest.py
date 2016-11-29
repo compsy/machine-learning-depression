@@ -26,7 +26,6 @@ def expected(request):
 
 @pytest.fixture()
 def assert_with_nan():
-
     def assertion(result, expected):
         if (np.isnan(expected)):
             assert np.isnan(result)

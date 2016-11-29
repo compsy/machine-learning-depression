@@ -20,6 +20,9 @@ class L:
 
     @staticmethod
     def info(text, force=False):
+        if not 'logger_on_hpc' in globals():
+            L.setup(False)
+
         if logger_on_hpc and not force:
             rank = MPI.COMM_WORLD.Get_rank()
             if rank != 0:

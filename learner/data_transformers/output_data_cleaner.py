@@ -12,27 +12,31 @@ class OutputDataCleaner(DataTransformer):
         incorrect_indices = []
         missing_value_hash = {}
         missing_indices = {}
-        index = 0  # TODO this can probably be done in one statement
-        for row in data:
+        for index, row in enumerate(data):
+
             # If a row contains NA's, add the pident to a list
             zippd = list(zip(header, np.isnan(row)))
 
+            # zippd is the header name + true or false for the value in this row whether it is nan.
             # Loop through the header
             for z in zippd:
+                # If z[1] is NaN
                 if z[1]:
                     key = z[0]
+
+                    # Store the stats, for this key there is a missing.
                     temp = missing_value_hash.get(key, 0)
                     missing_value_hash[key] = temp + 1
 
-                    if not key in missing_indices:
-                        missing_indices[key] = []
-
+                    # Also store the index which is missing
+                    missing_indices[key] = [] if not key in missing_indices else missing_indices[key]
                     missing_indices[key].append(index)
 
+            # Add the index of the row to remove
             if np.any(np.isnan(row)):
                 incorrect_indices.append(index)
-            index += 1
 
+        # Print statistics
         if print_info: L.info('The following keys have the most missings:')
         items = sorted(missing_value_hash.items(), key=lambda k_v: (k_v[1], k_v[0]), reverse=True)
         variables_that_are_gone = set()
@@ -44,4 +48,5 @@ class OutputDataCleaner(DataTransformer):
                 set(current_indices).difference(variables_that_are_gone))
 
             if print_info: L.info("--> %s (of which %d are new) \t %s" % (value, new_removed_vars, key))
+
         return incorrect_indices

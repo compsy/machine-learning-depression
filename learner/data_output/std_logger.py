@@ -21,6 +21,7 @@ class L:
     @staticmethod
     def info(text, force=False):
         if not 'logger_on_hpc' in globals():
+            L.warn('LOGGER - SETUP SHOULD BE CALLED FIRST')
             L.setup(False)
 
         if logger_on_hpc and not force:

@@ -23,6 +23,7 @@ from data_transformers.variable_transformer import VariableTransformer
 from factories.questionnaire_factory import QuestionnaireFactory
 from machine_learning_models.models.boosting_model import BoostingClassificationModel
 from machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
+from machine_learning_models.models.forest_model import RandomForestClassificationModel
 from machine_learning_models.models.naive_bayes_model import NaiveBayesModel
 from machine_learning_models.models.regression_model import ElasticNetModel, LogisticRegressionModel
 from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, \
@@ -111,6 +112,7 @@ class Driver:
         classification_models.append({'model': BoostingClassificationModel, 'options':[]})
         classification_models.append({'model': LogisticRegressionModel, 'options':[]})
         classification_models.append({'model': NaiveBayesModel, 'options':[]})
+        classification_models.append({'model': RandomForestClassificationModel, 'options':[]})
 
         # classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
         # classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})

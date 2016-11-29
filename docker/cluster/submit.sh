@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --time=2:30:00
-#SBATCH --nodes=8
+#SBATCH --time=8:30:00
+#SBATCH --nodes=16
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=23
 ####SBATCH --partition=short
@@ -20,5 +20,5 @@ cd learner
 echo "Running main.py"
 export MPLBACKEND="agg"
 export OMP_NUM_THREADS=23
-mpirun python3 main.py -c -p -n
+mpirun python3 main.py -c -p -n -f
 echo "Finished main.py"

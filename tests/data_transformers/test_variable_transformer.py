@@ -53,6 +53,23 @@ class TestVariableTransformer:
             assert data[val, 1] == orig_data[val, 1]
             assert data[val, 2] == orig_data[val, 2]
 
+    def test_log_transform_with_additive_columns(self,subject):
+        # it should be able to add the result to the original array
+        data = np.array([[1., 2., 3.], [2., 3., 4.], [1., 4., 5.], [4., 5., 6.], [5., 6., 7.], [6., 7., 8.],
+                         [7., 8., 9.], [8., 9., 10.], [9., 10., 11.]])
+        orig_data = data.copy()
+
+        data = subject.log_transform(data, 'a', additive=True)
+        print(data)
+        print(orig_data)
+
+        for val in range(np.shape(data)[0]):
+            assert data[val, 0] == orig_data[val, 0]
+            assert data[val, 1] == np.log(orig_data[val, 0])
+            assert data[val, 2] == orig_data[val, 1]
+            assert data[val, 3] == orig_data[val, 2]
+
+
     def test_sqrt_transform(self, subject):
         # It should log transform the data
         data = np.array([[1., 2., 3.], [2., 3., 4.], [0., 4., 5.], [4., 5., 6.], [5., 6., 7.], [6., 7., 8.],
@@ -80,3 +97,18 @@ class TestVariableTransformer:
             assert data[val, 0] == np.sqrt(orig_data[val, 0] + 3)
             assert data[val, 1] == orig_data[val, 1]
             assert data[val, 2] == orig_data[val, 2]
+
+
+    def test_sqrt_transform_with_additive_columns(self,subject):
+        # it should be able to add the result to the original array
+        data = np.array([[1., 2., 3.], [2., 3., 4.], [0., 4., 5.], [4., 5., 6.], [5., 6., 7.], [6., 7., 8.],
+                         [7., 8., 9.], [8., 9., 10.], [9., 10., 11.]])
+        orig_data = data.copy()
+
+        data = subject.sqrt_transform(data, 'a', additive=True)
+        for val in range(np.shape(data)[0]):
+            assert data[val, 0] == orig_data[val, 0]
+            assert data[val, 1] == np.sqrt(orig_data[val, 0])
+            assert data[val, 2] == orig_data[val, 1]
+            assert data[val, 3] == orig_data[val, 2]
+

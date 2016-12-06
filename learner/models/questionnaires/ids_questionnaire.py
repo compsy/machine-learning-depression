@@ -1,6 +1,6 @@
 from ..questionnaire import Questionnaire
 import numpy as np
-from learner.data_output.std_logger import L
+from data_output.std_logger import L
 
 
 class IDSQuestionnaire(Questionnaire):

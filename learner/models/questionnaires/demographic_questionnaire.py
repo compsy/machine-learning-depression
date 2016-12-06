@@ -1,4 +1,4 @@
-from learner.models.questionnaire import Questionnaire
+from models.questionnaire import Questionnaire
 import numpy as np
 
 

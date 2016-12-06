@@ -1,6 +1,6 @@
 from sklearn.metrics import mean_squared_error
-from learner.data_output.std_logger import L
-from learner.machine_learning_evaluation.evaluation import Evaluation
+from data_output.std_logger import L
+from machine_learning_evaluation.evaluation import Evaluation
 import numpy as np
 
 

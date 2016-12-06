@@ -1,5 +1,5 @@
 from sklearn.metrics import explained_variance_score
-from learner.machine_learning_evaluation.evaluation import Evaluation
+from machine_learning_evaluation.evaluation import Evaluation
 
 
 class ExplainedVarianceEvaluation(Evaluation):

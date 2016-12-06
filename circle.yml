@@ -2,7 +2,7 @@ machine:
   timezone:
     Europe/Amsterdam
   python:
-    version: 3.5.0
+    version: 3.5.1
 checkout:
   post:
     - pip install -U pip setuptools virtualenv
@@ -13,4 +13,4 @@ dependencies:
     - pip install -U -r test-requirements.txt
 test:
   override:
-    - ./test.sh
+    - 'cd learner; py.test --cov=learner ../tests/'

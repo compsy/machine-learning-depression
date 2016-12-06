@@ -1,9 +1,9 @@
 from sklearn.grid_search import GridSearchCV, ParameterGrid, RandomizedSearchCV
 import os.path
 from queue import Queue
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 from mpi4py import MPI
-from machine_learning_models.grid_search_mine import GridSearchMine
+from learner.machine_learning_models.grid_search_mine import GridSearchMine
 import random
 import math
 import numpy as np
@@ -30,6 +30,7 @@ class DistributedRandomGridSearch:
         my_y = np.copy(y)
 
         if (self.root):
+            # Create an array of elements with the number of jobs for each of the slaves
             iterations = [round(self.iterations / self.size)] * self.size
         else:
             iterations = np.empty(self.size)

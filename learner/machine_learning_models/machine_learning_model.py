@@ -4,14 +4,14 @@ from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
 import numpy as np
 
-from machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
-from machine_learning_evaluation.f1_evaluation import F1Evaluation
-from machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
-from data_output.std_logger import L
-from machine_learning_evaluation.variance_evaluation import VarianceEvaluation
-from machine_learning_models.distributed_grid_search import DistributedGridSearch
-from machine_learning_models.distributed_random_grid_search import DistributedRandomGridSearch
-from machine_learning_models.randomized_search_mine import RandomizedSearchMine
+from learner.machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
+from learner.machine_learning_evaluation.f1_evaluation import F1Evaluation
+from learner.machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
+from learner.data_output.std_logger import L
+from learner.machine_learning_evaluation.variance_evaluation import VarianceEvaluation
+from learner.machine_learning_models.distributed_grid_search import DistributedGridSearch
+from learner.machine_learning_models.distributed_random_grid_search import DistributedRandomGridSearch
+from learner.machine_learning_models.randomized_search_mine import RandomizedSearchMine
 
 
 class MachineLearningModel:
@@ -23,6 +23,7 @@ class MachineLearningModel:
         self.y_names = y_names
         self.grid_model = None
         self.skmodel = None
+        self.test_size = 0.2
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
@@ -44,7 +45,7 @@ class MachineLearningModel:
         """
         Splits dataset up into train and test set
         """
-        x_train, x_test, y_train, y_test = train_test_split(self.x, self.y, test_size=0.20, random_state=42)
+        x_train, x_test, y_train, y_test = train_test_split(self.x, self.y, test_size=self.test_size, random_state=42)
         return (x_train, x_test, y_train, y_test)
 
     def print_accuracy(self):
@@ -64,9 +65,6 @@ class MachineLearningModel:
             if evaluator.problem_type == self.model_type:
                 evaluator.print_evaluation(self, self.y_test, prediction)
         L.info('---------------------------------------------------------')
-
-    def cv_score(self):
-        return cross_val_score(self.skmodel, self.x_test, self.y_test, cv=10)
 
     def train(self):
         if (self.was_trained):
@@ -91,19 +89,13 @@ class MachineLearningModel:
         L.info('Fitted ' + self.given_name)
         return result
 
-    def cv_predict(self):
-        self.skmodel.fit(self.x_train, self.y_train)
-        # cross_val_predict returns an array of the same size as `y` where each entry
-        # is a prediction obtained by cross validated:
-        return cross_val_predict(self.skmodel, X=self.x_train, y=self.y_train, cv=10)
-
     def scoring(self):
         if (self.model_type == 'models'):
             return 'mean_squared_error'
         elif (self.model_type == 'classification'):
             return 'accuracy'
         else:
-            raise NotImplementedError('Type: ' + self.type + ' not implented')
+            raise NotImplementedError('Type: ' + self.model_type + ' not implemented')
 
     def variable_to_validate(self):
         return 'max_iter'

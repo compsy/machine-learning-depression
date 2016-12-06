@@ -1,4 +1,4 @@
-from sklearn.grid_search import BaseSearchCV, ParameterGrid
+from sklearn.grid_search import BaseSearchCV
 
 
 class GridSearchMine(BaseSearchCV):

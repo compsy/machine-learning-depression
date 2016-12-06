@@ -5,7 +5,7 @@ import numpy as np
 
 class DataTransformer:
 
-    def getVariableIndices(self, all_names, selected_names):
+    def get_variable_indices(self, all_names, selected_names):
         variable_indices = []
         for name in selected_names:
             var_name = self.get_variable_index(all_names, name)

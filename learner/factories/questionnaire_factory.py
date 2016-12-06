@@ -218,7 +218,6 @@ class QuestionnaireFactory:
             'ademo-bthctry',
             'ademo-natnmbr',
             'ademo-nation1',
-            'ademo-nationTwo',
             'ademo-northea',
 
             # N1_x201    Drug usage

@@ -20,11 +20,11 @@ class BoostingModel(MachineLearningModel):
             }
 
             random_parameter_grid = {
+                'n_estimators': randint(1,100),
+                'max_depth': randint(1,100),
+                'learning_rate': halflogistic(),
                 'n_estimators': halflogistic(scale=100),
                 'max_depth': halflogistic(scale=100),
-                'learning_rate': halflogistic(),
-                'min_samples_split': halflogistic(scale=100),
-                'min_samples_leaf': halflogistic(scale=100),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             self.grid_search([parameter_grid], [random_parameter_grid])

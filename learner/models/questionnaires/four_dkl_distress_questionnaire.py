@@ -6,7 +6,7 @@ from data_output.std_logger import L
 class FourDKLQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
-        function_mapping = {'somatizationScore': self.somatization_score}
+        function_mapping = {'somatizationScore': self.somatization_score, 'severity': self.severity}
 
         other_available_variables = [
             '4dkld01', '4dkld02', '4dkld03', '4dkld04', '4dkld05', '4dkld06', '4dkld07', '4dkld08', '4dkld09',

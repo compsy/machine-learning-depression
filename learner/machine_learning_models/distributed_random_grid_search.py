@@ -30,6 +30,7 @@ class DistributedRandomGridSearch:
         my_y = np.copy(y)
 
         if (self.root):
+            # Create an array of elements with the number of jobs for each of the slaves
             iterations = [round(self.iterations / self.size)] * self.size
         else:
             iterations = np.empty(self.size)

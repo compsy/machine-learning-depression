@@ -12,13 +12,13 @@ import numpy as np
 
 class DistributedGridSearch:
 
-    def __init__(self, ml_model, estimator, param_grid, cv):
+    def __init__(self, ml_model, estimator, param_grid, cv, cpus_per_node=23):
         # Number of nodes
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
         self.workers = self.size -1
         self.rank = self.comm.Get_rank()
-        self.cpus_per_node = 23
+        self.cpus_per_node = cpus_per_node
         self.skmodel = estimator
         self.param_grid = ParameterGrid(param_grid)
         self.cv = cv
@@ -39,6 +39,9 @@ class DistributedGridSearch:
         if shuffle: random.shuffle(shuffled_range)
 
         work_division = self.cpus_per_node
+
+        # If there are more workers than jobs, give each worker a small job. Otherwise just give them x number of jobs,
+        # according to the number of CPUs they have.
         if self.cpus_per_node * self.workers > len(self.param_grid) and force_distribute:
             work_division = math.ceil(len(self.param_grid) / self.workers)
 

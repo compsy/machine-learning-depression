@@ -2,7 +2,7 @@ machine:
   timezone:
     Europe/Amsterdam
   python:
-    version: 3.5.0
+    version: 3.5.2
 checkout:
   post:
     - pip install -U pip setuptools virtualenv

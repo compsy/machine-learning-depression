@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --time=8:30:00
-#SBATCH --nodes=16
+#SBATCH --time=0:30:00
+#SBATCH --nodes=8
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=23
-####SBATCH --partition=short
+#SBATCH --partition=short
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=peregrine@compsy.nl
 #SBATCH --job-name=python_cpu

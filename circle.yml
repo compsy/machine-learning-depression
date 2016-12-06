@@ -13,4 +13,4 @@ dependencies:
     - pip install -U -r test-requirements.txt
 test:
   override:
-    - ./test.sh
+    - 'cd learner; py.test --cov=learner ../tests/'

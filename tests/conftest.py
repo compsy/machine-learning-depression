@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, Mock
 import pytest
 import pandas as pd
+from sklearn.grid_search import GridSearchCV
 from learner.models.participant import Participant
 import numpy as np
 
@@ -11,6 +12,19 @@ def mock_reader():
     mock_reader = Mock()
     mock_reader.read_file = MagicMock(return_value=file_data)
     return mock_reader
+
+@pytest.fixture()
+def mock_skmodel():
+    file_data = 'running fitting'
+    mock_skmodel = Mock()
+    mock_skmodel.fit = MagicMock(return_value=file_data)
+    return mock_skmodel
+
+@pytest.fixture()
+def mock_gridsearch_skmodel():
+    mock_skmodel = GridSearchCV('estimator', {'a':[1,2],'b':[3,4]})
+    mock_skmodel.fit = MagicMock(return_value=mock_skmodel)
+    return mock_skmodel
 
 
 @pytest.fixture()

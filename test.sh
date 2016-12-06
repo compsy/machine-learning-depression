@@ -18,4 +18,5 @@ echo 'Yapf ran succesfully'
 #tox
 echo 'Running py.test'
 cd learner
+echo `pwd`
 py.test --cov=learner ../tests/

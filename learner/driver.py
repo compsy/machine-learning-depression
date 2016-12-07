@@ -125,9 +125,9 @@ class Driver:
 
         regression_models = []
         # regressionmodels.append(KerasNnModel)
-        regression_models.append({'model': ElasticNetModel, 'options':[]})
-        # regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
-        # regression_models.append({'model': RegressionTreeModel, 'options':[]})
+        # regression_models.append({'model': ElasticNetModel, 'options':[]})
+        regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
+        regression_models.append({'model': RegressionTreeModel, 'options':[]})
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
 

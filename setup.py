@@ -13,7 +13,10 @@ config = {
     'install_requires': ['nose'],
     'packages': ['learner'],
     'scripts': [],
+    'setup_requires': ['pytest-runner'],
+    'tests_require': ['pytest'],
     'name': 'learner'
 }
 
 setup(**config)
+

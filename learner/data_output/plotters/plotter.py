@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 class Plotter:
 
-    def __init__(self, location='../exports/'):
+    def __init__(self, location='exports/'):
         self.location = location
 
     def plot(self, *args, **kwargs):

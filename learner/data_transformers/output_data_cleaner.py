@@ -1,6 +1,6 @@
 import numpy as np
-from data_transformers.data_transformer import DataTransformer
-from data_output.std_logger import L
+from learner.data_transformers.data_transformer import DataTransformer
+from learner.data_output.std_logger import L
 
 
 class OutputDataCleaner(DataTransformer):

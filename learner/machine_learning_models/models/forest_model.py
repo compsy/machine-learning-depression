@@ -1,7 +1,7 @@
 from scipy.stats import halflogistic, randint
 
 
-from machine_learning_models.machine_learning_model import MachineLearningModel
+from learner.machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 

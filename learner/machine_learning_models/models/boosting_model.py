@@ -1,6 +1,6 @@
 from scipy.stats import halflogistic, randint
 from sklearn.ensemble.gradient_boosting import GradientBoostingRegressor, GradientBoostingClassifier
-from machine_learning_models.machine_learning_model import MachineLearningModel
+from learner.machine_learning_models.machine_learning_model import MachineLearningModel
 import numpy as np
 
 

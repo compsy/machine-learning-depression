@@ -2,13 +2,13 @@ from keras.optimizers import Adam
 from sklearn.cross_validation import cross_val_predict
 from sklearn.cross_validation import cross_val_score
 
-from machine_learning_models.machine_learning_model import MachineLearningModel
+from learner.machine_learning_models.machine_learning_model import MachineLearningModel
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
 from keras.wrappers.scikit_learn import KerasRegressor, KerasClassifier
 import numpy as np
 from pandas import DataFrame
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 
 import theano
 theano.config.openmp = True
@@ -62,7 +62,7 @@ class KerasNnModel(KerasWrapper):
         err = self.skmodel.predict((self.x_test))
         err = np.ravel(err) - self.y_test
         out = DataFrame(data={'err': err, 'out': np.ravel(self.y_test)})
-        out.to_csv('../exports/output_keras.csv')
+        out.to_csv('exports/output_keras.csv')
         # pred = self.skmodel.predict(np.reshape(self.x_test[i], (1, len(x_names))))
         # act = self.y_test[1]
         # err.append(np.ravel(pred[0][0] - act))

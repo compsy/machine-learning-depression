@@ -1,9 +1,9 @@
 from sklearn.grid_search import GridSearchCV, ParameterGrid
 import os.path
 from queue import Queue
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 from mpi4py import MPI
-from machine_learning_models.grid_search_mine import GridSearchMine
+from learner.machine_learning_models.grid_search_mine import GridSearchMine
 import random
 import math
 import numpy as np
@@ -61,7 +61,7 @@ class DistributedGridSearch:
         return queue
 
     def write_output(self, qsize, wall_time,  times):
-        file_name = ('../exports/%s.csv' % self.ml_model.given_name)
+        file_name = ('exports/%s.csv' % self.ml_model.given_name)
         if not os.path.isfile(file_name):
             with open(file_name, "w") as output_file:
                 output_file.write('"nodes", "cpus_per_node", "queue_size", "parameters", "cv", "wall_time", "average", "median", "standard_deviation"\n')

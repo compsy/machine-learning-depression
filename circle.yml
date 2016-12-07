@@ -11,6 +11,3 @@ dependencies:
     - pip install -U -r requirements.txt:
         timeout: 1800
     - pip install -U -r test-requirements.txt
-test:
-  override:
-    - 'cd learner; py.test --cov=learner ../tests/'

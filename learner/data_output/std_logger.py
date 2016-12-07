@@ -14,7 +14,7 @@ class L:
         if not logger_hpc:
             date = time.strftime("%y%m%d-%H%M")
             FORMAT = '%(asctime)-15s -> %(message)s'
-            logging.basicConfig(filename='../exports/' + date + '_output.log', format=FORMAT, level=logging.INFO)
+            logging.basicConfig(filename='exports/' + date + '_output.log', format=FORMAT, level=logging.INFO)
             L.info('Starting Machine Learning')
         print(logger_on_hpc)
 

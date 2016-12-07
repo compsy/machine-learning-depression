@@ -1,14 +1,14 @@
 import sklearn
 from sklearn.cross_validation import StratifiedKFold
 
-from data_output.plotters.plotter import Plotter
+from learner.data_output.plotters.plotter import Plotter
 from scipy import interp
 
 import numpy as np
 
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 
 
 class RocCurvePlotter(Plotter):

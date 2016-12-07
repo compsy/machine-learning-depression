@@ -6,32 +6,32 @@ import numpy as np
 from mpi4py import MPI
 from sklearn.preprocessing import normalize, scale
 
-from data_input.spss_reader import SpssReader
-from data_output.csv_exporter import CsvExporter
-from data_output.latex_table_exporter import LatexTableExporter
-from data_output.plotters.actual_vs_prediction_plotter import ActualVsPredictionPlotter
-from data_output.plotters.confusion_matrix_plotter import ConfusionMatrixPlotter
-from data_output.plotters.data_density_plotter import DataDensityPlotter
-from data_output.plotters.learning_curve_plotter import LearningCurvePlotter
-from data_output.plotters.roc_curve_plotter import RocCurvePlotter
-from data_output.plotters.validation_curve_plotter import ValidationCurvePlotter
-from data_output.std_logger import L
-from data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
-from data_transformers.output_data_cleaner import OutputDataCleaner
-from data_transformers.output_data_splitter import OutputDataSplitter
-from data_transformers.variable_transformer import VariableTransformer
-from factories.questionnaire_factory import QuestionnaireFactory
-from machine_learning_models.models.boosting_model import BoostingClassificationModel
-from machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
-from machine_learning_models.models.forest_model import RandomForestClassificationModel
-from machine_learning_models.models.naive_bayes_model import NaiveBayesModel
-from machine_learning_models.models.regression_model import ElasticNetModel, LogisticRegressionModel
-from machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, \
+from learner.data_input.spss_reader import SpssReader
+from learner.data_output.csv_exporter import CsvExporter
+from learner.data_output.latex_table_exporter import LatexTableExporter
+from learner.data_output.plotters.actual_vs_prediction_plotter import ActualVsPredictionPlotter
+from learner.data_output.plotters.confusion_matrix_plotter import ConfusionMatrixPlotter
+from learner.data_output.plotters.data_density_plotter import DataDensityPlotter
+from learner.data_output.plotters.learning_curve_plotter import LearningCurvePlotter
+from learner.data_output.plotters.roc_curve_plotter import RocCurvePlotter
+from learner.data_output.plotters.validation_curve_plotter import ValidationCurvePlotter
+from learner.data_output.std_logger import L
+from learner.data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
+from learner.data_transformers.output_data_cleaner import OutputDataCleaner
+from learner.data_transformers.output_data_splitter import OutputDataSplitter
+from learner.data_transformers.variable_transformer import VariableTransformer
+from learner.factories.questionnaire_factory import QuestionnaireFactory
+from learner.machine_learning_models.models.boosting_model import BoostingClassificationModel
+from learner.machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
+from learner.machine_learning_models.models.forest_model import RandomForestClassificationModel
+from learner.machine_learning_models.models.naive_bayes_model import NaiveBayesModel
+from learner.machine_learning_models.models.regression_model import ElasticNetModel, LogisticRegressionModel
+from learner.machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, \
         SupportVectorClassificationModel
-from machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
-from machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
-from models import participant
-from output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
+from learner.machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
+from learner.machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
+from learner.models import participant
+from learner.output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
 
 class Driver:
@@ -147,7 +147,7 @@ class Driver:
 
         #### Classification ####
         # Perform feature selection algorithm
-        CsvExporter.export('../exports/merged_all_dataframe.csv', data, header)
+        CsvExporter.export('exports/merged_all_dataframe.csv', data, header)
 
         coefficients = None
         if(self.FEATURE_SELECTION):
@@ -241,7 +241,7 @@ class Driver:
         else:
             data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), types))
         header.append('Type')
-        LatexTableExporter.export('../exports/'+name+'.tex', data, header)
+        LatexTableExporter.export('exports/'+name+'.tex', data, header)
 
 
     def create_descriptives(self, participants, x_data, x_names):
@@ -333,7 +333,7 @@ class Driver:
             self.roc_curve_plotter.plot(models)
 
         # Export all used data to a CSV file
-        CsvExporter.export('../exports/merged_' + model_type + '_dataframe.csv', used_data, selected_header)
+        CsvExporter.export('exports/merged_' + model_type + '_dataframe.csv', used_data, selected_header)
 
         for model in models:
             1

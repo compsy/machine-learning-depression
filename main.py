@@ -1,4 +1,4 @@
-from driver import Driver
+from learner.driver import Driver
 import sys, getopt
 
 def main(argv):

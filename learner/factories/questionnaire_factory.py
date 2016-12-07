@@ -1,4 +1,4 @@
-from models.questionnaires import ids_questionnaire, four_dkl_distress_questionnaire, demographic_questionnaire, bai_questionnaire, \
+from learner.models.questionnaires import ids_questionnaire, four_dkl_distress_questionnaire, demographic_questionnaire, bai_questionnaire, \
     masq_questionnaire, cidi_depression_derived, cidi_anxiety_derived, four_dkl_physical_complaints_questionnaire, \
     neo_ffi_questionnaire, drug_usage_questionnaire, alcohol_usage_audit_questionnaire, cidi_alcohol_diagnosis, \
     mdq_questionnaire, chronic_diseaeses_questionnaire, cidi_bipolar_derived

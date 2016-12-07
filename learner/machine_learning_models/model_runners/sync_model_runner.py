@@ -1,7 +1,7 @@
 from queue import Queue
 import numpy as np
-from data_output.std_logger import L
-from machine_learning_models.model_runner import ModelRunner
+from learner.data_output.std_logger import L
+from learner.machine_learning_models.model_runner import ModelRunner
 
 
 class SyncModelRunner(ModelRunner):

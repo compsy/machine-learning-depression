@@ -12,7 +12,7 @@ class TestLatexTableExporter():
         assert static_methods[0][0] == 'export'
 
     def test_export_filename(self):
-        filename = '../tests/data_examples/test.tex'
+        filename = 'tests/data_examples/test.tex'
         data = [[1,2,3,4],[5,6,7,8]]
         header = ['c','a','b','c']
         LatexTableExporter.export(filename, data, header)

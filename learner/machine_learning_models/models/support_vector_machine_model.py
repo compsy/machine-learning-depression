@@ -1,4 +1,4 @@
-from machine_learning_models.machine_learning_model import MachineLearningModel
+from learner.machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn import svm
 from numpy import logspace
 from scipy.stats import expon, halflogistic

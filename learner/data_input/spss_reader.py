@@ -4,14 +4,14 @@ import rpy2.robjects as robjects
 from rpy2.robjects import pandas2ri
 import rpy2.robjects.packages as rpackages
 import warnings
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 
 
 class SpssReader:
     def __init__(self):
         rpackages.importr('foreign')
         self.read_spss = robjects.r['read.spss']
-        self.base_dir = '../data/'
+        self.base_dir = 'data/'
 
     def read_file(self, filename):
         with warnings.catch_warnings():

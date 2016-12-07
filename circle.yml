@@ -13,4 +13,4 @@ dependencies:
     - pip install -U -r test-requirements.txt
 test:
   override:
-    - 'tox'
+    - 'python setup.py test'

@@ -11,3 +11,6 @@ dependencies:
     - pip install -U -r requirements.txt:
         timeout: 1800
     - pip install -U -r test-requirements.txt
+test:
+  override:
+    - 'tox'

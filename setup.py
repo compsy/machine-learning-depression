@@ -3,6 +3,9 @@ try:
 except ImportError:
     from distutils.core import setup
 
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 config = {
     'description': 'Learner project',
     'author': 'ICPE Machine Learning Workgroup',
@@ -10,7 +13,7 @@ config = {
     'download_url': 'http://github.com/frbl/ICPE_machine_learning_workgroup',
     'author_email': 'f.j.blaauw@umcg.nl',
     'version': '0.0.1',
-    'install_requires': ['nose'],
+    'install_requires': requirements,
     'packages': ['learner',
                  'learner.data_input',
                  'learner.data_output',

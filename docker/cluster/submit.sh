@@ -16,7 +16,6 @@ module load R/3.3.1-foss-2016a
 gitdir="ICPE_machine_learning_workgroup"
 cd $gitdir
 # pip install --user -r requirements.txt
-cd learner
 echo "Running main.py"
 export MPLBACKEND="agg"
 export OMP_NUM_THREADS=23

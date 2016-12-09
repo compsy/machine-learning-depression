@@ -1,6 +1,6 @@
 import numpy as np
-from data_output.std_logger import L
-from machine_learning_models.models.bagging_model import BaggingClassificationModel, BaggingModel
+from learner.data_output.std_logger import L
+from learner.machine_learning_models.models.bagging_model import BaggingClassificationModel, BaggingModel
 
 
 class ModelRunner:

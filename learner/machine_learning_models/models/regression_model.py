@@ -1,7 +1,7 @@
 from sklearn.linear_model import LogisticRegression
-from machine_learning_models.machine_learning_model import MachineLearningModel
+from learner.machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn.linear_model import ElasticNetCV, ElasticNet
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 from scipy.stats import expon, halflogistic, uniform
 import numpy as np
 

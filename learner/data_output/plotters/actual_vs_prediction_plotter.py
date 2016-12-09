@@ -1,6 +1,6 @@
-from data_output.plotters.plotter import Plotter
+from learner.data_output.plotters.plotter import Plotter
 import matplotlib.pyplot as plt
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 
 
 class ActualVsPredictionPlotter(Plotter):

@@ -17,7 +17,7 @@ class TestSpssReader:
         assert type(result) is pandas.core.frame.DataFrame
 
     def test_it_reads_the_file_provided_to_it(self, subject, monkeypatch):
-        fake_base_dir = '../testtest/'
+        fake_base_dir = 'testtest/'
         expected = 'test'
 
         def fake_read_spss(file_name, **kwargs):
@@ -31,7 +31,7 @@ class TestSpssReader:
         assert str(err.value) == 'stop_execution'
 
     def test_returns_the_correct_data(self, subject, monkeypatch):
-        fake_base_dir = '../tests/data_examples/'
+        fake_base_dir = 'tests/data_examples/'
         monkeypatch.setattr(subject, 'base_dir', fake_base_dir)
         result = subject.read_file('test_data.sav')
         expected_columns = [

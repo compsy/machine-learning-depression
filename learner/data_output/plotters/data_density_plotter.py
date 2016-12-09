@@ -1,12 +1,12 @@
 import sklearn
 
 import sys
-from data_output.plotters.plotter import Plotter
+from learner.data_output.plotters.plotter import Plotter
 
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.neighbors.kde import KernelDensity
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 
 
 class DataDensityPlotter(Plotter):

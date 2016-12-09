@@ -1,8 +1,8 @@
 import numpy as np
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 from mpi4py import MPI
 
-from machine_learning_models.model_runner import ModelRunner
+from learner.machine_learning_models.model_runner import ModelRunner
 
 
 class DistributedModelRunner(ModelRunner):

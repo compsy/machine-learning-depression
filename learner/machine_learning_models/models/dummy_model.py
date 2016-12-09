@@ -1,4 +1,4 @@
-from machine_learning_models.machine_learning_model import MachineLearningModel
+from learner.machine_learning_models.machine_learning_model import MachineLearningModel
 
 from sklearn.dummy import DummyClassifier
 

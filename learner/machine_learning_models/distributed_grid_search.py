@@ -61,7 +61,7 @@ class DistributedGridSearch:
         return queue
 
     def write_output(self, qsize, wall_time,  times):
-        file_name = ('../exports/%s.csv' % self.ml_model.given_name)
+        file_name = ('exports/%s.csv' % self.ml_model.given_name)
         if not os.path.isfile(file_name):
             with open(file_name, "w") as output_file:
                 output_file.write('"nodes", "cpus_per_node", "queue_size", "parameters", "cv", "wall_time", "average", "median", "standard_deviation"\n')

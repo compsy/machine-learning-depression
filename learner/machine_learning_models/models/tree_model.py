@@ -4,12 +4,12 @@ from sklearn.tree.tree import DecisionTreeClassifier
 from sklearn.externals.six import StringIO
 import pydotplus
 
-from machine_learning_models.machine_learning_model import MachineLearningModel
+from learner.machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn.cross_validation import cross_val_predict
 from sklearn.tree import DecisionTreeRegressor
 import numpy as np
 
-from machine_learning_models.models.boosting_model import BoostingClassificationModel
+from learner.machine_learning_models.models.boosting_model import BoostingClassificationModel
 from scipy.stats import expon
 
 class RegressionTreeModel(MachineLearningModel):
@@ -52,4 +52,4 @@ class ClassificationTreeModel(MachineLearningModel):
     #     dot_data = StringIO()
     #     tree.export_graphviz(self.skmodel, out_file=dot_data)
     #     graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
-    #     graph.write_pdf("../exports/classification_tree.pdf")
+    #     graph.write_pdf("exports/classification_tree.pdf")

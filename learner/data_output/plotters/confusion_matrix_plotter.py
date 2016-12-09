@@ -1,9 +1,9 @@
-from data_output.plotters.plotter import Plotter
+from learner.data_output.plotters.plotter import Plotter
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
 import numpy as np
-from data_output.std_logger import L
+from learner.data_output.std_logger import L
 
 
 class ConfusionMatrixPlotter(Plotter):

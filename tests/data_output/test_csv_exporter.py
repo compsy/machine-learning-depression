@@ -12,7 +12,7 @@ class TestCsvExporter():
         assert static_methods[0][0] == 'export'
 
     def test_export_filename(self):
-        filename = '../tests/data_examples/test.csv'
+        filename = 'tests/data_examples/test.csv'
         data = [[1,2,3,4],[5,6,7,8]]
         header = ['c','a','b','c']
         CsvExporter.export(filename, data, header)

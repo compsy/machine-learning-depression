@@ -1,3 +1,4 @@
+
 from unittest.mock import MagicMock, Mock
 import pytest
 import pandas as pd
@@ -31,7 +32,6 @@ def mock_gridsearch_skmodel():
 def mock_participant():
     mock_participant = Participant(pident=1, sexe=1, age=1)
     return mock_participant
-
 
 @pytest.fixture()
 def expected(request):

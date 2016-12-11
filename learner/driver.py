@@ -84,9 +84,6 @@ class Driver:
         self.FORCE_NO_CACHING = force_no_caching
         self.FEATURE_SELECTION = feature_selection
 
-        # Retrieve the names of the variables to use in the prediction
-        x_names = QuestionnaireFactory.construct_x_names()
-
         # Create objects to perform image plotting
         self.actual_vs_prediction_plotter = ActualVsPredictionPlotter()
         self.learning_curve_plotter = LearningCurvePlotter()
@@ -102,16 +99,20 @@ class Driver:
         self.output_data_splitter = OutputDataSplitter()
         self.data_preprocessor_polynomial = DataPreprocessorPolynomial()
 
+    def run(self):
+        # Retrieve the names of the variables to use in the prediction
+        x_names = QuestionnaireFactory.construct_x_names()
+
         ##### Define the models we should run
         classification_models = []
         # classification_models.append(KerasNnClassificationModel)
-        classification_models.append({'model': RandomForestClassificationModel, 'options':[]})
-        classification_models.append({'model': DummyClassifierModel, 'options': []})
-        classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        classification_models.append({'model': ClassificationTreeModel, 'options':[]})
-        classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
-        classification_models.append({'model': BoostingClassificationModel, 'options':[]})
-        classification_models.append({'model': LogisticRegressionModel, 'options':[]})
+        #classification_models.append({'model': RandomForestClassificationModel, 'options':[]})
+        #classification_models.append({'model': DummyClassifierModel, 'options': []})
+        #classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        #classification_models.append({'model': ClassificationTreeModel, 'options':[]})
+        #classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
+        #classification_models.append({'model': BoostingClassificationModel, 'options':[]})
+        #classification_models.append({'model': LogisticRegressionModel, 'options':[]})
         classification_models.append({'model': NaiveBayesModel, 'options':[]})
 
         # classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
@@ -308,7 +309,7 @@ class Driver:
     def transform_variables(self, x_data, x_names):
         if self.NORMALIZE:
             L.info('We are also normalizing the features')
-            x_data = normalize(x_data)
+            x_data = normalize(x_data, norm='l2', axis=1)
 
         if self.SCALE:
             L.info('We are also scaling the features')
@@ -350,8 +351,8 @@ class Driver:
             else:
                 self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
 
-    def create_participants(self):
-        data = self.spss_reader.read_file("N1_A100R.sav")
+    def create_participants(self, participant_file = "N1_A100R.sav"):
+        data = self.spss_reader.read_file(participant_file)
         participants = {}
         for index, entry in data.iterrows():
             p = participant.Participant(entry['pident'], entry['Sexe'], entry['Age'])

@@ -21,10 +21,11 @@ def main(argv):
 if __name__ == '__main__':
     params = main(sys.argv[1:])
     print(params)
-    Driver(verbosity=0,
+    d= Driver(verbosity=0,
            hpc=params['use_hpc'],
            polynomial_features=params['use_polynomial'],
            normalize=False,
            scale=True,
            force_no_caching=params['use_force_no_caching'],
            feature_selection=params['use_feature_selection'])
+    d.run()

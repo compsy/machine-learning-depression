@@ -235,8 +235,8 @@ class QuestionnaireFactory:
 
             # N1_x229    MDQ - bipolar symptoms
             'amdq-MdqTotalScore',
-            'amdq-MdqHirschfeldCriteriaBipolarSpectrumDisorder',
-            'amdq-MdqHirschfeldCriteriaBipolarSpectrumDisorderAdaptedCriteria',
+            #'amdq-MdqHirschfeldCriteriaBipolarSpectrumDisorder',
+            #'amdq-MdqHirschfeldCriteriaBipolarSpectrumDisorderAdaptedCriteria',
 
             # N1_x232    4DKL (distress)
             'a4dkl-somatizationScore',

@@ -26,8 +26,8 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
             'alpha': halflogistic(scale=.1),
             'average': [True, False],
             'class_weight': ['balanced', None],
-            'epsilon': halflogistic(scale=.1)
-            'eta0': halflogistic(scale=.1)
+            'epsilon': halflogistic(scale=.1),
+            'eta0': halflogistic(scale=.1),
             'l1_ratio': halflogistic(scale=.1)
         }
 

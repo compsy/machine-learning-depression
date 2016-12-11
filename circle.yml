@@ -13,4 +13,4 @@ dependencies:
     - pip install -U -r test-requirements.txt
 test:
   override:
-    - 'python setup.py test'
+    - 'py.test tests'

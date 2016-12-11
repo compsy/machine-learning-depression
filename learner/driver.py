@@ -32,7 +32,7 @@ from learner.machine_learning_models.models.tree_model import RegressionTreeMode
 from learner.machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
 from learner.models import participant
 from learner.output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
-from machine_learning_models.models.naive_bayes_model import GaussianNaiveBayesModel, BernoulliNaiveBayesModel
+from learner.machine_learning_models.models.naive_bayes_model import GaussianNaiveBayesModel, BernoulliNaiveBayesModel
 
 
 class Driver:

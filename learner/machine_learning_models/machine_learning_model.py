@@ -23,7 +23,7 @@ class MachineLearningModel:
         self.y_names = y_names
         self.grid_model = None
         self.skmodel = None
-        self.test_size = 0.2
+        self.test_size = 0.1
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False

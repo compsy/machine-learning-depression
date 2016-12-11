@@ -33,7 +33,7 @@ from learner.machine_learning_models.model_runners.sync_model_runner import Sync
 from learner.models import participant
 from learner.output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 from learner.machine_learning_models.models.naive_bayes_model import GaussianNaiveBayesModel, BernoulliNaiveBayesModel
-from machine_learning_models.models.stochastic_gradient_descent_model import \
+from learner.machine_learning_models.models.stochastic_gradient_descent_model import \
     StochasticGradientDescentClassificationModel
 
 
@@ -110,6 +110,7 @@ class Driver:
         ##### Define the models we should run
         classification_models = []
         # classification_models.append(KerasNnClassificationModel)
+        classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options':[]})
         classification_models.append({'model': RandomForestClassificationModel, 'options':[]})
         classification_models.append({'model': DummyClassifierModel, 'options': []})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
@@ -119,7 +120,6 @@ class Driver:
         classification_models.append({'model': LogisticRegressionModel, 'options':[]})
         classification_models.append({'model': GaussianNaiveBayesModel, 'options':[]})
         classification_models.append({'model': BernoulliNaiveBayesModel, 'options':[]})
-        classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options':[]})
 
         # classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
         # classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})

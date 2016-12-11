@@ -70,7 +70,8 @@ class Driver:
         # Set a seed for reproducability
         random.seed(42)
 
-        if(hpc): print('Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
+        if(hpc):
+            print('Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
 
         # setup logging
         L.setup(hpc)
@@ -163,7 +164,7 @@ class Driver:
         self.variable_transformer = VariableTransformer(x_names)
 
         # Calculate the actual models
-        model_runner = SyncModelRunner(classification_models, hpc=hpc)
+        model_runner = SyncModelRunner(classification_models, hpc=self.HPC)
         is_root, classification_fabricated_models = self.calculate(model_runner,
                                                                     x_data, classification_y_data,
                                                                     x_names,
@@ -188,12 +189,12 @@ class Driver:
         self.variable_transformer = VariableTransformer(x_names)
 
         # Calculate the actual models
-        model_runner = SyncModelRunner(regression_models, hpc=hpc)
+        model_runner = SyncModelRunner(regression_models, hpc=self.HPC)
         is_root, regression_fabricated_models = self.calculate(model_runner, x_data, regression_y_data, x_names,
                 regression_y_names)
 
         # Kill all worker nodes
-        if hpc and MPI.COMM_WORLD.Get_rank() > 0:
+        if self.HPC and MPI.COMM_WORLD.Get_rank() > 0:
             L.info('Byebye from node %d' % MPI.COMM_WORLD.Get_rank(), force=True)
             exit(0)
 

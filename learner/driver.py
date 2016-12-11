@@ -108,13 +108,13 @@ class Driver:
         ##### Define the models we should run
         classification_models = []
         # classification_models.append(KerasNnClassificationModel)
-        #classification_models.append({'model': RandomForestClassificationModel, 'options':[]})
-        #classification_models.append({'model': DummyClassifierModel, 'options': []})
-        #classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        #classification_models.append({'model': ClassificationTreeModel, 'options':[]})
-        #classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
-        #classification_models.append({'model': BoostingClassificationModel, 'options':[]})
-        #classification_models.append({'model': LogisticRegressionModel, 'options':[]})
+        classification_models.append({'model': RandomForestClassificationModel, 'options':[]})
+        classification_models.append({'model': DummyClassifierModel, 'options': []})
+        classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        classification_models.append({'model': ClassificationTreeModel, 'options':[]})
+        classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
+        classification_models.append({'model': BoostingClassificationModel, 'options':[]})
+        classification_models.append({'model': LogisticRegressionModel, 'options':[]})
         classification_models.append({'model': GaussianNaiveBayesModel, 'options':[]})
         classification_models.append({'model': BernoulliNaiveBayesModel, 'options':[]})
 
@@ -130,7 +130,7 @@ class Driver:
         regression_models = []
         # regressionmodels.append(KerasNnModel)
         # regression_models.append({'model': ElasticNetModel, 'options':[]})
-        regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
+        # regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
         regression_models.append({'model': RegressionTreeModel, 'options':[]})
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)

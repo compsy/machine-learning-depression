@@ -32,6 +32,7 @@ from learner.machine_learning_models.models.tree_model import RegressionTreeMode
 from learner.machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
 from learner.models import participant
 from learner.output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
+from machine_learning_models.models.naive_bayes_model import GaussianNaiveBayesModel, BernoulliNaiveBayesModel
 
 
 class Driver:
@@ -114,7 +115,8 @@ class Driver:
         #classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
         #classification_models.append({'model': BoostingClassificationModel, 'options':[]})
         #classification_models.append({'model': LogisticRegressionModel, 'options':[]})
-        classification_models.append({'model': NaiveBayesModel, 'options':[]})
+        classification_models.append({'model': GaussianNaiveBayesModel, 'options':[]})
+        classification_models.append({'model': BernoulliNaiveBayesModel, 'options':[]})
 
         # classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
         # classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})

@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --time=1:30:00
-#SBATCH --nodes=16
+#SBATCH --time=0:10:00
+#SBATCH --nodes=20
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=23
 ####SBATCH --partition=short

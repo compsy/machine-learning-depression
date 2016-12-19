@@ -23,7 +23,7 @@ class ElasticNetModel(MachineLearningModel):
             random_parameter_grid = {
                 # Uniformely between 0-1
                 'alpha': uniform(),
-                'l1_ratio': halflogistic(scale=.1)
+                'l1_ratio': uniform(low=0, high=1)
             }
             self.grid_search([parameter_grid], [random_parameter_grid])
 

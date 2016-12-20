@@ -39,6 +39,8 @@ class DistributedRandomGridSearch:
 
         L.info('Running %d iterations on %d nodes.' % (iterations[0], self.size))
         iterations = self.comm.scatter(iterations, root=0)
+        L.info('Created the iterations.')
+        L.info('Created the iterations (%d) .'% iterations)
 
         # Actual calculation
         my_data = []

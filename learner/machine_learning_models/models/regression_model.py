@@ -7,7 +7,7 @@ import numpy as np
 
 class ElasticNetModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=False, **kwargs):
         super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
         # TODO: Change to elasticnet CV
         self.skmodel = ElasticNet(alpha=0.1,

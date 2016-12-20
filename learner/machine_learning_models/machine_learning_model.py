@@ -34,7 +34,7 @@ class MachineLearningModel:
         self.grid_search_type = 'random'
         self.n_iter = n_iter
         if(hpc):
-            self.n_iter = 5000
+            self.n_iter = 1000
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)

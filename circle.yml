@@ -19,4 +19,4 @@ dependencies:
     - pip install -U -r test-requirements.txt
 test:
   override:
-    - 'PYTHONPATH=ICPE_machine_learning_workgroup py.test tests '
+    - 'PYTHONPATH=ICPE_machine_learning_workgroup python3 setup.py test'

@@ -4,7 +4,7 @@
 #####SBATCH --ntasks-per-node=1
 #####SBATCH --cpus-per-task=23
 #SBATCH --time=0:30:00
-#SBATCH --nodes=2
+#SBATCH --nodes=4
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=23
 #SBATCH --partition=short

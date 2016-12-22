@@ -19,4 +19,4 @@ dependencies:
     - pip install -U -r test-requirements.txt
 test:
   override:
-    - 'py.test tests'
+    - 'PYTHONPATH=.:/usr/local/lib/python py.test tests'

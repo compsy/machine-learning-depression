@@ -12,11 +12,13 @@ dependencies:
     - gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9
     - gpg -a --export E084DAB9 | sudo apt-key add -
     - sudo apt-get update
-    - sudo apt-get install -y r-base-core r-base libopenmpi-dev
+    - sudo apt-get install -y r-base-core r-base openmpi-bin openmpi-common libopenmpi-dev
   override:
     - pip install -U -r requirements.txt:
         timeout: 1800
     - pip install -U -r test-requirements.txt
 test:
   override:
-    - 'PYTHONPATH=ICPE_machine_learning_workgroup pytest tests'
+    - "py.test -vv ./tests/":
+       environment:
+         PYTHONPATH: $PWD

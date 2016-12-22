@@ -13,7 +13,8 @@ class TestSpssReader:
 
     def test_read_file_returns_a_pandasdataframe(self, subject):
         # monkeypatch.setattr(subject, 'get_row', fake_get_row)
-        result = subject.read_file('N1_A259D.sav')
+        subject.base_dir = 'tests/data_examples/'
+        result = subject.read_file('test.sav')
         assert type(result) is pandas.core.frame.DataFrame
 
     def test_it_reads_the_file_provided_to_it(self, subject, monkeypatch):

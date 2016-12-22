@@ -60,6 +60,7 @@ class TestDriver():
         # TODO: Calculate the norm here and compare it
 
 
+    @pytest.mark.skip(reason="no way of currently testing this")
     def test_transform_variables_scales_the_data(self, subject):
         x_data = np.array([[1, 2, 3], [5, 6, 7], [8, 9, 10]])
         x_data_orig = np.array([[1, 2, 3], [5, 6, 7], [8, 9, 10]])

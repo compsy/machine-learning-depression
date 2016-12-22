@@ -1,16 +1,21 @@
 #!/bin/bash
 #docker rmi -f icpe
 
-rm -r learner data requirements.txt install-packages.R
-cp -r ../learner .
+#rm -r learner data requirements.txt install-packages.R test-requirements.txt
+#cp -r ../learner .
+#cp -r ../tests .
 
 mkdir data
 cp -r ../data/* data/
 cp -r ../requirements.txt .
+cp -r ../test-requirements.txt .
 cp -r ../install-packages.R .
+#cp -r ../setup.py .
+#cp -r ../setup.cfg .
+#cp -r ../driver.py .
 #docker-compose build
 
 docker build -t frbl/icpe-machine-learning .
-docker push frbl/icpe-machine-learning
+#docker push frbl/icpe-machine-learning
 
-rm -r learner data requirements.txt install-packages.R
+# rm -r learner data requirements.txt install-packages.R

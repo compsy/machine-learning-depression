@@ -79,6 +79,8 @@ class Driver:
         comm.Barrier()
         if hpc :
             print('[HPC] All nodes are here! %d of them (from %d) ' % (MPI.COMM_WORLD.Get_size(), comm.Get_rank()))
+        if comm.Get_rank() == 0:
+            exit(0)
         # setup logging
         L.setup(hpc)
 

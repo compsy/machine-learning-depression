@@ -84,7 +84,7 @@ class Driver:
         self.FORCE_NO_CACHING = force_no_caching
         self.FEATURE_SELECTION = feature_selection
 
-        # Create objects to perform image plotting
+        # # Create objects to perform image plotting
         self.actual_vs_prediction_plotter = ActualVsPredictionPlotter()
         self.learning_curve_plotter = LearningCurvePlotter()
         self.validation_curve_plotter = ValidationCurvePlotter()
@@ -112,7 +112,7 @@ class Driver:
         classification_models.append({'model': DummyClassifierModel, 'options': []})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
         classification_models.append({'model': SupportVectorClassificationModel, 'options': []})
-        classification_models.append({'model': BoostingClassificationModel, 'options': []})
+        # classification_models.append({'model': BoostingClassificationModel, 'options': []})
         classification_models.append({'model': LogisticRegressionModel, 'options': []})
         classification_models.append({'model': GaussianNaiveBayesModel, 'options': []})
         classification_models.append({'model': BernoulliNaiveBayesModel, 'options': []})

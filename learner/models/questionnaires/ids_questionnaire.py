@@ -7,7 +7,11 @@ class IDSQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader, previous_questionnaire=None):
         self.previous_questionnaire = previous_questionnaire
-        function_mapping = {'somScore': self.som_score, 'severity': self.severity, 'twice_depression': self.twice_depression}
+        function_mapping = {
+            'somScore': self.som_score,
+            'severity': self.severity,
+            'twice_depression': self.twice_depression
+        }
 
         other_available_variables = [
             'ids01', 'ids02', 'ids03', 'ids04', 'ids05', 'ids06', 'ids07', 'ids08', 'ids09a', 'ids09b', 'ids09c',
@@ -33,7 +37,6 @@ class IDSQuestionnaire(Questionnaire):
             else:
                 result = 0
         return result
-
 
     def som_score(self, participant):
         # L.warn('Check if the sumscore calculation is correct this way')

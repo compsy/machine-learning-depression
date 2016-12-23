@@ -51,14 +51,15 @@ class LearningCurvePlotter(Plotter):
 
         L.info('Determining learning curve for ' + model.given_name)
         L.info('Which uses: ' + str(model.skmodel))
-        train_sizes, train_scores, test_scores = learning_curve(model.skmodel,
-                                                                model.x_train,
-                                                                model.y_train,
-                                                                cv=cv,
-                                                                train_sizes=train_sizes,
-                                                                scoring=model.scoring(),
-                                                                n_jobs=-1,
-                                                                verbose=1)
+        train_sizes, train_scores, test_scores = learning_curve(
+            model.skmodel,
+            model.x_train,
+            model.y_train,
+            cv=cv,
+            train_sizes=train_sizes,
+            scoring=model.scoring(),
+            n_jobs=-1,
+            verbose=1)
         L.info('Done fitting learning curve')
 
         train_scores_mean = np.mean(train_scores, axis=1)
@@ -68,16 +69,14 @@ class LearningCurvePlotter(Plotter):
         plt.grid()
 
         # Create the shading
-        plt.fill_between(train_sizes,
-                         train_scores_mean - train_scores_std,
-                         train_scores_mean + train_scores_std,
-                         alpha=0.1,
-                         color="r")
-        plt.fill_between(train_sizes,
-                         test_scores_mean - test_scores_std,
-                         test_scores_mean + test_scores_std,
-                         alpha=0.1,
-                         color="g")
+        plt.fill_between(
+            train_sizes,
+            train_scores_mean - train_scores_std,
+            train_scores_mean + train_scores_std,
+            alpha=0.1,
+            color="r")
+        plt.fill_between(
+            train_sizes, test_scores_mean - test_scores_std, test_scores_mean + test_scores_std, alpha=0.1, color="g")
 
         # Plot the means of the lines
         plt.plot(train_sizes, train_scores_mean, 'o-', color="r", label="Training score")

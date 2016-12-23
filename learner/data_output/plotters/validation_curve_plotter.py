@@ -20,13 +20,14 @@ class ValidationCurvePlotter(Plotter):
         L.info('Determining validation curve for ' + model.given_name + ', using space: ' + str(space) +
                ', and variable ' + variable_to_validate)
 
-        train_scores, valid_scores = validation_curve(estimator=model.skmodel,
-                                                      X=model.x_train,
-                                                      y=model.y_train,
-                                                      param_name=variable_to_validate,
-                                                      param_range=space,
-                                                      n_jobs=-1,
-                                                      verbose=1)
+        train_scores, valid_scores = validation_curve(
+            estimator=model.skmodel,
+            X=model.x_train,
+            y=model.y_train,
+            param_name=variable_to_validate,
+            param_range=space,
+            n_jobs=-1,
+            verbose=1)
 
         plt.figure()
         plt.title('Validation curves for ' + model.given_name)

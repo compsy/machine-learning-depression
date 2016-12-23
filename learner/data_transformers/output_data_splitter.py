@@ -2,6 +2,7 @@ from .data_transformer import DataTransformer
 
 
 class OutputDataSplitter(DataTransformer):
+
     def split(self, data, variable_set, selected_variables):
         """ Splits the selected variables from the data
         :params:

@@ -3,13 +3,12 @@ import numpy as np
 
 
 class DrugUsageQuestionnaire(Questionnaire):
+
     def __init__(self, name, filename, measurement_moment, reader):
         # -1 = "Q1 not reurned"
         # 0 = a valid score. (0 = "0 kinds of drugs")
 
-        function_mapping = {
-            'PolyDrugsUse': self.poly_drug_use
-        }
+        function_mapping = {'PolyDrugsUse': self.poly_drug_use}
 
         other_available_variables = []
 

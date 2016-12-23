@@ -6,6 +6,7 @@ import numpy as np
 
 
 class VariableTransformer(DataTransformer):
+
     def __init__(self, header):
         self.header = header
 
@@ -20,11 +21,9 @@ class VariableTransformer(DataTransformer):
         # If the variable contains a 0 or lower, add the minimal value as a constant, so the log can succeed
         if (min(x[:, var_loc]) <= 0):
             adder = (min(x[:, var_loc]) * -1) + 1
-            warnings.warn(
-                '%s contains 0s, thats not allowed for log transforms. Adding a constant of %d.'
-                % (variable_to_transform, adder))
+            warnings.warn('%s contains 0s, thats not allowed for log transforms. Adding a constant of %d.' %
+                          (variable_to_transform, adder))
             values_to_add += adder
-
 
         # if the result should be appended to the original dataframe
         if (additive):
@@ -45,13 +44,12 @@ class VariableTransformer(DataTransformer):
         values_to_add = x[:, var_loc].copy()
         if (min(values_to_add) < 0):
             adder = (min(values_to_add) * -1) + 1
-            warnings.warn(
-                '%s contains 0s, thats not allowed for log transforms. Adding a constant of %d.'
-                % (variable_to_transform, adder))
+            warnings.warn('%s contains 0s, thats not allowed for log transforms. Adding a constant of %d.' %
+                          (variable_to_transform, adder))
             values_to_add += adder
 
         if (additive):
-            self.header = np.insert(self.header,var_loc+1, 'sqrt_' + variable_to_transform)
+            self.header = np.insert(self.header, var_loc + 1, 'sqrt_' + variable_to_transform)
             x = np.insert(x, var_loc + 1, np.sqrt(values_to_add), axis=1)
         else:
             x[:, var_loc] = np.sqrt(values_to_add)

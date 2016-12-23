@@ -12,6 +12,7 @@ import numpy as np
 from learner.machine_learning_models.models.boosting_model import BoostingClassificationModel
 from scipy.stats import expon
 
+
 class RegressionTreeModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
@@ -19,8 +20,10 @@ class RegressionTreeModel(MachineLearningModel):
         self.skmodel = DecisionTreeRegressor(max_depth=5)
 
         if grid_search:
-            parameter_grid = {'max_depth': np.logspace(0, 3, 15),
-                              'max_features': ['auto', 'sqrt', 'log2', None],}
+            parameter_grid = {
+                'max_depth': np.logspace(0, 3, 15),
+                'max_features': ['auto', 'sqrt', 'log2', None],
+            }
             random_parameter_grid = {
                 'max_depth': halflogistic(scale=100),
                 'max_features': ['auto', 'sqrt', 'log2', None]

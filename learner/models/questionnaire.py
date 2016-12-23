@@ -3,6 +3,7 @@ import numpy as np
 
 from sklearn.decomposition import PCA
 
+
 class Questionnaire:
 
     def __init__(self, name, filename, measurement_moment, reader, function_mapping, other_available_variables=[]):

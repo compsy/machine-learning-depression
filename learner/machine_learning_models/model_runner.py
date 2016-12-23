@@ -18,7 +18,7 @@ class ModelRunner:
         for i, model in enumerate(self.models):
             # Get the options for the current model
             current_model = model(np.copy(x), np.copy(y), x_names, y_names, verbosity, hpc=self.hpc)
-            if('bagging' in self.model_options[i]):
+            if ('bagging' in self.model_options[i]):
                 bagged_sk_model = self.use_bagging(current_model, verbosity)
                 current_model.skmodel = bagged_sk_model
 

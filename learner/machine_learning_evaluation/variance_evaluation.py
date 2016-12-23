@@ -6,8 +6,9 @@ import numpy as np
 
 class VarianceEvaluation(Evaluation):
 
-    def __init__(self,
-                 name='Variance Evaluator',):
+    def __init__(
+            self,
+            name='Variance Evaluator',):
         super().__init__(name=name, model_type='regression')
 
     def evaluate(self, y_true, y_predicted):

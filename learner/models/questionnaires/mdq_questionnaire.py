@@ -12,7 +12,8 @@ class MdqQuestionnaire(Questionnaire):
         function_mapping = {
             'MdqTotalScore': self.mdq_total_score,
             'MdqHirschfeldCriteriaBipolarSpectrumDisorder': self.mdq_hirschfeld_criteria_bipolar_spectrum_disorder,
-            'MdqHirschfeldCriteriaBipolarSpectrumDisorderAdaptedCriteria': self.mdq_hirschfeld_criteria_bipolar_spectrum_disorder_adapted_criteria
+            'MdqHirschfeldCriteriaBipolarSpectrumDisorderAdaptedCriteria':
+            self.mdq_hirschfeld_criteria_bipolar_spectrum_disorder_adapted_criteria
         }
         other_available_variables = []
         super().__init__(name, filename, measurement_moment, reader, function_mapping, other_available_variables)

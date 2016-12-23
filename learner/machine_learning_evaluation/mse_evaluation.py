@@ -5,8 +5,9 @@ import numpy as np
 
 class MseEvaluation(Evaluation):
 
-    def __init__(self,
-                 name='MSE Evaluator',):
+    def __init__(
+            self,
+            name='MSE Evaluator',):
         super().__init__(name=name, model_type='regression')
 
     def evaluate(self, y_true, y_predicted):

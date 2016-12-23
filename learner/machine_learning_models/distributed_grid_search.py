@@ -9,14 +9,13 @@ import math
 import numpy as np
 
 
-
 class DistributedGridSearch:
 
     def __init__(self, ml_model, estimator, param_grid, cv, cpus_per_node=23):
         # Number of nodes
         self.comm = MPI.COMM_WORLD
         self.size = self.comm.Get_size()
-        self.workers = self.size -1
+        self.workers = self.size - 1
         self.rank = self.comm.Get_rank()
         self.cpus_per_node = cpus_per_node
         self.skmodel = estimator
@@ -60,14 +59,17 @@ class DistributedGridSearch:
 
         return queue
 
-    def write_output(self, qsize, wall_time,  times):
+    def write_output(self, qsize, wall_time, times):
         file_name = ('exports/%s.csv' % self.ml_model.given_name)
         if not os.path.isfile(file_name):
             with open(file_name, "w") as output_file:
-                output_file.write('"nodes", "cpus_per_node", "queue_size", "parameters", "cv", "wall_time", "average", "median", "standard_deviation"\n')
+                output_file.write(
+                    '"nodes", "cpus_per_node", "queue_size", "parameters", "cv", "wall_time", "average", "median", "standard_deviation"\n'
+                )
 
         with open(file_name, "a") as output_file:
-            output = (self.size, self.cpus_per_node, qsize, len(self.param_grid), self.cv, wall_time, np.average(times), np.median(times), np.std(times) )
+            output = (self.size, self.cpus_per_node, qsize, len(self.param_grid), self.cv, wall_time, np.average(times),
+                      np.median(times), np.std(times))
             output_file.write('%d,%d,%d,%d,%d,%0.2f,%0.2f,%0.2f,%0.2f\n' % output)
 
     def master(self):
@@ -91,9 +93,11 @@ class DistributedGridSearch:
 
         wt = MPI.Wtime() - wt
 
-        L.info('\tQueue is empty, it contained %d items which took %0.2f seconds (%0.2f minutes). Avg: %0.2f, Median: %0.2f, Std: %0.2f' % (qsize, wt, (wt/60), np.average(times), np.median(times), np.std(times)))
+        L.info(
+            '\tQueue is empty, it contained %d items which took %0.2f seconds (%0.2f minutes). Avg: %0.2f, Median: %0.2f, Std: %0.2f'
+            % (qsize, wt, (wt / 60), np.average(times), np.median(times), np.std(times)))
 
-        self.write_output(qsize, wt,  times)
+        self.write_output(qsize, wt, times)
         models = []
         models = self.comm.gather(models, root=0)
         best_model = None
@@ -128,13 +132,15 @@ class DistributedGridSearch:
             total_models += len(task)
             grid = [self.param_grid[y] for y in task]
             print('\t\tSlave %d: Received job: %s' % (self.rank, task))
-            model = GridSearchMine(estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv).fit(X=my_X, y=my_y)
+            model = GridSearchMine(
+                estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv).fit(X=my_X, y=my_y)
             models.append((model.best_score_, model.best_estimator_))
             last_run_time = MPI.Wtime() - start
             print('\t\tSlave %d: finished calculation in %0.1f seconds' % (self.rank, last_run_time))
             run_time += last_run_time
         if total_models > 0:
-            print('\t\tSlave %d: took %0.0f seconds (avg %0.2f per model)' % (self.rank, run_time, (run_time/total_models)))
+            print('\t\tSlave %d: took %0.0f seconds (avg %0.2f per model)' % (self.rank, run_time,
+                                                                              (run_time / total_models)))
         else:
             print('\t\tSlave %d: took %0.0f seconds' % (self.rank, run_time))
         # Collective report to parent

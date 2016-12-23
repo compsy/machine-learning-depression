@@ -1,9 +1,9 @@
 from scipy.stats import halflogistic, randint
 
-
 from learner.machine_learning_models.machine_learning_model import MachineLearningModel
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
+
 
 class RandomForestClassificationModel(MachineLearningModel):
 
@@ -18,9 +18,8 @@ class RandomForestClassificationModel(MachineLearningModel):
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             random_parameter_grid = {
-                'n_estimators': randint(1,100),
-                'max_depth': randint(1,100),
+                'n_estimators': randint(1, 100),
+                'max_depth': randint(1, 100),
                 'max_features': ['auto', 'sqrt', 'log2', None]
             }
             self.grid_search([parameter_grid], [random_parameter_grid])
-

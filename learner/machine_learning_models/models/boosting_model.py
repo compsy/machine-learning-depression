@@ -20,8 +20,8 @@ class BoostingModel(MachineLearningModel):
             }
 
             random_parameter_grid = {
-                'n_estimators': randint(1,100),
-                'max_depth': randint(1,100),
+                'n_estimators': randint(1, 100),
+                'max_depth': randint(1, 100),
                 'learning_rate': halflogistic(),
                 'n_estimators': halflogistic(scale=100),
                 'max_depth': halflogistic(scale=100),
@@ -46,11 +46,11 @@ class BoostingClassificationModel(MachineLearningModel):
             }
 
             random_parameter_grid = {
-                'n_estimators': randint(1,1000),
-                'max_depth': randint(1,1000),
+                'n_estimators': randint(1, 1000),
+                'max_depth': randint(1, 1000),
                 'learning_rate': halflogistic(),
-                'min_samples_split': randint(1,1000),
-                'min_samples_leaf': randint(1,1000),
+                'min_samples_split': randint(1, 1000),
+                'min_samples_leaf': randint(1, 1000),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             self.grid_search([parameter_grid], [random_parameter_grid])

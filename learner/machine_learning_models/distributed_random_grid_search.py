@@ -9,7 +9,6 @@ import math
 import numpy as np
 
 
-
 class DistributedRandomGridSearch:
 
     def __init__(self, ml_model, estimator, param_grid, cv, n_iter=10000):
@@ -40,19 +39,23 @@ class DistributedRandomGridSearch:
         L.info('Running %d iterations on %d nodes.' % (iterations[0], self.size))
         iterations = self.comm.scatter(iterations, root=0)
         L.info('Created the iterations.')
-        L.info('Created the iterations (%d) .'% iterations)
+        L.info('Created the iterations (%d) .' % iterations)
 
         # Actual calculation
         my_data = []
         my_iterations = round(iterations / len(self.param_grid))
         for param_grid in self.param_grid:
-            L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations),
-                   force=True)
-            model = RandomizedSearchCV(estimator=self.skmodel, param_distributions=param_grid,
-                                   n_jobs=-1, verbose=0, cv=self.cv, n_iter=my_iterations)
+            L.info(
+                'Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations), force=True)
+            model = RandomizedSearchCV(
+                estimator=self.skmodel,
+                param_distributions=param_grid,
+                n_jobs=-1,
+                verbose=0,
+                cv=self.cv,
+                n_iter=my_iterations)
             model = model.fit(X=my_X, y=my_y)
-            L.info('Done training on node %d with %d iterations' % (self.rank, my_iterations),
-                   force=True)
+            L.info('Done training on node %d with %d iterations' % (self.rank, my_iterations), force=True)
             my_data.append((model.best_score_, model.best_estimator_))
 
         iterations = self.get_best_model(my_data)
@@ -79,7 +82,7 @@ class DistributedRandomGridSearch:
         best_score = float('-inf')
         L.info('\tWe received %d models' % len(models))
         for model in models:
-            if(model is not None):
+            if (model is not None):
                 if model[0] > best_score:
                     best_score = model[0]
                     best_model = model[1]

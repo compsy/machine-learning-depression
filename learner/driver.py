@@ -61,26 +61,17 @@ class Driver:
     feature_selection : perform feature selection using elasticnet
     """
 
-    def __init__(self,
-            verbosity,
-            hpc,
-            polynomial_features,
-            normalize,
-            scale,
-            force_no_caching,
-            feature_selection):
+    def __init__(self, verbosity, hpc, polynomial_features, normalize, scale, force_no_caching, feature_selection):
 
         # Set a seed for reproducability
         random.seed(42)
-        if hpc :
+        if hpc:
             print('[HPC] Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
 
         comm = MPI.COMM_WORLD
         comm.Barrier()
-        if hpc :
+        if hpc:
             print('[HPC] All nodes are here! %d of them (from %d) ' % (MPI.COMM_WORLD.Get_size(), comm.Get_rank()))
-        if comm.Get_rank() == 0:
-            exit(0)
         # setup logging
         L.setup(hpc)
 
@@ -115,16 +106,16 @@ class Driver:
         ##### Define the models we should run
         classification_models = []
         # classification_models.append(KerasNnClassificationModel)
-        classification_models.append({'model': ClassificationTreeModel, 'options':[]})
-        classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options':[]})
-        classification_models.append({'model': RandomForestClassificationModel, 'options':[]})
+        classification_models.append({'model': ClassificationTreeModel, 'options': []})
+        classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': []})
+        classification_models.append({'model': RandomForestClassificationModel, 'options': []})
         classification_models.append({'model': DummyClassifierModel, 'options': []})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        classification_models.append({'model': SupportVectorClassificationModel, 'options':[]})
-        classification_models.append({'model': BoostingClassificationModel, 'options':[]})
-        classification_models.append({'model': LogisticRegressionModel, 'options':[]})
-        classification_models.append({'model': GaussianNaiveBayesModel, 'options':[]})
-        classification_models.append({'model': BernoulliNaiveBayesModel, 'options':[]})
+        classification_models.append({'model': SupportVectorClassificationModel, 'options': []})
+        classification_models.append({'model': BoostingClassificationModel, 'options': []})
+        classification_models.append({'model': LogisticRegressionModel, 'options': []})
+        classification_models.append({'model': GaussianNaiveBayesModel, 'options': []})
+        classification_models.append({'model': BernoulliNaiveBayesModel, 'options': []})
 
         classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
         classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
@@ -141,7 +132,7 @@ class Driver:
         # regressionmodels.append(KerasNnModel)
         # regression_models.append({'model': ElasticNetModel, 'options':[]})
         # regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
-        regression_models.append({'model': RegressionTreeModel, 'options':[]})
+        regression_models.append({'model': RegressionTreeModel, 'options': []})
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
 
@@ -151,11 +142,9 @@ class Driver:
 
         regression_y_names = np.array(['cids-followup-somScore'])
 
-
         participants = self.create_participants()
-        header, data = self.get_file_data('cache.pkl',
-                participants=participants,
-                force_to_not_use_cache=self.FORCE_NO_CACHING)
+        header, data = self.get_file_data(
+            'cache.pkl', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
 
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
@@ -164,38 +153,36 @@ class Driver:
         CsvExporter.export('exports/merged_all_dataframe.csv', data, header)
 
         coefficients = None
-        if(self.FEATURE_SELECTION):
-            coefficients = self.perform_feature_selection(data, header, x_names, classification_y_names, model_type='classification')
+        if (self.FEATURE_SELECTION):
+            coefficients = self.perform_feature_selection(
+                data, header, x_names, classification_y_names, model_type='classification')
             x_names = coefficients[0:, 0]
 
         L.info('We are using %s as input.' % x_names)
-        x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data,
-                header, x_names, classification_y_names)
+        x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
+                                                                                         classification_y_names)
 
         self.generate_descriptives_table(x_data, x_names, coefficients, 'classification_descriptives')
         self.variable_transformer = VariableTransformer(x_names)
 
         # Calculate the actual models
         model_runner = SyncModelRunner(classification_models, hpc=self.HPC)
-        is_root, classification_fabricated_models = self.calculate(model_runner,
-                                                                    x_data, classification_y_data,
-                                                                    x_names,
-                                                                    classification_y_names)
-
+        is_root, classification_fabricated_models = self.calculate(model_runner, x_data, classification_y_data, x_names,
+                                                                   classification_y_names)
 
         #### Regression ####
         # Reset the names to the original set
         x_names = QuestionnaireFactory.construct_x_names()
         # Perform feature selection algorithm
         coefficients = None
-        if(self.FEATURE_SELECTION):
-            coefficients = self.perform_feature_selection(data, header, x_names, regression_y_names,
-                                                          model_type='regression')
+        if (self.FEATURE_SELECTION):
+            coefficients = self.perform_feature_selection(
+                data, header, x_names, regression_y_names, model_type='regression')
             x_names = coefficients[0:, 0]
 
         L.info('We are using %s as input.' % x_names)
-        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
-                header, x_names, regression_y_names)
+        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
+                                                                                     regression_y_names)
 
         self.generate_descriptives_table(x_data, x_names, coefficients, 'regression_descriptives')
         self.variable_transformer = VariableTransformer(x_names)
@@ -203,7 +190,7 @@ class Driver:
         # Calculate the actual models
         model_runner = SyncModelRunner(regression_models, hpc=self.HPC)
         is_root, regression_fabricated_models = self.calculate(model_runner, x_data, regression_y_data, x_names,
-                regression_y_names)
+                                                               regression_y_names)
 
         # Kill all worker nodes
         if self.HPC and MPI.COMM_WORLD.Get_rank() > 0:
@@ -212,20 +199,22 @@ class Driver:
 
         # Plot an overview of the density estimations of the variables used in the actual model calculation.
         #self.create_descriptives(participants, x_data, x_names)
-        self.create_output(classification_fabricated_models, classification_y_data, used_data, selected_header,
-                model_type='classification')
-        self.create_output(regression_fabricated_models, regression_y_data, used_data, selected_header,
-                model_type='regression')
+        self.create_output(
+            classification_fabricated_models,
+            classification_y_data,
+            used_data,
+            selected_header,
+            model_type='classification')
+        self.create_output(
+            regression_fabricated_models, regression_y_data, used_data, selected_header, model_type='regression')
 
     def perform_feature_selection(self, data, header, x_names, y_names, model_type):
         temp_pol_features = self.POLYNOMIAL_FEATURES
         self.POLYNOMIAL_FEATURES = False
-        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data,
-                                                                                     header, x_names,
-                                                                                     y_names)
+        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, y_names)
         L.info('Performing feature selection for ' + model_type)
-        elastic_net_model = ElasticNetModel(np.copy(x_data), np.copy(regression_y_data), x_names,
-                                            y_names, verbosity=0, hpc=self.HPC)
+        elastic_net_model = ElasticNetModel(
+            np.copy(x_data), np.copy(regression_y_data), x_names, y_names, verbosity=0, hpc=self.HPC)
         elastic_net_model.train()
         coefficients = elastic_net_model.determine_best_variables()
         self.POLYNOMIAL_FEATURES = temp_pol_features
@@ -238,7 +227,7 @@ class Driver:
         header.append('SD')
         header.append('Mean')
 
-        ranks = list(range(1,26))
+        ranks = list(range(1, 26))
         types = []
         for column in x_data.T:
             unique_items = len(np.unique(column))
@@ -251,12 +240,11 @@ class Driver:
 
         if coefficients is not None:
             header.append('Elastic net Coefficient')
-            data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), coefficients[0:,1], types))
+            data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), coefficients[0:, 1], types))
         else:
             data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), types))
         header.append('Type')
-        LatexTableExporter.export('exports/'+name+'.tex', data, header)
-
+        LatexTableExporter.export('exports/' + name + '.tex', data, header)
 
     def create_descriptives(self, participants, x_data, x_names):
         ages = []
@@ -271,13 +259,12 @@ class Driver:
             L.warn('There are more than 2 types of people in the DB')
             L.warn(genders)
 
-        gender_output = ((gender_output[0]/len(participants))*100, (gender_output[1]/len(participants))*100)
+        gender_output = ((gender_output[0] / len(participants)) * 100, (gender_output[1] / len(participants)) * 100)
         ages_output = (len(participants), np.average(ages), np.median(ages), np.std(ages), min(ages), max(ages))
 
         L.info('The participants (%d) have an average age of %0.2f, median %0.2f, sd %0.2f, range %d-%d' % ages_output)
         L.info('The participants are %0.2f percent male (%0.2f percent female)' % gender_output)
         self.data_density_plotter.plot(x_data, x_names)
-
 
     def get_usable_data(self, data, header, x_names, y_names):
         L.info('Loaded data with %d rows and %d columns' % np.shape(data))
@@ -339,9 +326,9 @@ class Driver:
     def create_output(self, models, y_data, used_data, selected_header, model_type='classification'):
         if model_type == 'classification':
             L.info('In the training set, %d participants (%0.2f percent) is true' %
-                    self.calculate_true_false_ratio(y_data))
+                   self.calculate_true_false_ratio(y_data))
             L.info('In the test set, %d participants (%0.2f percent) is true' %
-                    self.calculate_true_false_ratio(models[0].y_test))
+                   self.calculate_true_false_ratio(models[0].y_test))
 
             # Generate learning curve plots
             self.roc_curve_plotter.plot(models)
@@ -362,9 +349,10 @@ class Driver:
             if model_type == 'classification':
                 self.confusion_matrix_plotter.plot(model, model.y_test, y_test_pred)
             else:
-                self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train, y_train_pred)
+                self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train,
+                                                            y_train_pred)
 
-    def create_participants(self, participant_file = "N1_A100R.sav"):
+    def create_participants(self, participant_file="N1_A100R.sav"):
         data = self.spss_reader.read_file(participant_file)
         participants = {}
         for index, entry in data.iterrows():

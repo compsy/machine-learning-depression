@@ -5,12 +5,21 @@ from learner.machine_learning_models.machine_learning_model import MachineLearni
 
 
 class StochasticGradientDescentClassificationModel(MachineLearningModel):
+
     def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
-        super().__init__(x, y, x_names, y_names, verbosity= verbosity, model_type='classification', **kwargs)
-        self.skmodel = SGDClassifier(alpha=0.0001, average=False, class_weight=None, epsilon=0.1,
-                      eta0=0.0, fit_intercept=True, l1_ratio=0.15,
-                      learning_rate='optimal', loss='hinge', shuffle=True,
-                      verbose=verbosity)
+        super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification', **kwargs)
+        self.skmodel = SGDClassifier(
+            alpha=0.0001,
+            average=False,
+            class_weight=None,
+            epsilon=0.1,
+            eta0=0.0,
+            fit_intercept=True,
+            l1_ratio=0.15,
+            learning_rate='optimal',
+            loss='hinge',
+            shuffle=True,
+            verbose=verbosity)
 
         # Radial basis function grid
         grid = {
@@ -34,4 +43,3 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
         self.exhaustive_param_grid = [grid]
         self.random_param_grid = [random_parameter_grid]
         self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
-

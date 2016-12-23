@@ -28,8 +28,9 @@ class MachineLearningModel:
         self.model_type = model_type
         self.was_trained = False
         self.hpc = hpc
-        self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(),
-                            ExplainedVarianceEvaluation(), RootMseEvaluation()]
+        self.evaluations = [
+            VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(), RootMseEvaluation()
+        ]
 
         self.grid_search_type = 'random'
         self.n_iter = n_iter
@@ -107,23 +108,26 @@ class MachineLearningModel:
     def grid_search(self, exhaustive_grid, random_grid):
         if self.hpc:
             if (self.grid_search_type == 'exhaustive'):
-                self.grid_model = DistributedGridSearch(ml_model=self, estimator=self.skmodel,
-                                                        param_grid=exhaustive_grid,
-                                                        cv=10)
+                self.grid_model = DistributedGridSearch(
+                    ml_model=self, estimator=self.skmodel, param_grid=exhaustive_grid, cv=10)
                 return self.grid_model
             elif (self.grid_search_type == 'random'):
-                self.grid_model = DistributedRandomGridSearch(ml_model=self, estimator=self.skmodel,
-                                                        param_grid=random_grid,
-                                                        cv=10, n_iter=self.n_iter)
+                self.grid_model = DistributedRandomGridSearch(
+                    ml_model=self, estimator=self.skmodel, param_grid=random_grid, cv=10, n_iter=self.n_iter)
                 return self.grid_model
         else:
             if (self.grid_search_type == 'exhaustive'):
-                self.skmodel = GridSearchCV(estimator=self.skmodel, param_grid=exhaustive_grid,
-                                            n_jobs=-1, verbose=1, cv=10)
+                self.skmodel = GridSearchCV(
+                    estimator=self.skmodel, param_grid=exhaustive_grid, n_jobs=-1, verbose=1, cv=10)
                 return self.skmodel
             elif (self.grid_search_type == 'random'):
-                self.skmodel = RandomizedSearchMine(estimator=self.skmodel, param_distributions=random_grid,
-                                                  n_jobs=-1, verbose=1, cv=10, n_iter=self.n_iter)
+                self.skmodel = RandomizedSearchMine(
+                    estimator=self.skmodel,
+                    param_distributions=random_grid,
+                    n_jobs=-1,
+                    verbose=1,
+                    cv=10,
+                    n_iter=self.n_iter)
                 return self.skmodel
 
         raise NotImplementedError('Gridsearch type: ' + self.grid_search_type + ' not implemented')

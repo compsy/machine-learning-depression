@@ -9,10 +9,7 @@ class AlcoholUsageAuditQuestionnaire(Questionnaire):
         #-3 = "Q1 not reurned"
         # --1 = "Too many missings"
         # 0 = a valid score. (0 = "R Does not drink")
-        function_mapping = {
-            'sumScore': self.sum_score,
-            'medicalAdvice': self.medical_advice
-        }
+        function_mapping = {'sumScore': self.sum_score, 'medicalAdvice': self.medical_advice}
         other_available_variables = []
         super().__init__(name, filename, measurement_moment, reader, function_mapping, other_available_variables)
 

@@ -31,7 +31,7 @@ class MachineLearningModel:
         self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(),
                             RootMseEvaluation()]
 
-        self.grid_search_type = 'random'
+        self.grid_search_type = 'exhaustive'
         self.n_iter = n_iter
         if(hpc):
             self.n_iter = 10

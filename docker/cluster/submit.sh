@@ -5,8 +5,8 @@
 #####SBATCH --cpus-per-task=23
 #SBATCH --time=0:30:00
 #SBATCH --nodes=3
-#SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=23
+#SBATCH --ntasks-per-node=10
+#SBATCH --cpus-per-task=2
 #SBATCH --partition=short
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=peregrine@compsy.nl

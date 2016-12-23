@@ -28,12 +28,12 @@ class MachineLearningModel:
         self.model_type = model_type
         self.was_trained = False
         self.hpc = hpc
-        self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(),
-                            RootMseEvaluation()]
+        self.evaluations = [VarianceEvaluation(), F1Evaluation(), MseEvaluation(),
+                            ExplainedVarianceEvaluation(), RootMseEvaluation()]
 
-        self.grid_search_type = 'exhaustive'
+        self.grid_search_type = 'random'
         self.n_iter = n_iter
-        if(hpc):
+        if hpc:
             self.n_iter = 10
 
     def remove_missings(self, data):

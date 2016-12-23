@@ -72,10 +72,13 @@ class Driver:
 
         # Set a seed for reproducability
         random.seed(42)
-
         if(hpc):
-            print('Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
+            print('[HPC] Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
 
+        comm = MPI.COMM_WORLD
+        comm.Barrier()
+        if(hpc):
+            print('All nodes are here! %d of them' % MPI.COMM_WORLD.Get_size())
         # setup logging
         L.setup(hpc)
 

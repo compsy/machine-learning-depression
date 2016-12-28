@@ -221,7 +221,7 @@ class Driver:
         x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, y_names)
         L.info('Performing feature selection for ' + model_type)
         elastic_net_model = ElasticNetModel(
-            np.copy(x_data), np.copy(regression_y_data), x_names, y_names, verbosity=0, hpc=self.HPC)
+            np.copy(x_data), np.copy(regression_y_data), x_names, y_names, grid_search=False, verbosity=0, hpc=self.HPC)
         elastic_net_model.train()
         coefficients = elastic_net_model.determine_best_variables()
         self.POLYNOMIAL_FEATURES = temp_pol_features

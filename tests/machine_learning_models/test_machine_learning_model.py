@@ -198,8 +198,9 @@ class TestMachineLearningModel:
 
     # short_name
     def test_short_name(self, subject):
-        assert subject.short_name == type(subject).__name__
-        assert subject.short_name == 'MachineLearningModel'
+        subject.skmodel = MagicMock('skmodel')
+        assert subject.short_name == type(subject).__name__ + type(subject.skmodel).__name__
+        assert subject.short_name == 'MachineLearningModelMagicMock'
 
     # grid_search
     def test_grid_search_should_consider_the_hpc_parameter(self, subject):

@@ -41,6 +41,7 @@ class BernoulliNaiveBayesModel(NaiveBayesModel):
             verbosity=verbosity,
             model_type='classification',
             **kwargs)
+
         self.skmodel = BernoulliNB(**self.hyperparameters)
 
         if grid_search:

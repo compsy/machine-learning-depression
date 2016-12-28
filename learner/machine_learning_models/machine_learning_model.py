@@ -67,7 +67,14 @@ class MachineLearningModel:
         L.info('SCORES OF MODEL: ' + self.given_name)
         L.info('---------------------------------------------------------')
         self.print_accuracy()
+        train_prediction = self.skmodel.predict(self.x_train)
         prediction = self.skmodel.predict(self.x_test)
+        L.info('Training data performance')
+        for evaluator in self.evaluations:
+            if evaluator.problem_type == self.model_type:
+                evaluator.print_evaluation(self, self.y_train, train_prediction)
+
+        L.info('Test data performance')
         for evaluator in self.evaluations:
             if evaluator.problem_type == self.model_type:
                 evaluator.print_evaluation(self, self.y_test, prediction)

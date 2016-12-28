@@ -2,7 +2,7 @@
 ######SBATCH --time=4:00:00
 ######SBATCH --nodes=6
 #SBATCH --time=0:30:00
-#SBATCH --nodes=6
+#SBATCH --nodes=1
 #SBATCH --partition=short
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=23
@@ -22,6 +22,6 @@ cd $gitdir
 echo "Running main.py"
 export MPLBACKEND="agg"
 export OMP_NUM_THREADS=23
-srun python3 main.py -c -n -f
+srun python3 main.py -n -f
 echo "Finished main.py"
 

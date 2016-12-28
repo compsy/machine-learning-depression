@@ -15,7 +15,7 @@ class NaiveBayesModel(MachineLearningModel):
 class GaussianNaiveBayesModel(NaiveBayesModel):
 
     def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
-        hyperparameters = None
+        hyperparameters = {'verbosity':verbosity}
         super().__init__(
             x,
             y,

@@ -7,23 +7,28 @@ import numpy as np
 
 
 class NaiveBayesModel(MachineLearningModel):
-
     def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
         super().__init__(x, y, x_names, y_names, verbosity=verbosity, **kwargs)
 
 
 class GaussianNaiveBayesModel(NaiveBayesModel):
-
     def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
-        super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification', **kwargs)
+        hyperparameters = None
+        super().__init__(x, y, x_names, y_names, hyperparameters=hyperparameters,
+                         verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = GaussianNB()
 
 
 class BernoulliNaiveBayesModel(NaiveBayesModel):
-
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search, **kwargs):
-        super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification', **kwargs)
-        self.skmodel = BernoulliNB()
+        hyperparameters = {
+            'alpha': 0.1,
+            'binarize': 0.5,
+            'fit_prior': True
+        }
+        super().__init__(x, y, x_names, y_names, hyperparameters=hyperparameters,
+                         verbosity=verbosity, model_type='classification', **kwargs)
+        self.skmodel = BernoulliNB(**self.hyperparameters)
 
         if grid_search:
             parameter_grid = {

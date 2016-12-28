@@ -147,7 +147,7 @@ class Driver:
 
         participants = self.create_participants()
         header, data = self.get_file_data(
-            'cache.pkl', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
+            'cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
 
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
@@ -327,13 +327,12 @@ class Driver:
 
     def get_file_data(self, file_name, participants, force_to_not_use_cache=False):
         header, data = (None, None)
-        header_file_name = file_name + '_data_header'
-        data_file_name = file_name + '_data'
+        header_file_name = file_name + '_data_header.pkl'
+        data_file_name = file_name + '_data.pkl'
         L.info('Converting data to single dataframe...')
         if not force_to_not_use_cache and self.cacher.file_available(file_name):
             header = self.cacher.read_cache(header_file_name)
             data = self.cacher.read_cache(data_file_name)
-            # self.print_header(header)
         else:
             questionnaires = QuestionnaireFactory.construct_questionnaires(self.spss_reader)
             data, header = (self.single_output_frame_creator.create_single_frame(questionnaires, participants))

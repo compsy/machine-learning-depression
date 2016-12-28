@@ -105,12 +105,3 @@ class TestDriver():
             assert participants[p].gender == data[index][1] -1
             assert participants[p].sexe == data[index][1]
             assert participants[p].age == data[index][2]
-
-
-
-    def test_calculate_true_false_ratio(self, subject):
-        y_data = [0,1,1,1,1,1,0,0,0,1,0,1]
-        result = subject.calculate_true_false_ratio(y_data)
-        assert len(result) == 2
-        assert np.sum(y_data) == result[0]
-        assert (np.sum(y_data)/len(y_data)) * 100 == result[1]

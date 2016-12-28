@@ -22,6 +22,6 @@ cd $gitdir
 echo "Running main.py"
 export MPLBACKEND="agg"
 export OMP_NUM_THREADS=23
-srun python3 main.py -n -f
+srun python3 main.py -c -n -f
 echo "Finished main.py"
 

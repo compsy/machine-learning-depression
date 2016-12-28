@@ -52,7 +52,7 @@ class DistributedRandomGridSearch:
                 verbose=0,
                 cv=self.cv,
                 n_iter=my_iterations)
-            L.info('Here we go, node %d starts calculating %s' % (self.rank, self.ml_model.given_name), force=True)
+            L.info('Here we go, node %d starts calculating %s with param grid %s' % (self.rank, self.ml_model.given_name, param_grid), force=True)
             model = model.fit(X=my_X, y=my_y)
             L.info('Done training on node %d with %d iterations' % (self.rank, my_iterations), force=True)
             my_data.append((model.best_score_, model.best_estimator_))

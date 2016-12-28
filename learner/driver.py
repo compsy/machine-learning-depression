@@ -66,7 +66,7 @@ class Driver:
 
     def __init__(self, verbosity, hpc, polynomial_features, normalize, scale, force_no_caching, feature_selection):
         # Set a seed for reproducability
-        random.seed(42)
+        # random.seed(42)
         self.comm = MPI.COMM_WORLD
 
         if hpc:

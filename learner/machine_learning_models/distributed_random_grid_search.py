@@ -43,8 +43,7 @@ class DistributedRandomGridSearch:
         my_data = []
         my_iterations = max(1,iterations) #round(iterations / len(self.param_grid))
         for param_grid in self.param_grid:
-            L.info(
-                'Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations), force=True)
+            L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations), force=True)
             model = RandomizedSearchCV(
                 estimator=self.skmodel,
                 param_distributions=param_grid,

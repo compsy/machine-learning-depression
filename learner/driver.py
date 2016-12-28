@@ -158,7 +158,7 @@ class Driver:
 
         #### Classification ####
         # Perform feature selection algorithm
-        CsvExporter.export('exports/merged_all_dataframe'+ comm.Get_rank() +'.csv', data, header)
+        CsvExporter.export('exports/merged_all_dataframe'+ self.comm.Get_rank() +'.csv', data, header)
 
         coefficients = None
         if (self.FEATURE_SELECTION):

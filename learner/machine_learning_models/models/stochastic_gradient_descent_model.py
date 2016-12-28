@@ -14,7 +14,7 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
             'epsilon': 0.1,
             'eta0': 0.0,
             'fit_intercept': True,
-            'l1_ratio': 0.15,
+            'l1_ratio': 0.5,
             'learning_rate': 'optimal',
             'loss': 'hinge',
             'shuffle': True,

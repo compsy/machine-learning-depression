@@ -34,6 +34,7 @@ class DistributedRandomGridSearch:
         else:
             iterations = np.empty(self.size)
 
+        self.comm.Barrier()
         L.info('Running %d iterations on %d nodes.' % (iterations[0], self.size))
         iterations = self.comm.scatter(iterations, root=0)
 

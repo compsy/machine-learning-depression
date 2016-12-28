@@ -32,26 +32,6 @@ class ElasticNetModel(MachineLearningModel):
             }
             self.grid_search([parameter_grid], [random_parameter_grid])
 
-    def determine_best_variables(self, top=25):
-        if self.was_trained:
-            assert len(self.skmodel.coef_) == len(self.x_names)
-            L.info('The most predictive variables are:')
-            indices = self.skmodel.sparse_coef_.indices
-            data = self.skmodel.sparse_coef_.data
-            zipped = list(zip(data, indices))
-            zipped.sort(reverse=True, key=lambda tup: abs(tup[0]))
-            i = 0
-            var_names = []
-            for coefficient, index in zipped:
-                i += 1
-                var_name = self.x_names[index]
-                var_names.append([var_name, coefficient])
-                L.info('--> %d\t%0.5f\t%s' % (i, coefficient, var_name))
-                if (i >= top): break
-
-            return np.array(var_names)
-
-
 class LogisticRegressionModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search, **kwargs):

@@ -34,12 +34,8 @@ class DistributedRandomGridSearch:
         else:
             iterations = np.empty(self.size)
 
-        self.comm.Barrier()
-
         L.info('Running %d iterations on %d nodes.' % (iterations[0], self.size))
         iterations = self.comm.scatter(iterations, root=0)
-        L.info('Created the iterations.')
-        L.info('Created the iterations (%d) .' % iterations)
 
         # Actual calculation
         my_data = []
@@ -54,6 +50,7 @@ class DistributedRandomGridSearch:
                 verbose=0,
                 cv=self.cv,
                 n_iter=my_iterations)
+            L.info('Here we go, node %d starts calculating %s' % (self.rank, self.ml_model.given_name), force=True)
             model = model.fit(X=my_X, y=my_y)
             L.info('Done training on node %d with %d iterations' % (self.rank, my_iterations), force=True)
             my_data.append((model.best_score_, model.best_estimator_))

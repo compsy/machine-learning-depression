@@ -40,8 +40,14 @@ class ModelRunner:
             # Get the options for the current model
             has_grid_search = True if ('grid-search' in self.model_options[i]) else False
 
-            current_model = model(np.copy(x), np.copy(y), x_names, y_names, verbosity=verbosity, hpc=self.hpc,
-                                  grid_search=has_grid_search)
+            current_model = model(
+                np.copy(x),
+                np.copy(y),
+                x_names,
+                y_names,
+                verbosity=verbosity,
+                hpc=self.hpc,
+                grid_search=has_grid_search)
 
             if ('bagging' in self.model_options[i]):
                 current_model.skmodel = self.use_bagging(current_model, verbosity)

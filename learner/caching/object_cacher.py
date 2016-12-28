@@ -3,6 +3,7 @@ import pickle
 
 
 class ObjectCacher():
+
     def __init__(self, directory='cache/'):
         self.directory = directory
 

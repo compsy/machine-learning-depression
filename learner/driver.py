@@ -165,14 +165,14 @@ class Driver:
         x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
                                                                                          classification_y_names)
 
-        DescriptivesTableCreator.generate_coefficient_descriptives_table(x_data, x_names, coefficients,
-                                                                         name='classification_descriptives')
+        DescriptivesTableCreator.generate_coefficient_descriptives_table(
+            x_data, x_names, coefficients, name='classification_descriptives')
         self.variable_transformer = VariableTransformer(x_names)
 
         # Calculate the actual models
         model_runner = SyncModelRunner(classification_models, hpc=self.HPC)
-        is_root, classification_fabricated_models = model_runner.calculate(x_data, classification_y_data, x_names,
-                                                                   classification_y_names, verbosity=self.VERBOSITY)
+        is_root, classification_fabricated_models = model_runner.calculate(
+            x_data, classification_y_data, x_names, classification_y_names, verbosity=self.VERBOSITY)
 
         import pdb
         pdb.set_trace()
@@ -192,16 +192,15 @@ class Driver:
         x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
                                                                                      regression_y_names)
 
-        DescriptivesTableCreator.generate_coefficient_descriptives_table(x_data, x_names, coefficients,
-                                                             name='regression_descriptives')
+        DescriptivesTableCreator.generate_coefficient_descriptives_table(
+            x_data, x_names, coefficients, name='regression_descriptives')
         self.variable_transformer = VariableTransformer(x_names)
 
         # Calculate the actual models
         model_runner = SyncModelRunner(regression_models, hpc=self.HPC)
-        is_root, regression_fabricated_models = model_runner.calculate(x_data, regression_y_data, x_names,
-                                                               regression_y_names, verbosity=self.VERBOSITY)
+        is_root, regression_fabricated_models = model_runner.calculate(
+            x_data, regression_y_data, x_names, regression_y_names, verbosity=self.VERBOSITY)
         ############################################################################################################
-
 
         # Kill all worker nodes
         if self.HPC and MPI.COMM_WORLD.Get_rank() > 0:

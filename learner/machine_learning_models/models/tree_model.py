@@ -35,7 +35,19 @@ class ClassificationTreeModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
         super().__init__(x, y, x_names, y_names, model_type='classification', verbosity=verbosity, **kwargs)
-        a = {'min_samples_split': 2, 'max_features': 'auto', 'criterion': 'gini', 'presort': False, 'random_state': None, 'min_weight_fraction_leaf': 0.0, 'class_weight': None, 'splitter': 'best', 'min_samples_leaf': 1, 'max_depth': 187.62645773985275, 'max_leaf_nodes': None}
+        a = {
+            'min_samples_split': 2,
+            'max_features': 'auto',
+            'criterion': 'gini',
+            'presort': False,
+            'random_state': None,
+            'min_weight_fraction_leaf': 0.0,
+            'class_weight': None,
+            'splitter': 'best',
+            'min_samples_leaf': 1,
+            'max_depth': 187.62645773985275,
+            'max_leaf_nodes': None
+        }
         self.skmodel = DecisionTreeClassifier(**a)
 
         if grid_search:

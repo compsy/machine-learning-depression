@@ -41,7 +41,6 @@ class DescriptivesTableCreator():
         header.append('Type')
         LatexTableExporter.export('exports/' + name + '.tex', data, header)
 
-
     @staticmethod
     def create_data_descriptive_plots(participants, x_data, x_names):
         ages = []

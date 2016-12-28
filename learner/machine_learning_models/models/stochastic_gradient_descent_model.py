@@ -8,7 +8,7 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
 
     def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {
-            'alpha': 0.0001,
+            'alpha': 0.5,
             'average': False,
             'class_weight': None,
             'epsilon': 0.1,

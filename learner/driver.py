@@ -333,7 +333,7 @@ class Driver:
         header_file_name = file_name + '_data_header.pkl'
         data_file_name = file_name + '_data.pkl'
         L.info('Converting data to single dataframe...')
-        if not force_to_not_use_cache and self.cacher.file_available(file_name):
+        if not force_to_not_use_cache and self.cacher.file_available(header_file_name) and self.cacher.file_available(data_file_name):
             header = self.cacher.read_cache(header_file_name)
             data = self.cacher.read_cache(data_file_name)
         else:

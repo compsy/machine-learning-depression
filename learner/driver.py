@@ -110,21 +110,21 @@ class Driver:
         classification_models = []
         # classification_models.append(KerasNnClassificationModel)
         classification_models.append({'model': ClassificationTreeModel, 'options': ['grid-search']})
-        #classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': []})
-        #classification_models.append({'model': RandomForestClassificationModel, 'options': []})
-        #classification_models.append({'model': DummyClassifierModel, 'options': []})
-        #classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        #classification_models.append({'model': SupportVectorClassificationModel, 'options': []})
-        # classification_models.append({'model': BoostingClassificationModel, 'options': []})
-        #classification_models.append({'model': LogisticRegressionModel, 'options': []})
-        #classification_models.append({'model': GaussianNaiveBayesModel, 'options': []})
-        #classification_models.append({'model': BernoulliNaiveBayesModel, 'options': []})
+        #classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
+        #classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
+        classification_models.append({'model': DummyClassifierModel, 'options': []})
+        classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        #classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
+        # classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
+        #classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
+        #classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
+        #classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
 
         # classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
         # classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
         # classification_models.append({'model': DummyClassifierModel, 'options': ['bagging']})
         # classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
-        # classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
+        classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
         # classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
         # classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
         # classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
@@ -173,9 +173,6 @@ class Driver:
         model_runner = SyncModelRunner(classification_models, hpc=self.HPC)
         is_root, classification_fabricated_models = model_runner.calculate(
             x_data, classification_y_data, x_names, classification_y_names, verbosity=self.VERBOSITY)
-
-        import pdb
-        pdb.set_trace()
 
         ############################################################################################################
         #### Regression ####

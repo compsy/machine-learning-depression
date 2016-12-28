@@ -72,6 +72,8 @@ class MachineLearningModel:
         for evaluator in self.evaluations:
             if evaluator.problem_type == self.model_type:
                 evaluator.print_evaluation(self, self.y_test, prediction)
+
+        L.info(self.skmodel.get_params())
         L.info('---------------------------------------------------------')
 
     def train(self):

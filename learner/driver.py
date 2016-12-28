@@ -65,16 +65,18 @@ class Driver:
     """
 
     def __init__(self, verbosity, hpc, polynomial_features, normalize, scale, force_no_caching, feature_selection):
-
         # Set a seed for reproducability
         random.seed(42)
-        if hpc:
-            print('[HPC] Node %d initialized.' % MPI.COMM_WORLD.Get_rank())
+        self.comm = MPI.COMM_WORLD
 
-        comm = MPI.COMM_WORLD
-        comm.Barrier()
         if hpc:
-            print('[HPC] All nodes are here! %d of them (from %d) ' % (MPI.COMM_WORLD.Get_size(), comm.Get_rank()))
+            print('[HPC] Node %d initialized.' % self.comm.Get_rank())
+
+
+        self.comm.Barrier()
+
+        if hpc:
+            print('[HPC] All nodes are here! %d of them (from %d) ' % (self.comm.Get_size(), self.comm.Get_rank()))
         # setup logging
         L.setup(hpc)
 
@@ -134,11 +136,11 @@ class Driver:
         classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
         classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
 
-        regression_models = []
+        #regression_models = []
         # regressionmodels.append(KerasNnModel)
         # regression_models.append({'model': ElasticNetModel, 'options':[]})
         # regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
-        regression_models.append({'model': RegressionTreeModel, 'options': []})
+        #regression_models.append({'model': RegressionTreeModel, 'options': []})
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
 
@@ -146,7 +148,7 @@ class Driver:
         # classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
         classification_y_names = np.array(['cids-followup-twice_depression'])
 
-        regression_y_names = np.array(['cids-followup-somScore'])
+        #regression_y_names = np.array(['cids-followup-somScore'])
 
         participants = self.create_participants()
         header, data = self.get_file_data(
@@ -156,7 +158,7 @@ class Driver:
 
         #### Classification ####
         # Perform feature selection algorithm
-        CsvExporter.export('exports/merged_all_dataframe.csv', data, header)
+        CsvExporter.export('exports/merged_all_dataframe'+ comm.Get_rank() +'.csv', data, header)
 
         coefficients = None
         if (self.FEATURE_SELECTION):
@@ -180,7 +182,7 @@ class Driver:
         ############################################################################################################
         #### Regression ####
         # Reset the names to the original set
-        x_names = QuestionnaireFactory.construct_x_names()
+        #x_names = QuestionnaireFactory.construct_x_names()
         # Perform feature selection algorithm
         # coefficients = None
         # if (self.FEATURE_SELECTION):
@@ -188,18 +190,18 @@ class Driver:
         #         data, header, x_names, regression_y_names, model_type='regression')
         #     x_names = coefficients[0:, 0]
 
-        L.info('We are using %s as input.' % x_names)
-        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
-                                                                                     regression_y_names)
+        #L.info('We are using %s as input.' % x_names)
+        #x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
+        #                                                                             regression_y_names)
 
-        DescriptivesTableCreator.generate_coefficient_descriptives_table(
-            x_data, x_names, coefficients, name='regression_descriptives')
-        self.variable_transformer = VariableTransformer(x_names)
+        #DescriptivesTableCreator.generate_coefficient_descriptives_table(
+        #    x_data, x_names, coefficients, name='regression_descriptives')
+        #self.variable_transformer = VariableTransformer(x_names)
 
         # Calculate the actual models
-        model_runner = SyncModelRunner(regression_models, hpc=self.HPC)
-        is_root, regression_fabricated_models = model_runner.calculate(
-            x_data, regression_y_data, x_names, regression_y_names, verbosity=self.VERBOSITY)
+        #model_runner = SyncModelRunner(regression_models, hpc=self.HPC)
+        #is_root, regression_fabricated_models = model_runner.calculate(
+        #    x_data, regression_y_data, x_names, regression_y_names, verbosity=self.VERBOSITY)
         ############################################################################################################
 
         # Kill all worker nodes
@@ -215,8 +217,8 @@ class Driver:
             used_data,
             selected_header,
             model_type='classification')
-        self.create_output(
-            regression_fabricated_models, regression_y_data, used_data, selected_header, model_type='regression')
+        #self.create_output(
+        #    regression_fabricated_models, regression_y_data, used_data, selected_header, model_type='regression')
 
     def perform_feature_selection(self, data, header, x_names, y_names, model_type):
         temp_pol_features = self.POLYNOMIAL_FEATURES

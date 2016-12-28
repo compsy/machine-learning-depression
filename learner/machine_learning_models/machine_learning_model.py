@@ -17,8 +17,7 @@ from learner.machine_learning_models.randomized_search_mine import RandomizedSea
 
 class MachineLearningModel:
 
-    def __init__(self, x, y, x_names, y_names, hyperparameters,
-                 model_type='models', verbosity=0, hpc=False, n_iter=10):
+    def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', verbosity=0, hpc=False, n_iter=10):
         self.x = x
         self.y = y
         self.x_names = x_names

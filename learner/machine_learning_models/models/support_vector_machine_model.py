@@ -13,15 +13,17 @@ class SupportVectorModel(MachineLearningModel):
 class SupportVectorRegressionModel(SupportVectorModel):
 
     def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
-        hyperparameters = {
-            'kernel': 'rbf',
-            'C': 1,
-            'epsilon': 0.1,
-            'gamma': 0.1,
-            'verbose': verbosity
-        }
+        hyperparameters = {'kernel': 'rbf', 'C': 1, 'epsilon': 0.1, 'gamma': 0.1, 'verbose': verbosity}
 
-        super().__init__(x, y, x_names, y_names, hyperparameters = hyperparameters, verbosity=verbosity, model_type='regression', **kwargs)
+        super().__init__(
+            x,
+            y,
+            x_names,
+            y_names,
+            hyperparameters=hyperparameters,
+            verbosity=verbosity,
+            model_type='regression',
+            **kwargs)
         self.skmodel = svm.SVR(**self.hyperparameters)
         # Radial basis function grid
         rbf_grid = {
@@ -83,15 +85,16 @@ class SupportVectorRegressionModel(SupportVectorModel):
 class SupportVectorClassificationModel(SupportVectorModel):
 
     def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
-        hyperparameters = {
-            'kernel': 'poly',
-            'degree': 2,
-            'C': 3,
-            'probabiltiy': True,
-            'verbose': verbosity
-        }
-        super().__init__(x, y, x_names, y_names, hyperparameters=hyperparameters,
-                         verbosity=verbosity, model_type='classification', **kwargs)
+        hyperparameters = {'kernel': 'poly', 'degree': 2, 'C': 3, 'probabiltiy': True, 'verbose': verbosity}
+        super().__init__(
+            x,
+            y,
+            x_names,
+            y_names,
+            hyperparameters=hyperparameters,
+            verbosity=verbosity,
+            model_type='classification',
+            **kwargs)
         self.skmodel = svm.SVC(**self.hyperparameters)
 
         # Radial basis function grid

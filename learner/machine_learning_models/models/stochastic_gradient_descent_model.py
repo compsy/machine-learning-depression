@@ -5,6 +5,7 @@ from learner.machine_learning_models.machine_learning_model import MachineLearni
 
 
 class StochasticGradientDescentClassificationModel(MachineLearningModel):
+
     def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {
             'alpha': 0.0001,
@@ -20,7 +21,15 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
             'verbose': verbosity
         }
 
-        super().__init__(x, y, x_names, y_names, hyperparameters=hyperparameters,verbosity=verbosity, model_type='classification', **kwargs)
+        super().__init__(
+            x,
+            y,
+            x_names,
+            y_names,
+            hyperparameters=hyperparameters,
+            verbosity=verbosity,
+            model_type='classification',
+            **kwargs)
         self.skmodel = SGDClassifier(**self.hyperparameters)
 
         # Radial basis function grid

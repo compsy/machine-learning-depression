@@ -7,14 +7,18 @@ import numpy as np
 
 
 class ElasticNetModel(MachineLearningModel):
+
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search, **kwargs):
-        hyperparameters = {
-            'alpha': 0.1,
-            'l1_ratio': 0.5,
-            'max_iter': 10000
-        }
-        super().__init__(x, y, x_names, y_names, hyperparameters=hyperparameters, verbosity=verbosity,
-                         model_type='classification', **kwargs)
+        hyperparameters = {'alpha': 0.1, 'l1_ratio': 0.5, 'max_iter': 10000}
+        super().__init__(
+            x,
+            y,
+            x_names,
+            y_names,
+            hyperparameters=hyperparameters,
+            verbosity=verbosity,
+            model_type='classification',
+            **kwargs)
         # TODO: Change to elasticnet CV
         self.skmodel = ElasticNet(**self.hyperparameters)
 
@@ -49,6 +53,7 @@ class ElasticNetModel(MachineLearningModel):
 
 
 class LogisticRegressionModel(MachineLearningModel):
+
     def __init__(self, x, y, x_names, y_names, verbosity, grid_search, **kwargs):
         hyperparameters = {
             'penalty': 'l2',
@@ -58,8 +63,15 @@ class LogisticRegressionModel(MachineLearningModel):
             'tol': 0.000001,
             'max_iter': 100000
         }
-        super().__init__(x, y, x_names, y_names, hyperparameters=hyperparameters, verbosity=verbosity,
-                         model_type='classification', **kwargs)
+        super().__init__(
+            x,
+            y,
+            x_names,
+            y_names,
+            hyperparameters=hyperparameters,
+            verbosity=verbosity,
+            model_type='classification',
+            **kwargs)
         self.skmodel = LogisticRegression(**self.hyperparameters)
 
         if grid_search:

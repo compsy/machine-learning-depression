@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --time=0:30:00
-#SBATCH --nodes=6
-###SBATCH --time=8:00:00
-####SBATCH --nodes=20
-#SBATCH --partition=short
+######SBATCH --time=0:30:00
+######SBATCH --nodes=6
+#SBATCH --time=8:00:00
+#SBATCH --nodes=30
+#####SBATCH --partition=short
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=23
 #SBATCH --mail-type=ALL

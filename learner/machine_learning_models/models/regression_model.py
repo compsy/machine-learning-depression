@@ -8,7 +8,7 @@ import numpy as np
 
 class ElasticNetModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=False, **kwargs):
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search, **kwargs):
         super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
         # TODO: Change to elasticnet CV
         self.skmodel = ElasticNet(alpha=0.1, l1_ratio=0.5, max_iter=10000)
@@ -45,7 +45,7 @@ class ElasticNetModel(MachineLearningModel):
 
 class LogisticRegressionModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+    def __init__(self, x, y, x_names, y_names, verbosity, grid_search, **kwargs):
         super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = LogisticRegression(
             penalty='l2', C=0.1, verbose=verbosity, random_state=42, tol=0.000001, max_iter=100000)

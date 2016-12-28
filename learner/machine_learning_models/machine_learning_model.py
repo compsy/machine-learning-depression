@@ -103,7 +103,7 @@ class MachineLearningModel:
 
     @property
     def given_name(self):
-        return type(self).__name__
+        return type(self).__name__ + " Type: " + type(self.skmodel).__name__
 
     def grid_search(self, exhaustive_grid, random_grid):
         if self.hpc:

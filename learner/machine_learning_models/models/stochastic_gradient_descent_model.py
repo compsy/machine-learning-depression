@@ -6,7 +6,7 @@ from learner.machine_learning_models.machine_learning_model import MachineLearni
 
 class StochasticGradientDescentClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
+    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
         super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = SGDClassifier(
             alpha=0.0001,
@@ -42,4 +42,5 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
 
         self.exhaustive_param_grid = [grid]
         self.random_param_grid = [random_parameter_grid]
-        self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
+        if grid_search:
+            self.grid_search(self.exhaustive_param_grid, self.random_param_grid)

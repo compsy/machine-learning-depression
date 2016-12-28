@@ -7,7 +7,7 @@ import numpy as np
 
 class RandomForestClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
         super().__init__(x, y, x_names, y_names, model_type='classification', verbosity=verbosity, **kwargs)
         self.skmodel = RandomForestClassifier(n_estimators=5)
 

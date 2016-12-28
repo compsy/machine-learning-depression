@@ -12,7 +12,7 @@ class SupportVectorModel(MachineLearningModel):
 
 class SupportVectorRegressionModel(SupportVectorModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
+    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
         super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='regression', **kwargs)
         self.skmodel = svm.SVR(verbose=verbosity)
         # Radial basis function grid
@@ -68,13 +68,13 @@ class SupportVectorRegressionModel(SupportVectorModel):
         }
 
         self.random_param_grid = [random_rbf_grid, random_poly_grid, random_sigmoid_grid]
-
-        self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
+        if grid_search:
+            self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
 
 
 class SupportVectorClassificationModel(SupportVectorModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
+    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
         super().__init__(x, y, x_names, y_names, verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = svm.SVC(verbose=verbosity, kernel='poly', degree=2, C=600000, probability=True)
         # Radial basis function grid
@@ -132,7 +132,8 @@ class SupportVectorClassificationModel(SupportVectorModel):
         }
 
         self.random_param_grid = [random_rbf_grid, random_poly_grid, random_sigmoid_grid]
-        self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
+        if grid_search:
+            self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
 
     def variable_to_validate(self):
         return 'degree'

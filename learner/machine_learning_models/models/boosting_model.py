@@ -6,7 +6,7 @@ import numpy as np
 
 class BoostingModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
         super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
         self.skmodel = GradientBoostingRegressor(verbose=verbosity)
         if grid_search:
@@ -32,7 +32,7 @@ class BoostingModel(MachineLearningModel):
 
 class BoostingClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
+    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
         super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
         self.skmodel = GradientBoostingClassifier(verbose=verbosity, n_estimators=1000, max_depth=5)
         if grid_search:

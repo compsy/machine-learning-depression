@@ -58,17 +58,17 @@ class DistributedRandomGridSearch:
             L.info('Done training on node %d with %d iterations' % (self.rank, my_iterations), force=True)
             my_data.append((model.best_score_, model.best_estimator_))
 
-        iterations = self.get_best_model(my_data)
+        best_model_and_score = self.get_best_model(my_data)
 
         self.comm.Barrier()
 
         L.info('!!Trained all models!!')
 
-        iterations = self.comm.gather(iterations, root=0)
+        best_model_and_score = self.comm.gather(best_model_and_score, root=0)
 
         if self.root:
-            best_score, best_model = self.get_best_model(iterations)
-            L.info('\tThese models had %d good models' % (len(iterations)))
+            best_score, best_model = self.get_best_model(best_model_and_score)
+            L.info('\tThese models had %d good models' % (len(best_model_and_score)))
             L.info('\tThe score of the best model was %0.3f' % best_score)
         else:
             best_model = None

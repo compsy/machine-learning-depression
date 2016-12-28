@@ -151,7 +151,7 @@ class SupportVectorClassificationModel(SupportVectorModel):
             'class_weight': ['balanced', None]
         }
 
-        self.random_param_grid = [random_rbf_grid, random_poly_grid, random_sigmoid_grid]
+        self.random_param_grid = [random_poly_grid, random_sigmoid_grid]
         if grid_search:
             self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
 

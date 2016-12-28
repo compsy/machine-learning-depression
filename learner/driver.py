@@ -158,7 +158,7 @@ class Driver:
 
         #### Classification ####
         # Perform feature selection algorithm
-        CsvExporter.export('exports/merged_all_dataframe'+ self.comm.Get_rank() +'.csv', data, header)
+        CsvExporter.export('exports/merged_all_dataframe%d.csv' % self.comm.Get_rank(), data, header)
 
         coefficients = None
         if (self.FEATURE_SELECTION):
@@ -223,13 +223,13 @@ class Driver:
     def perform_feature_selection(self, data, header, x_names, y_names, model_type):
         temp_pol_features = self.POLYNOMIAL_FEATURES
         self.POLYNOMIAL_FEATURES = False
-        x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, y_names)
+        usable_x_data, usable_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, y_names)
         L.info('Performing feature selection for ' + model_type)
 
-        elastic_net_model = StochasticGradientDescentClassificationModel(
-            np.copy(x_data), np.copy(regression_y_data), x_names, y_names, grid_search=False, verbosity=0, hpc=self.HPC)
-        elastic_net_model.train()
-        coefficients = self.feature_selector.determine_best_variables(elastic_net_model)
+        feature_selection_model = StochasticGradientDescentClassificationModel(
+            np.copy(usable_x_data), np.copy(usable_y_data), x_names, y_names, grid_search=False, verbosity=0, hpc=self.HPC)
+        feature_selection_model.train()
+        coefficients = self.feature_selector.determine_best_variables(feature_selection_model)
         self.POLYNOMIAL_FEATURES = temp_pol_features
         return coefficients
 

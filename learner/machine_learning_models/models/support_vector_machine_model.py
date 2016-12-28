@@ -85,7 +85,7 @@ class SupportVectorRegressionModel(SupportVectorModel):
 class SupportVectorClassificationModel(SupportVectorModel):
 
     def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
-        hyperparameters = {'kernel': 'poly', 'degree': 2, 'C': 3, 'probabiltiy': True, 'verbose': verbosity}
+        hyperparameters = {'kernel': 'poly', 'degree': 2, 'C': 3, 'coef0': 1, 'verbose': verbosity}
         super().__init__(
             x,
             y,

@@ -72,13 +72,9 @@ class Driver:
         if hpc:
             print('[HPC] Node %d initialized.' % self.comm.Get_rank())
 
-
-        self.comm.Barrier()
-
         if hpc:
+            self.comm.Barrier()
             print('[HPC] All nodes are here! %d of them (from %d) ' % (self.comm.Get_size(), self.comm.Get_rank()))
-
-        self.comm.Barrier()
         # setup logging
         L.setup(hpc)
 
@@ -122,7 +118,7 @@ class Driver:
         classification_models.append({'model': DummyClassifierModel, 'options': []})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
         classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
-        classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
+        # classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
         classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
         classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
         classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})

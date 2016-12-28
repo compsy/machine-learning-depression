@@ -77,6 +77,8 @@ class Driver:
 
         if hpc:
             print('[HPC] All nodes are here! %d of them (from %d) ' % (self.comm.Get_size(), self.comm.Get_rank()))
+
+        self.comm.Barrier()
         # setup logging
         L.setup(hpc)
 

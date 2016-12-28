@@ -28,14 +28,14 @@ class DistributedRandomGridSearch:
         my_X = np.copy(X)
         my_y = np.copy(y)
 
+        L.info('Node %d arrived at barrier' % self.rank, force=True)
+
         if (self.root):
             # Create an array of elements with the number of jobs for each of the slaves
             iterations = [round(self.iterations / self.size)] * self.size
         else:
             iterations = np.empty(self.size)
 
-        L.info('Node %d arrived at barrier' % self.rank, force=True)
-        self.comm.Barrier()
         L.info('Running %d iterations on %d nodes.' % (iterations[0], self.size))
         iterations = self.comm.scatter(iterations, root=0)
 

@@ -60,6 +60,7 @@ class DistributedRandomGridSearch:
 
         best_model_and_score = self.get_best_model(my_data)
 
+        L.info('Im done (%d)' % self.rank, force=True)
         self.comm.Barrier()
 
         L.info('!!Trained all models!!')

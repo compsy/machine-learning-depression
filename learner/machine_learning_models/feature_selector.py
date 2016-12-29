@@ -8,16 +8,16 @@ class FeatureSelector():
             coef_ = mlmodel.skmodel.coef_[0]
             assert len(coef_) == len(mlmodel.x_names)
             indices = list(range(len(coef_)))
-            return self.return_top(coef_, indices, top)
+            return self.return_top(coef_, indices, mlmodel, top)
 
     def determine_best_variables_elastic_net(self, mlmodel, top=25):
         if mlmodel.was_trained:
             assert len(mlmodel.skmodel.coef_) == len(mlmodel.x_names)
             indices = mlmodel.skmodel.sparse_coef_.indices
             data = mlmodel.skmodel.sparse_coef_.data
-            return self.return_top(data, indices, top)
+            return self.return_top(data, indices, mlmodel, top)
 
-    def return_top(self, coef, indices, top):
+    def return_top(self, coef, indices, mlmodel, top):
         L.info('The most predictive variables are:')
         zipped = list(zip(coef, indices))
         zipped.sort(reverse=True, key=lambda tup: abs(tup[0]))

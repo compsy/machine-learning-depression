@@ -34,7 +34,7 @@ class MachineLearningModel:
         ]
 
         self.cacher = ObjectCacher('cache/mlmodels/')
-        self.grid_search_type = 'random'
+        self.grid_search_type = 'exhaustive'
 
         # Initialize the hyperparameters from cache, if available
         self.hyperparameters = self.hot_start(hyperparameters)

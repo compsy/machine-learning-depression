@@ -41,7 +41,7 @@ class MachineLearningModel:
 
         self.n_iter = n_iter
         if hpc:
-            self.n_iter = 40
+            self.n_iter = 80
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)

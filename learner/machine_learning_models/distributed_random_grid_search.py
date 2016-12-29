@@ -28,8 +28,6 @@ class DistributedRandomGridSearch:
         my_X = np.copy(X)
         my_y = np.copy(y)
 
-        L.info('Node %d arrived at barrier' % self.rank, force=True)
-
         if (self.root):
             # Create an array of elements with the number of jobs for each of the slaves
             iterations = [round(self.iterations / self.size)] * self.size

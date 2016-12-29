@@ -32,19 +32,8 @@ class DistributedRandomGridSearch:
         if (self.root):
             # Create an array of elements with the number of jobs for each of the slaves
             iterations = [round(self.iterations / self.size)] * self.size
-
-            L.info('Hibernating...')
-            time.sleep(60)
-            L.info('Done hibernating...')
-            [self.comm.send('go!', dest=node) for node in range(1, self.size - 1)]
         else:
             iterations = np.empty(self.size)
-            start = time.time()
-            L.info('The waiting starts on node %d' % self.rank, force=True)
-            data = self.comm.recv(source= 0)
-            end = time.time()
-            timespent = (end - start)
-            L.info('Received %s from node 0 on node %d, it took %d seconds, lets go!' % (data, timespent, self.rank), force=True)
 
         L.info('Running %d iterations on %d nodes.' % (iterations[0], self.size))
         iterations = self.comm.scatter(iterations, root=0)

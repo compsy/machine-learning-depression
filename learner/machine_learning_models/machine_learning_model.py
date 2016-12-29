@@ -34,14 +34,14 @@ class MachineLearningModel:
         ]
 
         self.cacher = ObjectCacher('cache/mlmodels/')
-        self.grid_search_type = 'exhaustive'
+        self.grid_search_type = 'random'
 
         # Initialize the hyperparameters from cache, if available
         self.hyperparameters = self.hot_start(hyperparameters)
 
         self.n_iter = n_iter
         if hpc:
-            self.n_iter = 1
+            self.n_iter = 10000
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)

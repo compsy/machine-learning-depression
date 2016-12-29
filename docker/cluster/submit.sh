@@ -1,7 +1,7 @@
 #!/bin/bash
 ######SBATCH --time=0:30:00
 ######SBATCH --nodes=6
-#SBATCH --time=0:30:00
+#SBATCH --time=4:30:00
 #SBATCH --nodes=30
 #####SBATCH --partition=short
 #SBATCH --ntasks-per-node=1

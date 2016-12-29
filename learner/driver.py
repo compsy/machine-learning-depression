@@ -118,7 +118,7 @@ class Driver:
         #classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
         #classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
         classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
-        #classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
+        classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
 
         #classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
         # classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
@@ -128,7 +128,7 @@ class Driver:
         #classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
         #classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
         #classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
-        classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
+        #classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
         #classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
 
         #regression_models = []

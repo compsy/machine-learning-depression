@@ -72,9 +72,6 @@ class Driver:
         if hpc:
             print('[HPC] Node %d initialized.' % self.comm.Get_rank())
 
-        if hpc:
-            self.comm.Barrier()
-            print('[HPC] All nodes are here! %d of them (from %d) ' % (self.comm.Get_size(), self.comm.Get_rank()))
         # setup logging
         L.setup(hpc)
 
@@ -176,16 +173,17 @@ class Driver:
             used_data= None
             selected_header= None
 
-        L.info('[HPC-Slave] Waiting for data from node %d' % self.comm.Get_rank(), force=True)
-        L.info('[HPC-Master] Sending data to nodes for data from node %d' % self.comm.Get_rank())
-
-        x_data = self.comm.bcast(x_data, root=0)
-        classification_y_data = self.comm.bcast(classification_y_data, root=0)
-        used_data = self.comm.bcast(used_data, root=0)
-        selected_header = self.comm.bcast(selected_header, root=0)
+        if self.HPC:
+            L.info('[HPC-Slave] Waiting for data from node %d' % self.comm.Get_rank(), force=True)
+            L.info('[HPC-Master] Sending data to nodes for data from node %d' % self.comm.Get_rank())
+            x_data = self.comm.bcast(x_data, root=0)
+            classification_y_data = self.comm.bcast(classification_y_data, root=0)
+            used_data = self.comm.bcast(used_data, root=0)
+            selected_header = self.comm.bcast(selected_header, root=0)
 
         L.info('[HPC-Slave] Got the data on node %d' % self.comm.Get_rank(), force=True)
 
+        self.comm.Barrier()
         # Calculate the actual models
         model_runner = SyncModelRunner(classification_models, hpc=self.HPC)
         is_root, classification_fabricated_models = model_runner.calculate(

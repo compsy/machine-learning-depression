@@ -2,10 +2,10 @@
 ######SBATCH --time=0:30:00
 ######SBATCH --nodes=6
 #SBATCH --time=4:00:00
-#SBATCH --nodes=30
+#SBATCH --nodes=1
 #####SBATCH --partition=short
-#SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=23
+#SBATCH --ntasks-per-node=10
+#SBATCH --cpus-per-task=2
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=peregrine@compsy.nl
 #SBATCH --job-name=python_cpu

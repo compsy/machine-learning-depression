@@ -31,7 +31,7 @@ class RandomForestClassificationModel(MachineLearningModel):
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             random_parameter_grid = {
-                'n_estimators': randint(1, 100),
+                'n_estimators': randint(1, 10),
                 'max_depth': randint(1, 100),
                 'max_features': ['auto', 'sqrt', 'log2', None]
             }

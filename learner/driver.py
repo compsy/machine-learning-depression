@@ -147,7 +147,7 @@ class Driver:
         classification_y_names = np.array(['cids-followup-twice_depression'])
 
         #regression_y_names = np.array(['cids-followup-somScore'])
-        if self.comm.Get_rank() == 0 || !self.HPC:
+        if self.comm.Get_rank() == 0 or not self.HPC:
             participants = self.create_participants()
             header, data = self.get_file_data(
                 'cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)

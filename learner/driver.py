@@ -117,7 +117,7 @@ class Driver:
         # classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
         #classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
         #classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
-        #classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
+        classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
         #classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
 
         #classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
@@ -153,7 +153,7 @@ class Driver:
 
             #### Classification ####
             # Perform feature selection algorithm
-            CsvExporter.export('exports/merged_all_dataframe%d.csv' % self.comm.Get_rank(), data, header)
+            CsvExporter.export('exports/merged_all_dataframe.csv', data, header)
 
             coefficients = None
             if (self.FEATURE_SELECTION):
@@ -180,8 +180,7 @@ class Driver:
             classification_y_data = self.comm.bcast(classification_y_data, root=0)
             used_data = self.comm.bcast(used_data, root=0)
             selected_header = self.comm.bcast(selected_header, root=0)
-
-        L.info('[HPC-Slave] Got the data on node %d' % self.comm.Get_rank(), force=True)
+            L.info('[HPC-Slave] Got the data on node %d' % self.comm.Get_rank(), force=True)
 
         self.comm.Barrier()
         # Calculate the actual models

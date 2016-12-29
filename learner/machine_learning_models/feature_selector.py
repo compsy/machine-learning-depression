@@ -18,7 +18,7 @@ class FeatureSelector():
             return self.return_top(data, indices, mlmodel, top)
 
     def return_top(self, coef, indices, mlmodel, top):
-        L.info('The most predictive variables are:')
+        #L.info('The most predictive variables are:')
         zipped = list(zip(coef, indices))
         zipped.sort(reverse=True, key=lambda tup: abs(tup[0]))
         i = 0
@@ -27,7 +27,7 @@ class FeatureSelector():
             i += 1
             var_name = mlmodel.x_names[index]
             var_names.append([var_name, coefficient])
-            L.info('--> %d\t%0.5f\t%s' % (i, coefficient, var_name))
+            #L.info('--> %d\t%0.5f\t%s' % (i, coefficient, var_name))
             if (i >= top): break
 
         return np.array(var_names)

@@ -128,7 +128,7 @@ class Driver:
         #classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
         #classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
         #classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
-        #classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
+        classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
         #classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
 
         #regression_models = []
@@ -174,13 +174,11 @@ class Driver:
             selected_header= None
 
         if self.HPC:
-            L.info('[HPC-Slave] Waiting for data from node %d' % self.comm.Get_rank(), force=True)
             L.info('[HPC-Master] Sending data to nodes for data from node %d' % self.comm.Get_rank())
             x_data = self.comm.bcast(x_data, root=0)
             classification_y_data = self.comm.bcast(classification_y_data, root=0)
             used_data = self.comm.bcast(used_data, root=0)
             selected_header = self.comm.bcast(selected_header, root=0)
-            L.info('[HPC-Slave] Got the data on node %d' % self.comm.Get_rank(), force=True)
 
         self.comm.Barrier()
         # Calculate the actual models

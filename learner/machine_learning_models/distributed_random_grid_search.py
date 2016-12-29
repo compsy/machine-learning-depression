@@ -55,18 +55,25 @@ class DistributedRandomGridSearch:
 
         best_model_and_score = self.comm.gather(best_model_and_score, root=0)
 
+        best_model = None
         if self.root:
             best_score, best_model = self.get_best_model(best_model_and_score)
             L.info('\tThese models had %d good models' % (len(best_model_and_score)))
             L.info('\tThe score of the best model was %0.3f' % best_score)
-        else:
-            best_model = None
 
         # Send the model to all clients
         best_model = self.comm.bcast(best_model, root=0)
         return best_model
 
     def fit_single_model(self, X, y, param_grid, iterations):
+        """
+        Fits a single model using randomized gridsearch.
+        :param X: The x data to train the model on
+        :param y: the outcome data to train the model on
+        :param param_grid: the parameter grid to use for fitting the model
+        :param iterations: the number of iterations to use for the randomization (how many steps it should try)
+        :return: the fitted model.
+        """
         L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, iterations), force=True)
         model = RandomizedSearchCV(
             estimator=self.skmodel,

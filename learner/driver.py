@@ -114,7 +114,7 @@ class Driver:
         # classification_models.append(KerasNnClassificationModel)
         classification_models.append({'model': ClassificationTreeModel, 'options': ['grid-search']})
         # classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
-        # classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
+        # classification_models.append({'modelL.info('The most predictive variables are:')': RandomForestClassificationModel, 'options': ['grid-search']})
         classification_models.append({'model': DummyClassifierModel, 'options': []})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
         #classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
@@ -147,30 +147,44 @@ class Driver:
         classification_y_names = np.array(['cids-followup-twice_depression'])
 
         #regression_y_names = np.array(['cids-followup-somScore'])
+        if self.comm.Get_rank() == 0 || !self.HPC:
+            participants = self.create_participants()
+            header, data = self.get_file_data(
+                'cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
 
-        participants = self.create_participants()
-        header, data = self.get_file_data(
-            'cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
+            # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
-        # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
+            #### Classification ####
+            # Perform feature selection algorithm
+            CsvExporter.export('exports/merged_all_dataframe%d.csv' % self.comm.Get_rank(), data, header)
 
-        #### Classification ####
-        # Perform feature selection algorithm
-        CsvExporter.export('exports/merged_all_dataframe%d.csv' % self.comm.Get_rank(), data, header)
+            coefficients = None
+            if (self.FEATURE_SELECTION):
+                coefficients = self.perform_feature_selection(
+                    data, header, x_names, classification_y_names, model_type='classification')
+                x_names = coefficients[0:, 0]
 
-        coefficients = None
-        if (self.FEATURE_SELECTION):
-            coefficients = self.perform_feature_selection(
-                data, header, x_names, classification_y_names, model_type='classification')
-            x_names = coefficients[0:, 0]
+            L.info('We are using %s as input.' % x_names)
+            x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
+                                                                                             classification_y_names)
+            DescriptivesTableCreator.generate_coefficient_descriptives_table(
+                x_data, x_names, coefficients, name='classification_descriptives')
+            self.variable_transformer = VariableTransformer(x_names)
+        else:
+            x_data=None
+            classification_y_data= None
+            used_data= None
+            selected_header= None
 
-        L.info('We are using %s as input.' % x_names)
-        x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
-                                                                                         classification_y_names)
+        L.info('[HPC-Slave] Waiting for data from node %d' % self.comm.Get_rank(), force=True)
+        L.info('[HPC-Master] Sending data to nodes for data from node %d' % self.comm.Get_rank())
 
-        DescriptivesTableCreator.generate_coefficient_descriptives_table(
-            x_data, x_names, coefficients, name='classification_descriptives')
-        self.variable_transformer = VariableTransformer(x_names)
+        x_data = self.comm.bcast(x_data, root=0)
+        classification_y_data = self.comm.bcast(classification_y_data, root=0)
+        used_data = self.comm.bcast(used_data, root=0)
+        selected_header = self.comm.bcast(selected_header, root=0)
+
+        L.info('[HPC-Slave] Got the data on node %d' % self.comm.Get_rank(), force=True)
 
         # Calculate the actual models
         model_runner = SyncModelRunner(classification_models, hpc=self.HPC)

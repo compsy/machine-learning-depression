@@ -43,17 +43,7 @@ class DistributedRandomGridSearch:
         my_data = []
         my_iterations = max(1,iterations) #round(iterations / len(self.param_grid))
         for param_grid in self.param_grid:
-            L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations), force=True)
-            model = RandomizedSearchCV(
-                estimator=self.skmodel,
-                param_distributions=param_grid,
-                n_jobs=-1,
-                verbose=0,
-                cv=self.cv,
-                n_iter=my_iterations)
-            L.info('Here we go, node %d starts calculating %s with param grid %s' % (self.rank, self.ml_model.given_name, param_grid), force=True)
-            model = model.fit(X=my_X, y=my_y)
-            L.info('Done training on node %d with %d iterations' % (self.rank, my_iterations), force=True)
+            model = self.fit_single_model(my_X, my_y, param_grid, my_iterations)
             my_data.append((model.best_score_, model.best_estimator_))
 
         best_model_and_score = self.get_best_model(my_data)
@@ -75,6 +65,21 @@ class DistributedRandomGridSearch:
         # Send the model to all clients
         best_model = self.comm.bcast(best_model, root=0)
         return best_model
+
+    def fit_single_model(self, X, y, param_grid, iterations):
+        L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, iterations), force=True)
+        model = RandomizedSearchCV(
+            estimator=self.skmodel,
+            param_distributions=param_grid,
+            n_jobs=-1,
+            verbose=0,
+            cv=self.cv,
+            n_iter=iterations)
+        L.info('Here we go, node %d starts calculating %s with param grid %s' % (self.rank, self.ml_model.given_name, param_grid), force=True)
+        model = model.fit(X=X, y=y)
+        L.info('Done training on node %d with %d iterations' % (self.rank, iterations), force=True)
+        return model
+
 
     def get_best_model(self, models):
         best_model = None

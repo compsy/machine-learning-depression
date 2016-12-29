@@ -20,7 +20,6 @@ def main(argv):
 
 if __name__ == '__main__':
     params = main(sys.argv[1:])
-    print(params)
     d= Driver(verbosity=0,
            hpc=params['use_hpc'],
            polynomial_features=params['use_polynomial'],

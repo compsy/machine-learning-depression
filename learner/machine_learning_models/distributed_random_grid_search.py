@@ -71,7 +71,6 @@ class DistributedRandomGridSearch:
         :param iterations: the number of iterations to use for the randomization (how many steps it should try)
         :return: the fitted model.
         """
-        L.info('Training from MPI model runner on node %d with %d iterations' % (self.rank, iterations), force=True)
         model = RandomizedSearchCV(
             estimator=self.skmodel,
             param_distributions=param_grid,
@@ -81,7 +80,6 @@ class DistributedRandomGridSearch:
             n_iter=iterations)
         L.info('Here we go, node %d starts calculating %s with param grid %s' % (self.rank, self.ml_model.given_name, param_grid), force=True)
         model = model.fit(X=X, y=y)
-        L.info('Done training on node %d with %d iterations' % (self.rank, iterations), force=True)
         return model
 
 

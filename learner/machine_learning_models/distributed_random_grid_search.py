@@ -39,9 +39,12 @@ class DistributedRandomGridSearch:
             [self.comm.send('go!', dest=node) for node in range(1, self.size - 1)]
         else:
             iterations = np.empty(self.size)
+            start = time.time()
             L.info('The waiting starts on node %d' % self.rank, force=True)
             data = self.comm.recv(source= 0)
-            L.info('Received %s from node 0 on node %d, lets go!' % (data, self.rank), force=True)
+            end = time.time()
+            timespent = (end - start)
+            L.info('Received %s from node 0 on node %d, it took %d seconds, lets go!' % (data, timespent, self.rank), force=True)
 
         L.info('Running %d iterations on %d nodes.' % (iterations[0], self.size))
         iterations = self.comm.scatter(iterations, root=0)

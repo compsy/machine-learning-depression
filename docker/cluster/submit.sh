@@ -2,7 +2,7 @@
 ######SBATCH --time=0:30:00
 ######SBATCH --nodes=6
 #SBATCH --time=4:00:00
-#SBATCH --nodes=2
+#SBATCH --nodes=1
 #####SBATCH --partition=short
 #SBATCH --ntasks-per-node=10
 #SBATCH --cpus-per-task=2

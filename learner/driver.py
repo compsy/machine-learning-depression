@@ -175,7 +175,7 @@ class Driver:
                 'used_data': used_data,
                 'selected_header': selected_header
             }
-            self.cacher.write_cache('training_data.pkl', merged_data)
+            self.cacher.write_cache(merged_data, 'training_data.pkl')
         else:
             merged_data = self.cacher.read_cache('training_data.pkl')
 

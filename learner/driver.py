@@ -14,11 +14,14 @@ from learner.data_transformers.variable_transformer import VariableTransformer
 from learner.factories.questionnaire_factory import QuestionnaireFactory
 from learner.machine_learning_models.feature_selector import FeatureSelector
 from learner.machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
+from learner.machine_learning_models.models.boosting_model import BoostingClassificationModel
 from learner.machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
 from learner.machine_learning_models.models.forest_model import RandomForestClassificationModel
 from learner.machine_learning_models.models.naive_bayes_model import GaussianNaiveBayesModel, BernoulliNaiveBayesModel
+from learner.machine_learning_models.models.regression_model import LogisticRegressionModel
 from learner.machine_learning_models.models.stochastic_gradient_descent_model import \
     StochasticGradientDescentClassificationModel
+from learner.machine_learning_models.models.support_vector_machine_model import SupportVectorClassificationModel
 from learner.machine_learning_models.models.tree_model import ClassificationTreeModel
 from learner.models import participant
 from learner.output_file_creators.descriptives_table_creator import DescriptivesTableCreator
@@ -94,9 +97,9 @@ class Driver:
         classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
         classification_models.append({'model': DummyClassifierModel, 'options': []})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        # classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
-        # classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
-        # classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
+        classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
+        classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
+        classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
         classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
         classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
 
@@ -105,11 +108,11 @@ class Driver:
         classification_models.append({'model': DummyClassifierModel, 'options': ['bagging']})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
         classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
-        # classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
+        classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
         # classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
-        # classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
-        # classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
-        # classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
+        classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
+        classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
+        classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
 
         # regression_models = []
         # regressionmodels.append(KerasNnModel)

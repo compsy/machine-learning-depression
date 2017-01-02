@@ -1,0 +1,8 @@
+#!/bin/bash
+git clone https://$GITHUB_TOKEN:x-oauth-basic@github.com/compsy/ICPE_machine_learning_workgroup.git app
+ln -s /usr/src/app/exports /exports
+ln -s /data /usr/src/app/data
+
+cd app
+python main.py
+

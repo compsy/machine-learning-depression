@@ -98,7 +98,7 @@ class Driver:
         classification_models.append({'model': DummyClassifierModel, 'options': []})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
         classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
-        classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
+        #classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
         classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
         classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
         classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})

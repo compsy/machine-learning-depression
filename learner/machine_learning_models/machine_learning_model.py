@@ -137,6 +137,8 @@ class MachineLearningModel:
         cache_name = self.short_name + '_hyperparameters'
 
         files = self.cacher.files_in_dir()
+
+        # Only use the hyperparameters of the for the present model
         files = list(filter(lambda x: cache_name in x, files))
 
         best_score = 0

@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --time=0:30:00
-#SBATCH --nodes=3
+#SBATCH --nodes=4
 #######SBATCH --time=4:30:00
 #######SBATCH --nodes=30
 #SBATCH --partition=short

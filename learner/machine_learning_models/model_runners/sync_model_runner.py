@@ -7,8 +7,7 @@ from learner.machine_learning_models.model_runner import ModelRunner
 class SyncModelRunner(ModelRunner):
 
     def __init__(self, models, hpc=False):
-        super().__init__(models)
-        self.hpc = hpc
+        super().__init__(models, hpc)
 
     def run_calculations(self, fabricated_models):
         result = True

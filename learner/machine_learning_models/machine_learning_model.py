@@ -4,6 +4,7 @@ from sklearn.preprocessing import Imputer
 from sklearn.cross_validation import train_test_split
 import numpy as np
 
+from learner.caching.object_cacher import ObjectCacher
 from learner.machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
 from learner.machine_learning_evaluation.f1_evaluation import F1Evaluation
 from learner.machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
@@ -16,7 +17,7 @@ from learner.machine_learning_models.randomized_search_mine import RandomizedSea
 
 class MachineLearningModel:
 
-    def __init__(self, x, y, x_names, y_names, model_type='models', verbosity=0, hpc=False, n_iter=10):
+    def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', verbosity=0, hpc=False, n_iter=10):
         self.x = x
         self.y = y
         self.x_names = x_names
@@ -32,10 +33,15 @@ class MachineLearningModel:
             VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(), RootMseEvaluation()
         ]
 
+        self.cacher = ObjectCacher('cache/mlmodels/')
         self.grid_search_type = 'random'
+
+        # Initialize the hyperparameters from cache, if available
+        self.hyperparameters = self.hot_start(hyperparameters)
+
         self.n_iter = n_iter
         if hpc:
-            self.n_iter = 10
+            self.n_iter = 10000
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
@@ -61,10 +67,19 @@ class MachineLearningModel:
         L.info('SCORES OF MODEL: ' + self.given_name)
         L.info('---------------------------------------------------------')
         self.print_accuracy()
+        train_prediction = self.skmodel.predict(self.x_train)
         prediction = self.skmodel.predict(self.x_test)
+        L.info('Training data performance')
+        for evaluator in self.evaluations:
+            if evaluator.problem_type == self.model_type:
+                evaluator.print_evaluation(self, self.y_train, train_prediction)
+
+        L.info('Test data performance')
         for evaluator in self.evaluations:
             if evaluator.problem_type == self.model_type:
                 evaluator.print_evaluation(self, self.y_test, prediction)
+
+        L.info(self.skmodel.get_params())
         L.info('---------------------------------------------------------')
 
     def train(self):
@@ -87,6 +102,9 @@ class MachineLearningModel:
         if isinstance(self.skmodel, GridSearchCV):
             self.skmodel = self.skmodel.best_estimator_
 
+        cache_name = self.short_name + '_hyperparameters.pkl'
+        self.cacher.write_cache(data=self.skmodel.get_params(), cache_name=cache_name)
+
         L.info('Fitted ' + self.given_name)
         return result
 
@@ -101,9 +119,19 @@ class MachineLearningModel:
     def variable_to_validate(self):
         return 'max_iter'
 
+    def hot_start(self, hyperparameters):
+        cache_name = self.short_name + '_hyperparameters.pkl'
+        if self.cacher.file_available(cache_name):
+            hyperparameters = self.cacher.read_cache(cache_name)
+        return hyperparameters
+
     @property
     def given_name(self):
-        return type(self).__name__
+        return type(self).__name__ + " Type: " + type(self.skmodel).__name__
+
+    @property
+    def short_name(self):
+        return type(self).__name__ + type(self.skmodel).__name__
 
     def grid_search(self, exhaustive_grid, random_grid):
         if self.hpc:

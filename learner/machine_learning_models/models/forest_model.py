@@ -7,9 +7,22 @@ import numpy as np
 
 class RandomForestClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
-        super().__init__(x, y, x_names, y_names, model_type='classification', verbosity=verbosity, **kwargs)
-        self.skmodel = RandomForestClassifier(n_estimators=5)
+    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+        hyperparameters = {
+            'n_estimators': 5,
+            'max_depth': 10,
+            'max_features': 'auto',
+        }
+        super().__init__(
+            x,
+            y,
+            x_names,
+            y_names,
+            hyperparameters=hyperparameters,
+            verbosity=verbosity,
+            model_type='classification',
+            **kwargs)
+        self.skmodel = RandomForestClassifier(**self.hyperparameters)
 
         if grid_search:
             parameter_grid = {
@@ -18,7 +31,7 @@ class RandomForestClassificationModel(MachineLearningModel):
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             random_parameter_grid = {
-                'n_estimators': randint(1, 100),
+                'n_estimators': randint(1, 10),
                 'max_depth': randint(1, 100),
                 'max_features': ['auto', 'sqrt', 'log2', None]
             }

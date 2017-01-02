@@ -7,6 +7,7 @@ from learner.machine_learning_models.grid_search_mine import GridSearchMine
 import random
 import math
 import numpy as np
+import time
 
 
 class DistributedRandomGridSearch:
@@ -34,48 +35,54 @@ class DistributedRandomGridSearch:
         else:
             iterations = np.empty(self.size)
 
-        self.comm.Barrier()
-
         L.info('Running %d iterations on %d nodes.' % (iterations[0], self.size))
         iterations = self.comm.scatter(iterations, root=0)
-        L.info('Created the iterations.')
-        L.info('Created the iterations (%d) .' % iterations)
 
         # Actual calculation
         my_data = []
-        my_iterations = round(iterations / len(self.param_grid))
+        my_iterations = max(1,iterations) #round(iterations / len(self.param_grid))
         for param_grid in self.param_grid:
-            L.info(
-                'Training from MPI model runner on node %d with %d iterations' % (self.rank, my_iterations), force=True)
-            model = RandomizedSearchCV(
-                estimator=self.skmodel,
-                param_distributions=param_grid,
-                n_jobs=-1,
-                verbose=0,
-                cv=self.cv,
-                n_iter=my_iterations)
-            model = model.fit(X=my_X, y=my_y)
-            L.info('Done training on node %d with %d iterations' % (self.rank, my_iterations), force=True)
+            model = self.fit_single_model(my_X, my_y, param_grid, my_iterations)
             my_data.append((model.best_score_, model.best_estimator_))
 
-        iterations = self.get_best_model(my_data)
+        best_model_and_score = self.get_best_model(my_data)
 
         self.comm.Barrier()
 
         L.info('!!Trained all models!!')
 
-        iterations = self.comm.gather(iterations, root=0)
+        best_model_and_score = self.comm.gather(best_model_and_score, root=0)
 
+        best_model = None
         if self.root:
-            best_score, best_model = self.get_best_model(iterations)
-            L.info('\tThese models had %d good models' % (len(iterations)))
+            best_score, best_model = self.get_best_model(best_model_and_score)
+            L.info('\tThese models had %d good models' % (len(best_model_and_score)))
             L.info('\tThe score of the best model was %0.3f' % best_score)
-        else:
-            best_model = None
 
         # Send the model to all clients
         best_model = self.comm.bcast(best_model, root=0)
         return best_model
+
+    def fit_single_model(self, X, y, param_grid, iterations):
+        """
+        Fits a single model using randomized gridsearch.
+        :param X: The x data to train the model on
+        :param y: the outcome data to train the model on
+        :param param_grid: the parameter grid to use for fitting the model
+        :param iterations: the number of iterations to use for the randomization (how many steps it should try)
+        :return: the fitted model.
+        """
+        model = RandomizedSearchCV(
+            estimator=self.skmodel,
+            param_distributions=param_grid,
+            n_jobs=-1,
+            verbose=0,
+            cv=self.cv,
+            n_iter=iterations)
+        L.info('Here we go, node %d starts calculating %s' % (self.rank, self.ml_model.given_name), force=True)
+        model = model.fit(X=X, y=y)
+        return model
+
 
     def get_best_model(self, models):
         best_model = None

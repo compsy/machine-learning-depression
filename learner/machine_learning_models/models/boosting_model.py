@@ -6,9 +6,29 @@ import numpy as np
 
 class BoostingModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
-        super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
-        self.skmodel = GradientBoostingRegressor(verbose=verbosity)
+    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+
+        hyperparameters = {
+            'n_estimators': 20,
+            'max_depth': 100,
+            'learning_rate': 0.1,
+            'min_samples_split': 5,
+            'min_samples_leaf': 5,
+            'max_features': 'auto',
+            'verbose': verbosity
+        }
+
+        super().__init__(
+            x,
+            y,
+            x_names,
+            y_names,
+            hyperparameters=hyperparameters,
+            verbosity=verbosity,
+            model_type='regression',
+            **kwargs)
+        self.skmodel = GradientBoostingRegressor(**self.hyperparameters)
+
         if grid_search:
             parameter_grid = {
                 'n_estimators': np.unique(np.round(np.logspace(0, 2, 20))),
@@ -32,9 +52,20 @@ class BoostingModel(MachineLearningModel):
 
 class BoostingClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search=True, **kwargs):
-        super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
-        self.skmodel = GradientBoostingClassifier(verbose=verbosity, n_estimators=1000, max_depth=5)
+    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+        hyperparameters = {'n_estimators': 1000, 'max_depth': 5, 'verbose': verbosity}
+
+        super().__init__(
+            x,
+            y,
+            x_names,
+            y_names,
+            hyperparameters=hyperparameters,
+            verbosity=verbosity,
+            model_type='classification',
+            **kwargs)
+        self.skmodel = GradientBoostingClassifier(**self.hyperparameters)
+
         if grid_search:
             parameter_grid = {
                 'n_estimators': np.unique(np.round(np.logspace(0, 2, 20))),

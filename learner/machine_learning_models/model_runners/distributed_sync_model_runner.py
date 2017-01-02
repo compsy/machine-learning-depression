@@ -34,7 +34,6 @@ class DistributedModelRunner(ModelRunner):
 
         data = self.comm.scatter(data, root=0)
 
-        #model = data
         my_data = []
         for model in data:
             L.info('Training from MPI model runner on node %d' % self.rank)

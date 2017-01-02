@@ -12,12 +12,14 @@ from learner.machine_learning_models.distributed_random_grid_search import Distr
 
 class TestMachineLearningModel:
     @pytest.fixture()
-    def subject(self):
+    def subject(self, mock_cacher):
         x = np.array([[1], [ 2 ], [ 3 ], [ 4 ], [ 5 ], [ 6 ], [ 7 ], [ 8 ], [ 9 ], [ 10 ]])
         y = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99])[::-1]
         x_names = np.array(['input'])
         y_names = np.array(['output'])
-        subject = MachineLearningModel(x, y, x_names, y_names)
+
+        subject = MachineLearningModel(x, y, x_names, y_names, hyperparameters=None)
+        subject.cacher = mock_cacher
         return subject
 
     # init
@@ -84,42 +86,48 @@ class TestMachineLearningModel:
             subject.train()
 
     def test_train_should_call_skmodel_fit_if_no_gridmodel_is_available(self, subject, monkeypatch, mock_skmodel):
+
         def fake_fit(X, y):
             assert np.array_equal(X, subject.x_train)
             assert np.array_equal(y, subject.y_train)
-            return 'fitting!'
+            mock_skmodel.fitting = 'fitting!'
+            return mock_skmodel
 
         monkeypatch.setattr(mock_skmodel, 'fit', fake_fit)
         subject.grid_model = None
         subject.skmodel = mock_skmodel
+
         result = subject.train()
-        assert result == 'fitting!'
+        assert result.fitting == 'fitting!'
 
     def test_train_should_call_gridmodel_fit_if_a_gridmodel_is_available(self, subject, monkeypatch, mock_skmodel):
         def fake_gridmodel_fit(X, y):
             assert np.array_equal(X, subject.x_train)
             assert np.array_equal(y, subject.y_train)
-            return 'fitting! gridmodel'
+            mock_skmodel.fitting = 'fitting! gridmodel'
+            return mock_skmodel
 
         monkeypatch.setattr(mock_skmodel, 'fit', fake_gridmodel_fit)
         subject.grid_model = mock_skmodel
         subject.skmodel = mock_skmodel
         result = subject.train()
-        assert result == 'fitting! gridmodel'
+        assert result.fitting == 'fitting! gridmodel'
 
     def test_train_should_only_update_the_result_if_it_came_from_the_master_node(self, subject, monkeypatch, mock_skmodel):
         def fake_fit(X, y):
             assert np.array_equal(X, subject.x_train)
             assert np.array_equal(y, subject.y_train)
-            return ['fitted', 'data']
+            # Add an attr so we now this object was returned
+            mock_skmodel.fitting = ['fitted', 'data']
+            return mock_skmodel
 
         monkeypatch.setattr(mock_skmodel, 'fit', fake_fit)
         subject.grid_model = None
         subject.skmodel = mock_skmodel
 
-        assert subject.skmodel != ['fitted', 'data']
-        result = subject.train()
-        assert subject.skmodel == ['fitted', 'data']
+        assert subject.skmodel.fitting != ['fitted', 'data']
+        subject.train()
+        assert subject.skmodel.fitting == ['fitted', 'data']
 
         def fake_fit_from_slave(x, y):
             assert np.array_equal(x, subject.x_train)
@@ -130,29 +138,36 @@ class TestMachineLearningModel:
         subject.grid_model = None
         subject.skmodel = mock_skmodel
 
-        assert subject.skmodel != ['fitted', 'data']
-        result = subject.train()
-        assert subject.skmodel != ['fitted', 'data']
+        assert subject.skmodel != False
+        subject.train()
+        assert subject.skmodel != False
 
-    def test_train_should_update_was_trained_if_it_was_trained(self, subject, mock_skmodel):
+    def test_train_should_update_was_trained_if_it_was_trained(self, subject, monkeypatch, mock_skmodel):
         subject.grid_model = None
         subject.skmodel = mock_skmodel
 
         assert subject.was_trained != True
-        result = subject.train()
+        subject.train()
         assert subject.was_trained == True
 
     def test_train_should_get_the_best_estimator_if_the_sk_model_is_a_gridsearchCV(self, monkeypatch, subject, mock_gridsearch_skmodel):
-        return_val = 'Fake best estimator'
-
-        mock_gridsearch_skmodel.best_estimator_ = return_val
+        return_val = 'best_estimator!'
 
         subject.grid_model = mock_gridsearch_skmodel
         subject.skmodel = mock_gridsearch_skmodel
-
-        assert subject.skmodel != return_val
         subject.train()
-        assert subject.skmodel == return_val
+        assert subject.skmodel.fitted == return_val
+
+    def test_train_should_cache_the_correct_file_and_data(self, subject, monkeypatch, mock_skmodel):
+        def fake_write_cache(data, cache_name):
+            assert data == {'a': 1}
+            assert cache_name == subject.short_name + '_hyperparameters.pkl'
+            return None
+
+        monkeypatch.setattr(subject.cacher, 'write_cache', fake_write_cache)
+        subject.skmodel = mock_skmodel
+        subject.train()
+
 
     # scoring
     def test_scoring_should_return_MSE_for_default_models(self, subject):
@@ -169,7 +184,6 @@ class TestMachineLearningModel:
             subject.scoring()
 
 
-
     # variable_to_validate
     def test_variable_to_validate_should_return_a_correct_string(self,
             subject):
@@ -178,8 +192,15 @@ class TestMachineLearningModel:
 
     # given_name
     def test_given_name_should_return_the_name_of_the_object(self, subject):
-        assert subject.given_name == type(subject).__name__
-        assert subject.given_name == 'MachineLearningModel'
+        subject.skmodel = MagicMock('skmodel')
+        assert subject.given_name == type(subject).__name__ + " Type: " + type(subject.skmodel).__name__
+        assert subject.given_name == 'MachineLearningModel Type: MagicMock'
+
+    # short_name
+    def test_short_name(self, subject):
+        subject.skmodel = MagicMock('skmodel')
+        assert subject.short_name == type(subject).__name__ + type(subject.skmodel).__name__
+        assert subject.short_name == 'MachineLearningModelMagicMock'
 
     # grid_search
     def test_grid_search_should_consider_the_hpc_parameter(self, subject):

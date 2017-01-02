@@ -1,4 +1,4 @@
-from scipy.stats._continuous_distns import halflogistic
+from scipy.stats import expon, halflogistic, uniform
 from sklearn.linear_model.stochastic_gradient import SGDClassifier
 import numpy as np
 from learner.machine_learning_models.machine_learning_model import MachineLearningModel
@@ -34,6 +34,7 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
 
         # Radial basis function grid
         grid = {
+            'loss':['log'],
             'alpha': np.logspace(-10, 3, 100),
             'average': [True, False],
             'class_weight': ['balanced', None],
@@ -43,12 +44,13 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
         }
 
         random_parameter_grid = {
+            'loss':['log'],
             'alpha': halflogistic(scale=.1),
             'average': [True, False],
             'class_weight': ['balanced', None],
             'epsilon': halflogistic(scale=.1),
             'eta0': halflogistic(scale=.1),
-            'l1_ratio': halflogistic(scale=.1)
+            'l1_ratio': uniform()
         }
 
         self.exhaustive_param_grid = [grid]

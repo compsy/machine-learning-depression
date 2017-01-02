@@ -21,7 +21,7 @@ class OutputGenerator():
         self.roc_curve_plotter = RocCurvePlotter()
         self.confusion_matrix_plotter = ConfusionMatrixPlotter()
         self.data_density_plotter = DataDensityPlotter()
-        self.cacher = ObjectCacher(MachineLearningModel.cache_directory)
+        self.cacher = ObjectCacher(MachineLearningModel.cache_directory())
 
     def create_output(self, classification_fabricated_models, y_data, used_data, selected_header, model_type='classification'):
 

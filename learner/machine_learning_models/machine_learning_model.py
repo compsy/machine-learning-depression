@@ -36,7 +36,7 @@ class MachineLearningModel:
             AccuracyEvaluation()
         ]
 
-        self.cacher = ObjectCacher(self.cache_directory)
+        self.cacher = ObjectCacher(self.cache_directory())
         self.grid_search_type = 'random'
 
         # Initialize the hyperparameters from cache, if available
@@ -45,8 +45,7 @@ class MachineLearningModel:
         self.n_iter = n_iter
 
     @staticmethod
-    @property
-    def cache_directory:
+    def cache_directory():
         return 'cache/mlmodels/'
 
     def remove_missings(self, data):

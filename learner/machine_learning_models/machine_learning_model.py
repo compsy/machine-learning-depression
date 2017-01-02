@@ -90,7 +90,7 @@ class MachineLearningModel:
         self.was_trained = True
         self.skmodel = skmodel
 
-    def train(self):
+    def train(self, cache_result = True):
         if (self.was_trained):
             return True
 
@@ -110,7 +110,7 @@ class MachineLearningModel:
         if isinstance(self.skmodel, GridSearchCV):
             self.skmodel = self.skmodel.best_estimator_
 
-        self.cache_model()
+        if cache_result: self.cache_model()
 
         L.info('Fitted ' + self.given_name)
         return result

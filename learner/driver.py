@@ -1,6 +1,3 @@
-import os.path
-import random
-
 import numpy as np
 from mpi4py import MPI
 from sklearn.preprocessing import normalize, scale
@@ -8,6 +5,7 @@ from sklearn.preprocessing import normalize, scale
 from learner.caching.object_cacher import ObjectCacher
 from learner.data_input.spss_reader import SpssReader
 from learner.data_output.csv_exporter import CsvExporter
+from learner.data_output.final_output_generator import OutputGenerator
 from learner.data_output.std_logger import L
 from learner.data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
 from learner.data_transformers.output_data_cleaner import OutputDataCleaner
@@ -15,17 +13,16 @@ from learner.data_transformers.output_data_splitter import OutputDataSplitter
 from learner.data_transformers.variable_transformer import VariableTransformer
 from learner.factories.questionnaire_factory import QuestionnaireFactory
 from learner.machine_learning_models.feature_selector import FeatureSelector
+from learner.machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
 from learner.machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
 from learner.machine_learning_models.models.forest_model import RandomForestClassificationModel
-from learner.machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
-from learner.machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
-from learner.models import participant
-from learner.output_file_creators.descriptives_table_creator import DescriptivesTableCreator
-from learner.output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 from learner.machine_learning_models.models.naive_bayes_model import GaussianNaiveBayesModel, BernoulliNaiveBayesModel
 from learner.machine_learning_models.models.stochastic_gradient_descent_model import \
     StochasticGradientDescentClassificationModel
-from learner.output_generator import OutputGenerator
+from learner.machine_learning_models.models.tree_model import ClassificationTreeModel
+from learner.models import participant
+from learner.output_file_creators.descriptives_table_creator import DescriptivesTableCreator
+from learner.output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
 
 class Driver:
@@ -80,7 +77,7 @@ class Driver:
         self.data_preprocessor_polynomial = DataPreprocessorPolynomial()
         self.cacher = ObjectCacher()
 
-        self.output_generator = OutputGenerator()
+        self.final_output_generator = OutputGenerator()
 
         self.feature_selector = FeatureSelector()
 
@@ -208,7 +205,7 @@ class Driver:
 
         # Plot an overview of the density estimations of the variables used in the actual model calculation.
         # DescriptivesTableCreator.create_data_descriptive_plots(participants, x_data, x_names)
-        self.output_generator.create_output(
+        self.final_output_generator.create_output(
             classification_fabricated_models,
             classification_y_data,
             used_data,
@@ -226,7 +223,7 @@ class Driver:
         feature_selection_model = StochasticGradientDescentClassificationModel(
             np.copy(usable_x_data), np.copy(usable_y_data), x_names, y_names, grid_search=False, verbosity=0,
             hpc=self.HPC)
-        feature_selection_model.train()
+        feature_selection_model.train(cache_result=False)
         coefficients = self.feature_selector.determine_best_variables(feature_selection_model)
         self.POLYNOMIAL_FEATURES = temp_pol_features
         return coefficients

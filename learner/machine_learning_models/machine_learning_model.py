@@ -46,7 +46,7 @@ class MachineLearningModel:
 
     @staticmethod
     @property
-    def cache_directory():
+    def cache_directory:
         return 'cache/mlmodels/'
 
     def remove_missings(self, data):
@@ -123,7 +123,7 @@ class MachineLearningModel:
             'skmodel': self.skmodel,
         }
         rand_id = uuid.uuid4()
-        cache_name = self.model_cache_name + '_' + str(rand_id) + '.pkl'
+        cache_name = self.model_cache_name +'_' + str(rand_id) + '.pkl'
         self.cacher.write_cache(data=data, cache_name=cache_name)
 
     def scoring(self):

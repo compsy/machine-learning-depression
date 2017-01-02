@@ -76,7 +76,7 @@ class DistributedRandomGridSearch:
             estimator=self.skmodel,
             param_distributions=param_grid,
             n_jobs=-1,
-            verbose=0,
+            verbose=1,
             cv=self.cv,
             n_iter=iterations)
         L.info('Here we go, node %d starts calculating %s' % (self.rank, self.ml_model.given_name), force=True)

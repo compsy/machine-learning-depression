@@ -110,8 +110,8 @@ class Driver:
         classification_models = []
         # classification_models.append(KerasNnClassificationModel)
         classification_models.append({'model': ClassificationTreeModel, 'options': ['grid-search']})
-        #classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
-        #classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
+        # classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
+        classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
         classification_models.append({'model': DummyClassifierModel, 'options': []})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
         # classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
@@ -121,7 +121,7 @@ class Driver:
         classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
 
         #classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
-        # classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
+        classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
         classification_models.append({'model': DummyClassifierModel, 'options': ['bagging']})
         classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
         classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})

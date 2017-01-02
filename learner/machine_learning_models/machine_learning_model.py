@@ -5,6 +5,7 @@ from sklearn.cross_validation import train_test_split
 import numpy as np
 
 from learner.caching.object_cacher import ObjectCacher
+from learner.machine_learning_evaluation.accuracy_evaluation import AccuracyEvaluation
 from learner.machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
 from learner.machine_learning_evaluation.f1_evaluation import F1Evaluation
 from learner.machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
@@ -13,7 +14,7 @@ from learner.machine_learning_evaluation.variance_evaluation import VarianceEval
 from learner.machine_learning_models.distributed_grid_search import DistributedGridSearch
 from learner.machine_learning_models.distributed_random_grid_search import DistributedRandomGridSearch
 from learner.machine_learning_models.randomized_search_mine import RandomizedSearchMine
-
+import uuid
 
 class MachineLearningModel:
 
@@ -30,7 +31,8 @@ class MachineLearningModel:
         self.was_trained = False
         self.hpc = hpc
         self.evaluations = [
-            VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(), RootMseEvaluation()
+            VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(), RootMseEvaluation(),
+            AccuracyEvaluation()
         ]
 
         self.cacher = ObjectCacher('cache/mlmodels/')
@@ -66,7 +68,6 @@ class MachineLearningModel:
         L.br()
         L.info('SCORES OF MODEL: ' + self.given_name)
         L.info('---------------------------------------------------------')
-        self.print_accuracy()
         train_prediction = self.skmodel.predict(self.x_train)
         prediction = self.skmodel.predict(self.x_test)
         L.info('Training data performance')
@@ -102,11 +103,19 @@ class MachineLearningModel:
         if isinstance(self.skmodel, GridSearchCV):
             self.skmodel = self.skmodel.best_estimator_
 
-        cache_name = self.short_name + '_hyperparameters.pkl'
-        self.cacher.write_cache(data=self.skmodel.get_params(), cache_name=cache_name)
+        self.cache_hyperparameters()
 
         L.info('Fitted ' + self.given_name)
         return result
+
+    def cache_hyperparameters(self):
+        data = {
+            'score': self.skmodel.score(self.x_test, self.y_test),
+            'hyperparameters': self.skmodel.get_params()
+        }
+        rand_id = uuid.uuid4()
+        cache_name = self.short_name + '_hyperparameters_' + str(rand_id) + '.pkl'
+        self.cacher.write_cache(data=data, cache_name=cache_name)
 
     def scoring(self):
         if (self.model_type == 'models'):
@@ -120,9 +129,23 @@ class MachineLearningModel:
         return 'max_iter'
 
     def hot_start(self, hyperparameters):
-        cache_name = self.short_name + '_hyperparameters.pkl'
-        if self.cacher.file_available(cache_name):
-            hyperparameters = self.cacher.read_cache(cache_name)
+        """
+        Function to load the hyperparameters from cache. If no hyperparameter cache exists, it returns the defaults.
+        :param hyperparameters: the default hyperparameters
+        :return: either the default parameters, or the cached parameters (which are by definition better than the default)
+        """
+        cache_name = self.short_name + '_hyperparameters'
+
+        files = self.cacher.files_in_dir()
+        files = list(filter(lambda x: cache_name in x, files))
+
+        best_score = 0
+        for filename in files:
+            cached_params = self.cacher.read_cache(filename)
+            if cached_params['score'] > best_score:
+                best_score = cached_params['score']
+                hyperparameters = cached_params['hyperparameters']
+
         return hyperparameters
 
     @property
@@ -140,8 +163,8 @@ class MachineLearningModel:
                     ml_model=self, estimator=self.skmodel, param_grid=exhaustive_grid, cv=10)
                 return self.grid_model
             elif (self.grid_search_type == 'random'):
-                self.grid_model = DistributedRandomGridSearch(
-                    ml_model=self, estimator=self.skmodel, param_grid=random_grid, cv=10, n_iter=self.n_iter)
+                self.grid_model = RandomizedSearchMine(
+                    estimator=self.skmodel, param_distributions=random_grid, cv=10, n_iter=self.n_iter)
                 return self.grid_model
         else:
             if (self.grid_search_type == 'exhaustive'):

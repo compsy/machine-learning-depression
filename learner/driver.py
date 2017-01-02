@@ -169,10 +169,10 @@ class Driver:
         # Calculate the actual models
         model_runner = SyncModelRunner(classification_models, hpc=self.HPC)
 
-        classification_fabricated_models = self.fabricate_models(x_data, classification_y_data, x_names, classification_y_names, verbosity=self.VERBOSITY)
+        classification_fabricated_models = model_runner.fabricate_models(x_data, classification_y_data, x_names, classification_y_names, verbosity=self.VERBOSITY)
 
         # Train all models, the fitted parameters will be saved inside the models
-        is_root, classification_trained_models = self.run_calculations(fabricated_models=classification_fabricated_models)
+        model_runner.run_calculations(fabricated_models=classification_fabricated_models)
 
 
 

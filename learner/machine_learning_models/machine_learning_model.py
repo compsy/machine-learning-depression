@@ -16,9 +16,9 @@ from learner.machine_learning_models.distributed_random_grid_search import Distr
 from learner.machine_learning_models.randomized_search_mine import RandomizedSearchMine
 import uuid
 
-class MachineLearningModel:
 
-    def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', verbosity=0, hpc=False, n_iter=10):
+class MachineLearningModel:
+    def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', verbosity=0, hpc=False, n_iter=100):
         self.x = x
         self.y = y
         self.x_names = x_names
@@ -26,6 +26,7 @@ class MachineLearningModel:
         self.grid_model = None
         self.skmodel = None
         self.test_size = 0.1
+        self.cv = 10
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
@@ -35,15 +36,18 @@ class MachineLearningModel:
             AccuracyEvaluation()
         ]
 
-        self.cacher = ObjectCacher('cache/mlmodels/')
+        self.cacher = ObjectCacher(self.cache_directory)
         self.grid_search_type = 'random'
 
         # Initialize the hyperparameters from cache, if available
         self.hyperparameters = self.hot_start(hyperparameters)
 
         self.n_iter = n_iter
-        if hpc:
-            self.n_iter = 100
+
+    @staticmethod
+    @property
+    def cache_directory():
+        return 'cache/mlmodels/'
 
     def remove_missings(self, data):
         imp = Imputer(missing_values='NaN', strategy='mean', axis=0)
@@ -83,6 +87,10 @@ class MachineLearningModel:
         L.info(self.skmodel.get_params())
         L.info('---------------------------------------------------------')
 
+    def inject_trained_model(self, skmodel):
+        self.was_trained = True
+        self.skmodel = skmodel
+
     def train(self):
         if (self.was_trained):
             return True
@@ -103,18 +111,19 @@ class MachineLearningModel:
         if isinstance(self.skmodel, GridSearchCV):
             self.skmodel = self.skmodel.best_estimator_
 
-        self.cache_hyperparameters()
+        self.cache_model()
 
         L.info('Fitted ' + self.given_name)
         return result
 
-    def cache_hyperparameters(self):
+    def cache_model(self):
         data = {
             'score': self.skmodel.score(self.x_test, self.y_test),
-            'hyperparameters': self.skmodel.get_params()
+            'hyperparameters': self.skmodel.get_params(),
+            'skmodel': self.skmodel,
         }
         rand_id = uuid.uuid4()
-        cache_name = self.short_name + '_hyperparameters_' + str(rand_id) + '.pkl'
+        cache_name = self.model_cache_name + '_' + str(rand_id) + '.pkl'
         self.cacher.write_cache(data=data, cache_name=cache_name)
 
     def scoring(self):
@@ -134,7 +143,7 @@ class MachineLearningModel:
         :param hyperparameters: the default hyperparameters
         :return: either the default parameters, or the cached parameters (which are by definition better than the default)
         """
-        cache_name = self.short_name + '_hyperparameters'
+        cache_name = self.model_cache_name
 
         files = self.cacher.files_in_dir()
 
@@ -158,29 +167,25 @@ class MachineLearningModel:
     def short_name(self):
         return type(self).__name__ + type(self.skmodel).__name__
 
+    @property
+    def model_cache_name(self):
+        return self.short_name + '_hyperparameters'
+
     def grid_search(self, exhaustive_grid, random_grid):
-        if self.hpc:
-            if (self.grid_search_type == 'exhaustive'):
+        if (self.grid_search_type == 'random'):
+            self.skmodel = RandomizedSearchMine(
+                estimator=self.skmodel, param_distributions=random_grid, cv=self.cv, n_iter=self.n_iter)
+            return self.skmodel
+
+        elif (self.grid_search_type == 'exhaustive'):
+            if self.hpc:
                 self.grid_model = DistributedGridSearch(
-                    ml_model=self, estimator=self.skmodel, param_grid=exhaustive_grid, cv=10)
+                    ml_model=self, estimator=self.skmodel, param_grid=exhaustive_grid, cv=self.cv)
                 return self.grid_model
-            elif (self.grid_search_type == 'random'):
-                self.grid_model = RandomizedSearchMine(
-                    estimator=self.skmodel, param_distributions=random_grid, cv=10, n_iter=self.n_iter)
-                return self.grid_model
-        else:
-            if (self.grid_search_type == 'exhaustive'):
+
+            else:
                 self.skmodel = GridSearchCV(
-                    estimator=self.skmodel, param_grid=exhaustive_grid, n_jobs=-1, verbose=1, cv=10)
-                return self.skmodel
-            elif (self.grid_search_type == 'random'):
-                self.skmodel = RandomizedSearchMine(
-                    estimator=self.skmodel,
-                    param_distributions=random_grid,
-                    n_jobs=-1,
-                    verbose=1,
-                    cv=10,
-                    n_iter=self.n_iter)
+                    estimator=self.skmodel, param_grid=exhaustive_grid, n_jobs=-1, verbose=1, cv=self.cv)
                 return self.skmodel
 
         raise NotImplementedError('Gridsearch type: ' + self.grid_search_type + ' not implemented')

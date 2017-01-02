@@ -8,28 +8,15 @@ from sklearn.preprocessing import normalize, scale
 from learner.caching.object_cacher import ObjectCacher
 from learner.data_input.spss_reader import SpssReader
 from learner.data_output.csv_exporter import CsvExporter
-from learner.data_output.latex_table_exporter import LatexTableExporter
-from learner.data_output.plotters.actual_vs_prediction_plotter import ActualVsPredictionPlotter
-from learner.data_output.plotters.confusion_matrix_plotter import ConfusionMatrixPlotter
-from learner.data_output.plotters.data_density_plotter import DataDensityPlotter
-from learner.data_output.plotters.learning_curve_plotter import LearningCurvePlotter
-from learner.data_output.plotters.roc_curve_plotter import RocCurvePlotter
-from learner.data_output.plotters.validation_curve_plotter import ValidationCurvePlotter
 from learner.data_output.std_logger import L
 from learner.data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
 from learner.data_transformers.output_data_cleaner import OutputDataCleaner
 from learner.data_transformers.output_data_splitter import OutputDataSplitter
 from learner.data_transformers.variable_transformer import VariableTransformer
 from learner.factories.questionnaire_factory import QuestionnaireFactory
-from learner.machine_learning_evaluation.true_false_ratio_evaluation import TrueFalseRationEvaluation
 from learner.machine_learning_models.feature_selector import FeatureSelector
-from learner.machine_learning_models.models.boosting_model import BoostingClassificationModel
 from learner.machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
 from learner.machine_learning_models.models.forest_model import RandomForestClassificationModel
-from learner.machine_learning_models.models.naive_bayes_model import NaiveBayesModel
-from learner.machine_learning_models.models.regression_model import ElasticNetModel, LogisticRegressionModel
-from learner.machine_learning_models.models.support_vector_machine_model import SupportVectorRegressionModel, \
-    SupportVectorClassificationModel
 from learner.machine_learning_models.models.tree_model import RegressionTreeModel, ClassificationTreeModel
 from learner.machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
 from learner.models import participant
@@ -38,6 +25,7 @@ from learner.output_file_creators.single_output_frame_creator import SingleOutpu
 from learner.machine_learning_models.models.naive_bayes_model import GaussianNaiveBayesModel, BernoulliNaiveBayesModel
 from learner.machine_learning_models.models.stochastic_gradient_descent_model import \
     StochasticGradientDescentClassificationModel
+from learner.output_generator import OutputGenerator
 
 
 class Driver:
@@ -84,14 +72,6 @@ class Driver:
         self.FORCE_NO_CACHING = force_no_caching
         self.FEATURE_SELECTION = feature_selection
 
-        # # Create objects to perform image plotting
-        self.actual_vs_prediction_plotter = ActualVsPredictionPlotter()
-        self.learning_curve_plotter = LearningCurvePlotter()
-        self.validation_curve_plotter = ValidationCurvePlotter()
-        self.roc_curve_plotter = RocCurvePlotter()
-        self.confusion_matrix_plotter = ConfusionMatrixPlotter()
-        self.data_density_plotter = DataDensityPlotter()
-
         # create several objects to do data processing
         self.spss_reader = SpssReader()
         self.single_output_frame_creator = SingleOutputFrameCreator()
@@ -99,6 +79,8 @@ class Driver:
         self.output_data_splitter = OutputDataSplitter()
         self.data_preprocessor_polynomial = DataPreprocessorPolynomial()
         self.cacher = ObjectCacher()
+
+        self.output_generator = OutputGenerator()
 
         self.feature_selector = FeatureSelector()
 
@@ -186,8 +168,13 @@ class Driver:
 
         # Calculate the actual models
         model_runner = SyncModelRunner(classification_models, hpc=self.HPC)
-        is_root, classification_fabricated_models = model_runner.calculate(
-            x_data, classification_y_data, x_names, classification_y_names, verbosity=self.VERBOSITY)
+
+        classification_fabricated_models = self.fabricate_models(x_data, classification_y_data, x_names, classification_y_names, verbosity=self.VERBOSITY)
+
+        # Train all models, the fitted parameters will be saved inside the models
+        is_root, classification_trained_models = self.run_calculations(fabricated_models=classification_fabricated_models)
+
+
 
         ############################################################################################################
         #### Regression ####
@@ -221,7 +208,7 @@ class Driver:
 
         # Plot an overview of the density estimations of the variables used in the actual model calculation.
         # DescriptivesTableCreator.create_data_descriptive_plots(participants, x_data, x_names)
-        self.create_output(
+        self.output_generator.create_output(
             classification_fabricated_models,
             classification_y_data,
             used_data,
@@ -293,36 +280,6 @@ class Driver:
         # Logtransform the data
         # self.variable_transformer.log_transform(x_data, 'aids-somScore')
         return x_data
-
-    def create_output(self, models, y_data, used_data, selected_header, model_type='classification'):
-        if model_type == 'classification':
-            true_false_ration_evaluation = TrueFalseRationEvaluation(pos_label=0)
-            train_trues, train_outcome, test_trues, test_outcome = true_false_ration_evaluation \
-                .evaluate(y_train=y_data, y_test=models[0].y_test)
-            L.info('In the training set, %d participants (%0.2f percent) is true' % (train_trues, train_outcome))
-            L.info('In the test set, %d participants (%0.2f percent) is true' % (test_trues, test_outcome))
-
-            # Generate learning curve plots
-            self.roc_curve_plotter.plot(models)
-
-        # Export all used data to a CSV file
-        CsvExporter.export('exports/merged_' + model_type + '_dataframe.csv', used_data, selected_header)
-
-        for model in models:
-            1
-            # learning_curve_plotter.plot(model)
-            # validation_curve_plotter.plot(model, variable_to_validate='n_estimators')
-
-        for model in models:
-            model.print_evaluation()
-            y_train_pred = model.skmodel.predict(model.x_train)
-            y_test_pred = model.skmodel.predict(model.x_test)
-
-            if model_type == 'classification':
-                self.confusion_matrix_plotter.plot(model, model.y_test, y_test_pred)
-            else:
-                self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train,
-                                                            y_train_pred)
 
     def create_participants(self, participant_file="N1_A100R.sav"):
         data = self.spss_reader.read_file(participant_file)

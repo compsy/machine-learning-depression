@@ -16,12 +16,6 @@ class ModelRunner:
     def run_calculations(self, fabricated_models):
         raise NotImplementedError('This function needs to be implemented in the subclass')
 
-    def calculate(self, x, y, x_names, y_names, verbosity):
-        fabricated_models = self.fabricate_models(x, y, x_names, y_names, verbosity)
-
-        # Train all models, the fitted parameters will be saved inside the models
-        return self.run_calculations(fabricated_models=fabricated_models)
-
     def fabricate_models(self, x, y, x_names, y_names, verbosity):
         """
         Fabricates (that is, creates instances) of the models in self.models. Furthermore, it will enable gridsearch

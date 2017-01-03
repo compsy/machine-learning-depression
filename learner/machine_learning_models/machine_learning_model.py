@@ -107,22 +107,24 @@ class MachineLearningModel:
         if result != False: self.skmodel = result
         self.was_trained = True
 
+        # We have to store the model name before we actually set the best estimator
+        model_name = self.model_cache_name
         if isinstance(self.skmodel, GridSearchCV):
             self.skmodel = self.skmodel.best_estimator_
 
-        if cache_result: self.cache_model()
+        if cache_result: self.cache_model(model_name=model_name)
 
         L.info('Fitted ' + self.given_name)
         return result
 
-    def cache_model(self):
+    def cache_model(self, model_name=MachineLearningModel.model_cache_name):
         data = {
             'score': self.skmodel.score(self.x_test, self.y_test),
             'hyperparameters': self.skmodel.get_params(),
             'skmodel': self.skmodel,
         }
         rand_id = uuid.uuid4()
-        cache_name = self.model_cache_name +'_' + str(rand_id) + '.pkl'
+        cache_name = model_name +'_' + str(rand_id) + '.pkl'
         self.cacher.write_cache(data=data, cache_name=cache_name)
 
     def scoring(self):

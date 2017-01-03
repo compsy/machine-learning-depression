@@ -172,7 +172,7 @@ class Driver:
         classification_fabricated_models = model_runner.fabricate_models(x_data, classification_y_data, x_names, classification_y_names, verbosity=self.VERBOSITY)
 
         # Train all models, the fitted parameters will be saved inside the models
-        model_runner.run_calculations(fabricated_models=classification_fabricated_models)
+        # model_runner.run_calculations(fabricated_models=classification_fabricated_models)
 
 
 

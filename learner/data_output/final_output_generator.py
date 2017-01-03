@@ -37,6 +37,8 @@ class OutputGenerator():
             skmodel = None
             for filename in files:
                 cached_params = self.cacher.read_cache(filename)
+                if cached_params['skmodel'] is None:
+                    next
                 if cached_params['score'] > best_score:
                     best_score = cached_params['score']
                     skmodel = cached_params['skmodel']
@@ -44,6 +46,8 @@ class OutputGenerator():
             if skmodel is not None:
                 model.inject_trained_model(skmodel=skmodel)
                 models.append(model)
+            else:
+                L.info('File %s has none' % cache_name)
 
         if model_type == 'classification':
             true_false_ration_evaluation = TrueFalseRationEvaluation(pos_label=0)

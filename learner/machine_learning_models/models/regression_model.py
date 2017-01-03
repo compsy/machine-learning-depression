@@ -40,8 +40,8 @@ class LogisticRegressionModel(MachineLearningModel):
             'C': 0.1,
             'verbose': verbosity,
             'random_state': 42,
-            'tol': 0.000001,
-            'max_iter': 100000
+            'n_jobs': -1,
+            'tol': 0.0001,
         }
         super().__init__(
             x,

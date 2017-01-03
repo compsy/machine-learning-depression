@@ -38,7 +38,7 @@ class OutputGenerator():
             for filename in files:
                 cached_params = self.cacher.read_cache(filename)
                 if cached_params['skmodel'] is None:
-                    next
+                    continue
                 if cached_params['score'] > best_score:
                     best_score = cached_params['score']
                     skmodel = cached_params['skmodel']

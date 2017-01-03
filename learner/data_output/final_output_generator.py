@@ -41,8 +41,9 @@ class OutputGenerator():
                     best_score = cached_params['score']
                     skmodel = cached_params['skmodel']
 
-            model.inject_trained_model(skmodel=skmodel)
-            models.append(model)
+            if skmodel is not None:
+                model.inject_trained_model(skmodel=skmodel)
+                models.append(model)
 
         if model_type == 'classification':
             true_false_ration_evaluation = TrueFalseRationEvaluation(pos_label=0)

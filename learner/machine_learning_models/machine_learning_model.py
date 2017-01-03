@@ -117,7 +117,8 @@ class MachineLearningModel:
         L.info('Fitted ' + self.given_name)
         return result
 
-    def cache_model(self, model_name=MachineLearningModel.model_cache_name):
+    def cache_model(self, model_name=None):
+        model_name = MachineLearningModel.model_cache_name if model_name is None else model_name
         data = {
             'score': self.skmodel.score(self.x_test, self.y_test),
             'hyperparameters': self.skmodel.get_params(),

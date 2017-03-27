@@ -7,6 +7,11 @@ class ObjectCacher():
     def __init__(self, directory='cache/'):
         self.directory = directory
 
+        # Create the directory if it does not yet exist
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+
     def get_dirred_file(self, cache_name):
         return self.directory + cache_name
 

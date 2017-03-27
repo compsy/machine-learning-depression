@@ -29,12 +29,18 @@ RUN pip install -r test-requirements.txt
 RUN echo 'options(repos=structure(c(CRAN="http://cran.cnr.berkeley.edu/")))' > ~/.Rprofile
 RUN R CMD BATCH install-packages.R
 
+# Setup AWS
+RUN mkdir ~/.aws
+RUN echo '[default]\\nregion = eu-west-1' >> ~/.aws/config
+
 ########################################
 # Preferably add stuff after this line #
 ########################################
 
-# Create a directory for the exports
+
+# Create a directory for the exports and the cache
 VOLUME /exports
+VOLUME /cache
 
 # Copy the data
 COPY data /data
@@ -53,4 +59,5 @@ RUN mkdir -p /usr/src
 RUN mv /tmp/run_on_docker /usr/src
 
 WORKDIR /usr/src
+ENTRYPOINT [ "./run_on_docker"]
 CMD [ "./run_on_docker"]

@@ -18,7 +18,7 @@ from learner.machine_learning_models.randomized_search_mine import RandomizedSea
 import uuid
 
 class MachineLearningModel:
-    def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', verbosity=0, hpc=False, n_iter=100):
+    def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', verbosity=0, n_iter=100):
         self.x = x
         self.y = y
         self.x_names = x_names
@@ -30,9 +30,12 @@ class MachineLearningModel:
         self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
-        self.hpc = hpc
         self.evaluations = [
-            VarianceEvaluation(), F1Evaluation(), MseEvaluation(), ExplainedVarianceEvaluation(), RootMseEvaluation(),
+            VarianceEvaluation(),
+            F1Evaluation(),
+            MseEvaluation(),
+            ExplainedVarianceEvaluation(),
+            RootMseEvaluation(),
             AccuracyEvaluation()
         ]
 
@@ -106,7 +109,7 @@ class MachineLearningModel:
             result = self.skmodel.fit(X=self.x_train, y=self.y_train)
 
         # This check is needed whenever we run using MPI
-        if result != False: self.skmodel = result
+        self.skmodel = result
         self.was_trained = True
 
         # We have to store the model name before we actually set the best estimator
@@ -156,6 +159,8 @@ class MachineLearningModel:
 
         best_score = 0
         for filename in files:
+            import pdb
+            pdb.set_trace()
             cached_params = self.cacher.read_cache(filename)
             if cached_params['score'] > best_score:
                 best_score = cached_params['score']
@@ -169,11 +174,11 @@ class MachineLearningModel:
 
     @property
     def short_name(self):
-        return type(self).__name__ + type(self.skmodel).__name__
+        return type(self).__name__# + type(self.skmodel).__name__
 
     @property
     def model_cache_name(self):
-        return self.short_name + '_hyperparameters'
+        return self.short_name
 
     def grid_search(self, exhaustive_grid, random_grid):
         if (self.grid_search_type == 'random'):
@@ -182,15 +187,9 @@ class MachineLearningModel:
             return self.skmodel
 
         elif (self.grid_search_type == 'exhaustive'):
-            if self.hpc:
-                self.grid_model = DistributedGridSearch(
-                    ml_model=self, estimator=self.skmodel, param_grid=exhaustive_grid, cv=self.cv)
-                return self.grid_model
-
-            else:
-                self.skmodel = GridSearchCV(
-                    estimator=self.skmodel, param_grid=exhaustive_grid, n_jobs=-1, verbose=1, cv=self.cv)
-                return self.skmodel
+            self.skmodel = GridSearchCV(
+                estimator=self.skmodel, param_grid=exhaustive_grid, n_jobs=-1, verbose=1, cv=self.cv)
+            return self.skmodel
 
         raise NotImplementedError('Gridsearch type: ' + self.grid_search_type + ' not implemented')
 

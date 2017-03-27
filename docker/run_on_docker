@@ -1,8 +1,28 @@
 #!/bin/bash
-git clone https://$GITHUB_TOKEN:x-oauth-basic@github.com/compsy/ICPE_machine_learning_workgroup.git app
+if [ -z ${GITHUB_BRANCH+x} ]; then BRANCH=master; fi
+
+git clone -b $GITHUB_BRANCH https://$GITHUB_TOKEN:x-oauth-basic@github.com/compsy/ICPE_machine_learning_workgroup.git app
 ln -s /usr/src/app/exports /exports
 ln -s /data /usr/src/app/data
+ln -s /cache /usr/src/app/cache
 
 cd app
-python main.py
 
+echo "aws_access_key_id = $AWS_ACCESS_KEY_ID" >> ~/.aws/config
+echo "aws_secret_access_key = $AWS_ACCESS_KEY_ID" >> ~/.aws/config
+
+python main.py $#
+
+
+# docker run --it --rm \
+  # -v cache:/cache
+  # -v data:/data
+  # -v app:/app
+  # -v exports:/exports
+  # -e "AWS_key="\
+  # -e "AWS_secret="\
+  # -e "GITHUB_TOKEN="\
+  # -e "GITHUB_BRANCH="\
+  # --name ML
+  # -t train
+  # frbl/ml

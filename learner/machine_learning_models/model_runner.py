@@ -41,7 +41,6 @@ class ModelRunner:
                 x_names,
                 y_names,
                 verbosity=verbosity,
-                hpc=self.hpc,
                 grid_search=has_grid_search)
 
             if ('bagging' in self.model_options[i]):

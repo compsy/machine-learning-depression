@@ -81,7 +81,7 @@ class Driver:
 
         self.feature_selector = FeatureSelector()
 
-        # Input columns 
+        # Input columns
         # Retrieve the names of the variables to use in the prediction
         self.x_names = QuestionnaireFactory.construct_x_names()
 
@@ -90,7 +90,6 @@ class Driver:
         self.classification_y_names = np.array(['cids-followup-twice_depression'])
 
 
-        
         ##### Define the models we should run
         self.classification_models = []
         # self.classification_models.append(KerasNnClassificationModel)
@@ -98,8 +97,8 @@ class Driver:
         # self.classification_models.append(
             # {'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
         # self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
-        # self.classification_models.append({'model': DummyClassifierModel, 'options': []})
-        # self.classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        self.classification_models.append({'model': DummyClassifierModel, 'options': []})
+        self.classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
         # self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
         # #self.classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
         self.classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})

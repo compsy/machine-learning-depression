@@ -2,7 +2,6 @@ from sklearn.grid_search import GridSearchCV, ParameterGrid
 import os.path
 from queue import Queue
 from learner.data_output.std_logger import L
-from mpi4py import MPI
 from learner.machine_learning_models.grid_search_mine import GridSearchMine
 import random
 import math

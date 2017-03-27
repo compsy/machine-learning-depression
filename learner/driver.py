@@ -1,6 +1,7 @@
 import numpy as np
-from mpi4py import MPI
 from sklearn.preprocessing import normalize, scale
+import matplotlib.pyplot as plt
+import os
 
 from learner.caching.object_cacher import ObjectCacher
 from learner.data_input.spss_reader import SpssReader
@@ -27,7 +28,6 @@ from learner.models import participant
 from learner.output_file_creators.descriptives_table_creator import DescriptivesTableCreator
 from learner.output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
-
 class Driver:
     """ The main class that runs the application
     Parameters
@@ -52,20 +52,17 @@ class Driver:
     feature_selection : perform feature selection using elasticnet
     """
 
-    def __init__(self, verbosity, hpc, polynomial_features, normalize, scale, force_no_caching, feature_selection):
+    def __init__(self, verbosity, polynomial_features, normalize, scale, force_no_caching, feature_selection):
         # Set a seed for reproducability
         # random.seed(42)
-        self.comm = MPI.COMM_WORLD
-
-        if hpc:
-            print('[HPC] Node %d initialized.' % self.comm.Get_rank())
 
         # setup logging
-        L.setup(hpc)
+        L.setup(False)
+        if(os.environ.get('AWS_CONFIG_FILE') == None):
+            L.warn('No AWS config location set! using the default!!!')
 
         # Define global variables
         self.VERBOSITY = verbosity
-        self.HPC = hpc
         self.POLYNOMIAL_FEATURES = polynomial_features
         self.NORMALIZE = normalize
         self.SCALE = scale
@@ -78,41 +75,47 @@ class Driver:
         self.output_data_cleaner = OutputDataCleaner()
         self.output_data_splitter = OutputDataSplitter()
         self.data_preprocessor_polynomial = DataPreprocessorPolynomial()
-        self.cacher = ObjectCacher()
+        self.cacher = ObjectCacher(directory='cache/')
 
         self.final_output_generator = OutputGenerator()
 
         self.feature_selector = FeatureSelector()
 
-    def run(self):
+        # Input columns 
         # Retrieve the names of the variables to use in the prediction
-        x_names = QuestionnaireFactory.construct_x_names()
+        self.x_names = QuestionnaireFactory.construct_x_names()
 
+        # Output columns
+        # self.classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
+        self.classification_y_names = np.array(['cids-followup-twice_depression'])
+
+
+        
         ##### Define the models we should run
-        classification_models = []
-        # classification_models.append(KerasNnClassificationModel)
-        classification_models.append({'model': ClassificationTreeModel, 'options': ['grid-search']})
-        classification_models.append(
-            {'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
-        classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
-        classification_models.append({'model': DummyClassifierModel, 'options': []})
-        classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
-        #classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
-        classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
-        classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
-        classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
+        self.classification_models = []
+        # self.classification_models.append(KerasNnClassificationModel)
+        self.classification_models.append({'model': ClassificationTreeModel, 'options': ['grid-search']})
+        # self.classification_models.append(
+            # {'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': DummyClassifierModel, 'options': []})
+        # self.classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        # self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
+        # #self.classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
+        self.classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
 
-        classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
-        classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
-        classification_models.append({'model': DummyClassifierModel, 'options': ['bagging']})
-        classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
-        classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
-        classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
-        # classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
-        classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
-        classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
-        classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': DummyClassifierModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
+        # # self.classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
 
         # regression_models = []
         # regressionmodels.append(KerasNnModel)
@@ -122,44 +125,40 @@ class Driver:
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
 
-        # Output columns
-        # classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
-        classification_y_names = np.array(['cids-followup-twice_depression'])
+    def run_setcreator(self):
+        participants = self.create_participants()
+        header, data = self.get_file_data(
+            'cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
 
-        # regression_y_names = np.array(['cids-followup-somScore'])
-        if self.comm.Get_rank() == 0 or not self.HPC and not self.cacher.file_available('training_data.pkl'):
-            participants = self.create_participants()
-            header, data = self.get_file_data(
-                'cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
+        # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
-            # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
+        #### Classification ####
+        # Perform feature selection algorithm
+        CsvExporter.export('exports/merged_all_dataframe.csv', data, header)
 
-            #### Classification ####
-            # Perform feature selection algorithm
-            CsvExporter.export('exports/merged_all_dataframe.csv', data, header)
+        coefficients = None
+        if (self.FEATURE_SELECTION):
+            coefficients = self.perform_feature_selection(
+                data, header, self.x_names, self.classification_y_names, model_type='classification')
+            self.x_names = coefficients[0:, 0]
 
-            coefficients = None
-            if (self.FEATURE_SELECTION):
-                coefficients = self.perform_feature_selection(
-                    data, header, x_names, classification_y_names, model_type='classification')
-                x_names = coefficients[0:, 0]
+        L.info('We are using %s as input.' % self.x_names)
+        x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, self.x_names,
+                                                                                            self.classification_y_names)
+        DescriptivesTableCreator.generate_coefficient_descriptives_table(
+            x_data, self.x_names, coefficients, name='classification_descriptives')
+        self.variable_transformer = VariableTransformer(self.x_names)
 
-            L.info('We are using %s as input.' % x_names)
-            x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
-                                                                                             classification_y_names)
-            DescriptivesTableCreator.generate_coefficient_descriptives_table(
-                x_data, x_names, coefficients, name='classification_descriptives')
-            self.variable_transformer = VariableTransformer(x_names)
+        merged_data = {
+            'x_data': x_data,
+            'classification_y_data': classification_y_data,
+            'used_data': used_data,
+            'selected_header': selected_header
+        }
+        self.cacher.write_cache(merged_data, 'training_data.pkl')
 
-            merged_data = {
-                'x_data': x_data,
-                'classification_y_data': classification_y_data,
-                'used_data': used_data,
-                'selected_header': selected_header
-            }
-            self.cacher.write_cache(merged_data, 'training_data.pkl')
-        else:
-            merged_data = self.cacher.read_cache('training_data.pkl')
+    def run_evaluator(self):
+        merged_data = self.cacher.read_cache('training_data.pkl')
 
         x_data = merged_data['x_data']
         classification_y_data = merged_data['classification_y_data']
@@ -167,55 +166,35 @@ class Driver:
         selected_header = merged_data['selected_header']
 
         # Calculate the actual models
-        model_runner = SyncModelRunner(classification_models, hpc=self.HPC)
+        model_runner = SyncModelRunner(self.classification_models)
 
-        classification_fabricated_models = model_runner.fabricate_models(x_data, classification_y_data, x_names, classification_y_names, verbosity=self.VERBOSITY)
+        classification_fabricated_models = model_runner.fabricate_models(x_data, classification_y_data, self.x_names, self.classification_y_names, verbosity=self.VERBOSITY)
 
-        # Train all models, the fitted parameters will be saved inside the models
-        # model_runner.run_calculations(fabricated_models=classification_fabricated_models)
-
-
-
-        ############################################################################################################
-        #### Regression ####
-        # Reset the names to the original set
-        # x_names = QuestionnaireFactory.construct_x_names()
-        # Perform feature selection algorithm
-        # coefficients = None
-        # if (self.FEATURE_SELECTION):
-        #     coefficients = self.perform_feature_selection(
-        #         data, header, x_names, regression_y_names, model_type='regression')
-        #     x_names = coefficients[0:, 0]
-
-        # L.info('We are using %s as input.' % x_names)
-        # x_data, regression_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names,
-        #                                                                             regression_y_names)
-
-        # DescriptivesTableCreator.generate_coefficient_descriptives_table(
-        #    x_data, x_names, coefficients, name='regression_descriptives')
-        # self.variable_transformer = VariableTransformer(x_names)
-
-        # Calculate the actual models
-        # model_runner = SyncModelRunner(regression_models, hpc=self.HPC)
-        # is_root, regression_fabricated_models = model_runner.calculate(
-        #    x_data, regression_y_data, x_names, regression_y_names, verbosity=self.VERBOSITY)
-        ############################################################################################################
-
-        # Kill all worker nodes
-        if self.HPC and MPI.COMM_WORLD.Get_rank() > 0:
-            L.info('Byebye from node %d' % MPI.COMM_WORLD.Get_rank(), force=True)
-            exit(0)
-
-        # Plot an overview of the density estimations of the variables used in the actual model calculation.
-        # DescriptivesTableCreator.create_data_descriptive_plots(participants, x_data, x_names)
         self.final_output_generator.create_output(
             classification_fabricated_models,
             classification_y_data,
             used_data,
             selected_header,
             model_type='classification')
-        # self.create_output(
-        #    regression_fabricated_models, regression_y_data, used_data, selected_header, model_type='regression')
+
+    def run_trainer(self):
+        if not self.cacher.file_available('training_data.pkl', add_dir=True):
+            raise FileNotFoundError('Training data not found!')
+
+        merged_data = self.cacher.read_cache('training_data.pkl')
+
+        x_data = merged_data['x_data']
+        classification_y_data = merged_data['classification_y_data']
+        used_data = merged_data['used_data']
+        selected_header = merged_data['selected_header']
+
+        # Calculate the actual models
+        model_runner = SyncModelRunner(self.classification_models)
+
+        classification_fabricated_models = model_runner.fabricate_models(x_data, classification_y_data, self.x_names, self.classification_y_names, verbosity=self.VERBOSITY)
+
+        # TODO: ??? SHOULD WE STILL DO THIS? Train all models, the fitted parameters will be saved inside the models
+        model_runner.run_calculations(fabricated_models=classification_fabricated_models)
 
     def perform_feature_selection(self, data, header, x_names, y_names, model_type):
         temp_pol_features = self.POLYNOMIAL_FEATURES
@@ -224,8 +203,8 @@ class Driver:
         L.info('Performing feature selection for ' + model_type)
 
         feature_selection_model = StochasticGradientDescentClassificationModel(
-            np.copy(usable_x_data), np.copy(usable_y_data), x_names, y_names, grid_search=False, verbosity=0,
-            hpc=self.HPC)
+            np.copy(usable_x_data), np.copy(usable_y_data), x_names, y_names, grid_search=False, verbosity=0
+            )
         feature_selection_model.train(cache_result=False)
         coefficients = self.feature_selector.determine_best_variables(feature_selection_model)
         self.POLYNOMIAL_FEATURES = temp_pol_features

@@ -27,7 +27,7 @@ class RegressionTreeModel(MachineLearningModel):
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             random_parameter_grid = {
-                'max_depth': halflogistic(scale=100),
+                'max_depth': logser(p=.99).rvs(),
                 'max_features': ['auto', 'sqrt', 'log2', None]
             }
             self.grid_search([parameter_grid], [random_parameter_grid])

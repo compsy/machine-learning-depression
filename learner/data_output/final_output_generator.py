@@ -56,7 +56,7 @@ class OutputGenerator():
             L.info('In the training set, %d participants (%0.2f percent) is true' % (train_trues, train_outcome))
             L.info('In the test set, %d participants (%0.2f percent) is true' % (test_trues, test_outcome))
 
-            # Generate learning curve plots
+            # Generate roc curve plots
             self.roc_curve_plotter.plot(models)
 
         # Export all used data to a CSV file

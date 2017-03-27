@@ -5,6 +5,7 @@ from sklearn.cross_validation import train_test_split
 import numpy as np
 
 from learner.caching.object_cacher import ObjectCacher
+from learner.caching.s3_cacher import S3Cacher
 from learner.machine_learning_evaluation.accuracy_evaluation import AccuracyEvaluation
 from learner.machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
 from learner.machine_learning_evaluation.f1_evaluation import F1Evaluation
@@ -15,7 +16,6 @@ from learner.machine_learning_models.distributed_grid_search import DistributedG
 from learner.machine_learning_models.distributed_random_grid_search import DistributedRandomGridSearch
 from learner.machine_learning_models.randomized_search_mine import RandomizedSearchMine
 import uuid
-
 
 class MachineLearningModel:
     def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', verbosity=0, hpc=False, n_iter=100):
@@ -36,7 +36,9 @@ class MachineLearningModel:
             AccuracyEvaluation()
         ]
 
-        self.cacher = ObjectCacher(self.cache_directory())
+        # Setup the cacher
+        self.cacher = S3Cacher(directory=self.cache_directory())
+
         self.grid_search_type = 'random'
 
         # Initialize the hyperparameters from cache, if available
@@ -176,7 +178,7 @@ class MachineLearningModel:
     def grid_search(self, exhaustive_grid, random_grid):
         if (self.grid_search_type == 'random'):
             self.skmodel = RandomizedSearchMine(
-                estimator=self.skmodel, param_distributions=random_grid, cv=self.cv, n_iter=self.n_iter)
+                estimator=self.skmodel, param_distributions=random_grid, n_jobs=-1, cv=self.cv, n_iter=self.n_iter)
             return self.skmodel
 
         elif (self.grid_search_type == 'exhaustive'):

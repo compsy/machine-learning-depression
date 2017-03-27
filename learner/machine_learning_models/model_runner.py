@@ -30,6 +30,7 @@ class ModelRunner:
         """
         L.info('Fabricating models')
         created_models = []
+
         for i, model in enumerate(self.models):
             # Get the options for the current model
             has_grid_search = True if ('grid-search' in self.model_options[i]) else False
@@ -47,6 +48,8 @@ class ModelRunner:
                 current_model.skmodel = self.use_bagging(current_model, verbosity)
 
             created_models.append(current_model)
+
+        L.info('Done fabricating')
         return created_models
 
     def use_bagging(self, model, verbosity):

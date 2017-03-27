@@ -1,4 +1,5 @@
 from sklearn.grid_search import BaseSearchCV, ParameterSampler
+from learner.data_output.std_logger import L
 
 
 class RandomizedSearchMine(BaseSearchCV):
@@ -36,8 +37,10 @@ class RandomizedSearchMine(BaseSearchCV):
     def fit(self, X, y=None):
         fitted_models = []
         for param_set in self.param_distributions:
-            sampled_params = ParameterSampler(param_set, self.n_iter, random_state=self.random_state)
+            sampled_params = list(ParameterSampler(param_set, self.n_iter, random_state=self.random_state))
+            L.info('Running on a param_set with %d iterations' % self.n_iter)
             fitted_model = self._fit(X, y, sampled_params)
+            L.info('Finished running on a param_set with %d iterations' % self.n_iter)
             fitted_models.append((fitted_model.best_score_, fitted_model.best_estimator_))
         fitted_models.sort(reverse=True, key=lambda tup: tup[0])
         return fitted_models[0][1]

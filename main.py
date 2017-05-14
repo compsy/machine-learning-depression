@@ -12,6 +12,7 @@ def main(argv):
     use_force_no_caching = False
     use_feature_selection = False
     used_type = None
+    print(opts)
     for opt, arg in opts:
         if opt == '-h':
             print('python main.py -t <createset|train|evaluate>  -p (use polynomial features) -n (bust cache) -f (feature selection)')
@@ -50,12 +51,12 @@ if __name__ == '__main__':
 
     # Run the create dataset operation
     if params['used_type'] == 'createset':
+        if not params['use_feature_selection'] and params['use_polynomial']:
+            warning('You have not done feature selection, but you do use polynomial features. This is will take some time.')
         d.run_setcreator()
 
     # Run the evaluation operation
     elif params['used_type'] == 'evaluate':
-        if not params['use_feature_selection'] and params['use_polynomial']:
-            warning('You have not done feature selection, but you do use polynomial features. This is will take some time.')
         d.run_evaluator()
 
     # Run the training operation

@@ -15,6 +15,7 @@ from learner.machine_learning_evaluation.variance_evaluation import VarianceEval
 from learner.machine_learning_models.distributed_grid_search import DistributedGridSearch
 from learner.machine_learning_models.distributed_random_grid_search import DistributedRandomGridSearch
 from learner.machine_learning_models.randomized_search_mine import RandomizedSearchMine
+from learner.machine_learning_models.model_runner import ModelRunner
 import uuid
 
 class MachineLearningModel:
@@ -159,12 +160,17 @@ class MachineLearningModel:
 
         best_score = 0
         for filename in files:
-            import pdb
-            pdb.set_trace()
             cached_params = self.cacher.read_cache(filename)
             if cached_params['score'] > best_score:
                 best_score = cached_params['score']
                 hyperparameters = cached_params['hyperparameters']
+
+        # If base_estimator is in the hyperparameters, this means we are dealing with a bagged model. 
+        # Bag it again here.
+        if 'base_estimator' in hyperparameters:
+            prefix = 'base_estimator__'
+            keys = filter(None.__ne__, map(lambda key: (None if(not key.startswith(prefix)) else key), hyperparameters.keys()))
+            hyperparameters =  {key[len(prefix):]: hyperparameters[key] for key in keys}
 
         return hyperparameters
 

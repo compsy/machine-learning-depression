@@ -1,17 +1,17 @@
 #!/bin/bash
-if [ -z ${GITHUB_BRANCH+x} ]; then BRANCH=master; fi
+#git clone -b $GITHUB_BRANCH https://$GITHUB_TOKEN:x-oauth-basic@github.com/compsy/ICPE_machine_learning_workgroup.git app
 
-git clone -b $GITHUB_BRANCH https://$GITHUB_TOKEN:x-oauth-basic@github.com/compsy/ICPE_machine_learning_workgroup.git app
-ln -s /usr/src/app/exports /exports
+ln -s /app /usr/src/app
+ln -s /exports /usr/src/app/exports
 ln -s /data /usr/src/app/data
 ln -s /cache /usr/src/app/cache
 
 cd app
 
 echo "aws_access_key_id = $AWS_ACCESS_KEY_ID" >> ~/.aws/config
-echo "aws_secret_access_key = $AWS_ACCESS_KEY_ID" >> ~/.aws/config
+echo "aws_secret_access_key = $AWS_SECRET_ACCESS_KEY" >> ~/.aws/config
 
-python main.py $#
+time python main.py $*
 
 
 # docker run --it --rm \
@@ -19,10 +19,10 @@ python main.py $#
   # -v data:/data
   # -v app:/app
   # -v exports:/exports
-  # -e "AWS_key="\
-  # -e "AWS_secret="\
+  # -e "AWS_ACCESS_KEY_ID="\
+  # -e "AWS_SECRET_ACCESS_KEY="\
   # -e "GITHUB_TOKEN="\
-  # -e "GITHUB_BRANCH="\
-  # --name ML
+  # -e "GITHUB_BRANCH=fb-other-random-search"\
+  # --name icpe-machine-learning
   # -t train
   # frbl/ml

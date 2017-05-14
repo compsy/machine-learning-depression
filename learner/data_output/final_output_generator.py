@@ -26,8 +26,6 @@ class OutputGenerator():
     def create_output(self, classification_fabricated_models, y_data, used_data, selected_header, model_type='classification'):
         models = []
         for model in classification_fabricated_models:
-            import pdb
-            pdb.set_trace()
             cache_name = model.model_cache_name
             files = self.cacher.files_in_dir()
 
@@ -55,8 +53,6 @@ class OutputGenerator():
 
         if model_type == 'classification':
             true_false_ration_evaluation = TrueFalseRationEvaluation(pos_label=0)
-            import pdb
-            pdb.set_trace()
             train_trues, train_outcome, test_trues, test_outcome = true_false_ration_evaluation \
                 .evaluate(y_train=y_data, y_test=models[0].y_test)
             L.info('In the training set, %d participants (%0.2f percent) is true' % (train_trues, train_outcome))

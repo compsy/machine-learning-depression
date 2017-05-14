@@ -1,8 +1,5 @@
 from sklearn.ensemble.bagging import BaggingRegressor, BaggingClassifier
 
-from learner.machine_learning_models.machine_learning_model import MachineLearningModel
-
-
 class BaggingModel:
 
     @staticmethod
@@ -11,7 +8,7 @@ class BaggingModel:
             base_estimator=skmodel, verbose=verbosity, n_estimators=100, bootstrap=True, max_samples=100)
 
 
-class BaggingClassificationModel(MachineLearningModel):
+class BaggingClassificationModel:
 
     @staticmethod
     def use_bagging(verbosity, skmodel):

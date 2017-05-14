@@ -10,6 +10,13 @@ cp -r ../data/* data/
 cp -r ../requirements.txt .
 cp -r ../test-requirements.txt .
 cp -r ../install-packages.R .
+
+mkdir app
+cp -r ../main.py app
+cp -r ../learner app/learner
+
+mkdir cache
+cp -r ../cache/* cache
 #cp -r ../setup.py .
 #cp -r ../setup.cfg .
 #cp -r ../driver.py .
@@ -18,4 +25,8 @@ cp -r ../install-packages.R .
 docker build -t frbl/icpe-machine-learning .
 #docker push frbl/icpe-machine-learning
 
-rm -r data requirements.txt install-packages.R test-requirements.txt
+rm -r data requirements.txt install-packages.R test-requirements.txt app cache
+docker run --rm -it \
+  -e 'AWS_ACCESS_KEY_ID=AKIAJAEV7SM5C4HLNPMA'\
+  -e 'AWS_SECRET_ACCESS_KEY=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'\
+  --name ml frbl/icpe-machine-learning -t evaluate

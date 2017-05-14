@@ -44,14 +44,15 @@ class ModelRunner:
                 grid_search=has_grid_search)
 
             if ('bagging' in self.model_options[i]):
-                current_model.skmodel = self.use_bagging(current_model, verbosity)
+                current_model.skmodel = ModelRunner.use_bagging(current_model, verbosity)
 
             created_models.append(current_model)
 
         L.info('Done fabricating')
         return created_models
 
-    def use_bagging(self, model, verbosity):
+    @staticmethod
+    def use_bagging(model, verbosity):
         current_skmodel = None
         if (model.model_type == 'regression'):
             current_skmodel = BaggingModel

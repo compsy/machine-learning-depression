@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import collections
 
 
@@ -42,4 +43,5 @@ class SingleOutputFrameCreator:
             # print(participant_array)
             result[index] = participant_array
 
-        return dataFrame(data=result, header=header)
+        return pd.DataFrame(result, columns=header)
+

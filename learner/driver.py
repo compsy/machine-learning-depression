@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from sklearn.preprocessing import normalize, scale
 import matplotlib.pyplot as plt
 import os
@@ -123,81 +124,89 @@ class Driver:
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
 
-    def run_setcreator(self):
+    def run_setcreator(self, test_set_portion = 0.2):
+        test_set_id = 1
         participants = self.create_participants()
-        header, data = self.get_file_data(
+        data = self.get_file_data(
             'cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
 
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
         #### Classification ####
         # Perform feature selection algorithm
-        CsvExporter.export('exports/merged_all_dataframe.csv', data, header)
+        CsvExporter.export('exports/merged_all_dataframe.csv', data)
 
         coefficients = None
         if (self.FEATURE_SELECTION):
             coefficients = self.perform_feature_selection(
-                data, header, self.x_names, self.classification_y_names, model_type='classification')
+                data, self.x_names, self.classification_y_names, model_type='classification')
             self.x_names = coefficients[0:, 0]
 
         L.info('We are using %s as input.' % self.x_names)
-        x_data, classification_y_data, used_data, selected_header = self.get_usable_data(data, header, self.x_names,
-                                                                                            self.classification_y_names)
+        x_data, y_data, used_data, selected_header = self.get_usable_data(
+                data, self.x_names, self.classification_y_names)
+
+
+        n = x_data.shape[0]
+        split_set =  np.random.binomial(test_set_id, test_set_portion, n)
+        x_data['test'] = split_set
+        y_data['test'] = split_set
+
         DescriptivesTableCreator.generate_coefficient_descriptives_table(
-            x_data, self.x_names, coefficients, name='classification_descriptives')
+            x_data, coefficients, name='classification_descriptives')
+
         self.variable_transformer = VariableTransformer(self.x_names)
 
-        merged_data = {
-            'x_data': x_data,
-            'classification_y_data': classification_y_data,
+        # Create test and training set
+        training_data = {
+            'x_data': x_data.loc[x_data['test'] != test_set_id].drop('test', 1),
+            'y_data': y_data.loc[y_data['test'] != test_set_id].drop('test', 1),
             'used_data': used_data,
             'selected_header': selected_header
         }
-        self.cacher.write_cache(merged_data, 'training_data.pkl')
+
+        test_data = {
+            'x_data': x_data.loc[x_data['test'] == test_set_id].drop('test', 1),
+            'y_data': y_data.loc[y_data['test'] == test_set_id].drop('test', 1),
+            'used_data': used_data,
+            'selected_header': selected_header
+        }
+
+        self.cacher.write_cache(training_data, 'training_data.pkl')
+        self.cacher.write_cache(test_data, 'test_data.pkl')
 
     def run_evaluator(self):
-        merged_data = self.cacher.read_cache('training_data.pkl')
-
-        x_data = merged_data['x_data']
-        classification_y_data = merged_data['classification_y_data']
-        used_data = merged_data['used_data']
-        selected_header = merged_data['selected_header']
+        x_data, y_data, used_data, selected_header = self.load_data(filename = 'test_data.pkl')
 
         # Calculate the actual models
         model_runner = SyncModelRunner(self.classification_models)
-
-        classification_fabricated_models = model_runner.fabricate_models(x_data, classification_y_data, self.x_names, self.classification_y_names, verbosity=self.VERBOSITY)
+        classification_fabricated_models = model_runner.fabricate_models(x_data, y_data, self.x_names, self.classification_y_names, verbosity=self.VERBOSITY)
 
         self.final_output_generator.create_output(
             classification_fabricated_models,
-            classification_y_data,
+            y_data,
             used_data,
             selected_header,
+            output_type = 'test',
             model_type='classification')
 
     def run_trainer(self):
         if not self.cacher.file_available('training_data.pkl', add_dir=True):
             raise FileNotFoundError('Training data not found!')
-
-        merged_data = self.cacher.read_cache('training_data.pkl')
-
-        x_data = merged_data['x_data']
-        classification_y_data = merged_data['classification_y_data']
-        used_data = merged_data['used_data']
-        selected_header = merged_data['selected_header']
+        x_data, y_data, used_data, selected_header = self.load_data(filename = 'training_data.pkl')
 
         # Calculate the actual models
         model_runner = SyncModelRunner(self.classification_models)
 
-        classification_fabricated_models = model_runner.fabricate_models(x_data, classification_y_data, self.x_names, self.classification_y_names, verbosity=self.VERBOSITY)
+        classification_fabricated_models = model_runner.fabricate_models(x_data, y_data, self.x_names, self.classification_y_names, verbosity=self.VERBOSITY)
 
         # TODO: ??? SHOULD WE STILL DO THIS? Train all models, the fitted parameters will be saved inside the models
         model_runner.run_calculations(fabricated_models=classification_fabricated_models)
 
-    def perform_feature_selection(self, data, header, x_names, y_names, model_type):
+    def perform_feature_selection(self, data, x_names, y_names, model_type):
         temp_pol_features = self.POLYNOMIAL_FEATURES
         self.POLYNOMIAL_FEATURES = False
-        usable_x_data, usable_y_data, used_data, selected_header = self.get_usable_data(data, header, x_names, y_names)
+        usable_x_data, usable_y_data, used_data, selected_header = self.get_usable_data(data, x_names, y_names)
         L.info('Performing feature selection for ' + model_type)
 
         feature_selection_model = StochasticGradientDescentClassificationModel(
@@ -208,15 +217,28 @@ class Driver:
         self.POLYNOMIAL_FEATURES = temp_pol_features
         return coefficients
 
-    def get_usable_data(self, data, header, x_names, y_names):
+    def load_data(self, filename):
+        training_data = self.cacher.read_cache(filename)
+
+        x_data = training_data['x_data']
+        y_data = training_data['y_data']
+        used_data = training_data['used_data']
+        selected_header = training_data['selected_header']
+        return(x_data, y_data, used_data, selected_header)
+
+
+    def get_usable_data(self, data, x_names, y_names):
         L.info('Loaded data with %d rows and %d columns' % np.shape(data))
         L.info('We will use %s as outcome.' % y_names)
 
         selected_header = np.append(x_names, y_names)
 
         # Select the data we will use in the present experiment (used_data = both x and y)
-        used_data = self.output_data_splitter.split(data, header, selected_header)
+        used_data = data[selected_header]
+
         # Determine which of this set are not complete
+        # import pdb
+        # pdb.set_trace()
         incorrect_rows = self.output_data_cleaner.find_incomplete_rows(used_data, selected_header)
 
         L.info('From the loaded data %d rows are incomplete and will be removed!' % len(incorrect_rows))
@@ -225,11 +247,12 @@ class Driver:
         used_data = self.output_data_cleaner.clean(used_data, incorrect_rows)
 
         # Split the dataframe into a x and y dataset.
-        x_data = self.output_data_splitter.split(used_data, selected_header, x_names)
-        y_data = self.output_data_splitter.split(used_data, selected_header, y_names)
+        x_data = used_data[x_names]
+        y_data = used_data[y_names]
+
         # y_data = output_data_cleaner.clean(self.output_data_splitter.split(data, header, Y_NAMES), incorrect_rows)
 
-        x_data = self.transform_variables(x_data, x_names)
+        x_data = self.transform_variables(x_data)
         if np.shape(x_data)[1] is not len(x_names):
             L.warn('The dimension of the X names data is not equal to the dimension of the data')
             L.warn('The dimensions are: %s and %d' % (np.shape(x_data)[1], len(x_names)))
@@ -238,21 +261,26 @@ class Driver:
         L.info("The values to predict have the shape: %s %s" % np.shape(y_data))
 
         # Convert ydata 2d matrix (x * 1) to 1d array (x). Needed for the classifcation things
-        y_data = np.ravel(y_data)
         return (x_data, y_data, used_data, selected_header)
 
-    def transform_variables(self, x_data, x_names):
+    def transform_variables(self, x_data):
+        # Save the names (they will be removed by scikitlearn)
+        names = list(x_data)
+
         if self.NORMALIZE:
             L.info('We are also normalizing the features')
             x_data = normalize(x_data, norm='l2', axis=1)
+            x_data = pd.DataFrame(x_data, columns=names)
+
 
         if self.SCALE:
             L.info('We are also scaling the features')
             x_data = scale(x_data)
+            x_data = pd.DataFrame(x_data, columns=names)
 
         if self.POLYNOMIAL_FEATURES:
             L.info('We are also adding polynomial features')
-            x_data = self.data_preprocessor_polynomial.process(x_data, x_names)
+            x_data = self.data_preprocessor_polynomial.process(x_data)
 
         # Logtransform the data
         # self.variable_transformer.log_transform(x_data, 'aids-somScore')
@@ -275,17 +303,13 @@ class Driver:
 
     def get_file_data(self, file_name, participants, force_to_not_use_cache=False):
         header, data = (None, None)
-        header_file_name = file_name + '_data_header.pkl'
         data_file_name = file_name + '_data.pkl'
         L.info('Converting data to single dataframe...')
-        if not force_to_not_use_cache and self.cacher.file_available(header_file_name) and self.cacher.file_available(
-            data_file_name):
-            header = self.cacher.read_cache(header_file_name)
+        if not force_to_not_use_cache and self.cacher.file_available(data_file_name):
             data = self.cacher.read_cache(data_file_name)
         else:
             questionnaires = QuestionnaireFactory.construct_questionnaires(self.spss_reader)
-            data, header = (self.single_output_frame_creator.create_single_frame(questionnaires, participants))
-            self.cacher.write_cache(header, header_file_name)
+            data = (self.single_output_frame_creator.create_single_frame(questionnaires, participants))
             self.cacher.write_cache(data, data_file_name)
 
-        return (header, data)
+        return data

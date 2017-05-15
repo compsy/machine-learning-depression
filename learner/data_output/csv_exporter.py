@@ -1,11 +1,10 @@
-import numpy as np
+import pandas as pd
 from learner.data_output.std_logger import L
 
 
 class CsvExporter:
 
     @staticmethod
-    def export(filename, data, header):
-        string_header = ','.join(header)
+    def export(filename, data):
         L.info('Exporting data to: ' + filename)
-        np.savetxt(filename, data, delimiter=',', header=string_header, fmt='%s')
+        data.to_csv(path_or_buf = filename, sep=',')

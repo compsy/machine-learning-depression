@@ -7,7 +7,7 @@ from learner.data_output.std_logger import L
 class DescriptivesTableCreator():
 
     @staticmethod
-    def generate_coefficient_descriptives_table(x_data, x_names, coefficients, name):
+    def generate_coefficient_descriptives_table(x_data, coefficients, name):
         """
         Creates a latex table of the coefficients as provided in the function. Usually these coefficients are generated
         using elastic net of some sort.
@@ -21,6 +21,8 @@ class DescriptivesTableCreator():
         header.append('Feature')
         header.append('SD')
         header.append('Mean')
+        x_names = list(x_data)
+
 
         ranks = list(range(1, 26))
         types = []

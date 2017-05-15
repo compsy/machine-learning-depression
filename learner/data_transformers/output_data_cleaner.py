@@ -6,13 +6,13 @@ from learner.data_output.std_logger import L
 class OutputDataCleaner(DataTransformer):
 
     def clean(self, data, incorrect_indices):
-        return np.delete(data, incorrect_indices, axis=0)
+        return data.drop(incorrect_indices)
 
     def find_incomplete_rows(self, data, header, print_info=True):
         incorrect_indices = []
         missing_value_hash = {}
         missing_indices = {}
-        for index, row in enumerate(data):
+        for index, row in data.iterrows():
 
             # If a row contains NA's, add the pident to a list
             zippd = list(zip(header, np.isnan(row)))

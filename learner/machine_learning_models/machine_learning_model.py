@@ -21,14 +21,11 @@ import uuid
 class MachineLearningModel:
     def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', verbosity=0, n_iter=100):
         self.x = x
-        self.y = y
+        self.y = np.ravel(y) #convert the 1d matrix to a vector
         self.x_names = x_names
         self.y_names = y_names
-        self.grid_model = None
         self.skmodel = None
-        self.test_size = 0.1
         self.cv = 10
-        self.x_train, self.x_test, self.y_train, self.y_test = self.train_test_data()
         self.model_type = model_type
         self.was_trained = False
         self.evaluations = [
@@ -59,35 +56,22 @@ class MachineLearningModel:
         imp.fit(data)
         return imp.transform(data)
 
-    def train_test_data(self):
-        """
-        Splits dataset up into train and test set
-        """
-        x_train, x_test, y_train, y_test = train_test_split(self.x, self.y, test_size=self.test_size, random_state=42)
-        return (x_train, x_test, y_train, y_test)
-
     def print_accuracy(self):
         """
-        Prints the accuracy of a model using crossvalidation on the test set
+        Prints the accuracy of a model using crossvalidation on the data set
         """
-        scores = self.skmodel.score(self.x_test, self.y_test)
+        scores = self.skmodel.score(self.x, self.y)
         L.info("%s - Accuracy: %0.2f (+/- %0.2f)" % (self.given_name, scores.mean(), scores.std() * 2))
 
     def print_evaluation(self):
         L.br()
         L.info('SCORES OF MODEL: ' + self.given_name)
         L.info('---------------------------------------------------------')
-        train_prediction = self.skmodel.predict(self.x_train)
-        prediction = self.skmodel.predict(self.x_test)
-        L.info('Training data performance')
+        prediction = self.skmodel.predict(self.x)
+        L.info('Performance on (%d,%d)' % np.shape(self.x))
         for evaluator in self.evaluations:
             if evaluator.problem_type == self.model_type:
-                evaluator.print_evaluation(self, self.y_train, train_prediction)
-
-        L.info('Test data performance')
-        for evaluator in self.evaluations:
-            if evaluator.problem_type == self.model_type:
-                evaluator.print_evaluation(self, self.y_test, prediction)
+                evaluator.print_evaluation(self, self.y, prediction)
 
         L.info(self.skmodel.get_params())
         L.info('---------------------------------------------------------')
@@ -103,11 +87,8 @@ class MachineLearningModel:
         if (self.skmodel is None):
             raise NotImplementedError('Skmodel is none!')
 
-        L.info('Training ' + self.given_name + ' with data (%d, %d)' % np.shape(self.x_train))
-        if self.grid_model is not None:
-            result = self.grid_model.fit(X=self.x_train, y=self.y_train)
-        else:
-            result = self.skmodel.fit(X=self.x_train, y=self.y_train)
+        L.info('Training ' + self.given_name + ' with data (%d, %d)' % np.shape(self.x))
+        result = self.skmodel.fit(X=self.x, y=self.y)
 
         # This check is needed whenever we run using MPI
         self.skmodel = result
@@ -126,7 +107,7 @@ class MachineLearningModel:
     def cache_model(self, model_name=None):
         model_name = MachineLearningModel.model_cache_name if model_name is None else model_name
         data = {
-            'score': self.skmodel.score(self.x_test, self.y_test),
+            'score': self.skmodel.score(self.x, self.y),
             'hyperparameters': self.skmodel.get_params(),
             'skmodel': self.skmodel,
         }

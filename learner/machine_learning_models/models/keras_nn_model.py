@@ -1,6 +1,4 @@
 from keras.optimizers import Adam
-from sklearn.cross_validation import cross_val_predict
-from sklearn.cross_validation import cross_val_score
 
 from learner.machine_learning_models.machine_learning_model import MachineLearningModel
 from keras.models import Sequential

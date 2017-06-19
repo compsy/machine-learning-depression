@@ -34,17 +34,23 @@ class ModelRunner:
         for i, model in enumerate(self.models):
             # Get the options for the current model
             has_grid_search = True if ('grid-search' in self.model_options[i]) else False
+            is_bagged = 'bagging' in self.model_options[i]
 
             current_model = model(
                 np.copy(x),
                 np.copy(y),
                 x_names,
                 y_names,
+                bagged=is_bagged,
                 verbosity=verbosity,
                 grid_search=has_grid_search)
 
-            if ('bagging' in self.model_options[i]):
+            # fail
+            ## ### Hier een check maken om te kijken of het model daadwerkelijk geupdate is met
+            ## ### nieuwe hyperparameters?
+            if is_bagged:
                 current_model.skmodel = ModelRunner.use_bagging(current_model, verbosity)
+
 
             created_models.append(current_model)
 
@@ -53,6 +59,7 @@ class ModelRunner:
 
     @staticmethod
     def use_bagging(model, verbosity):
+        """ Bags the model provided to it """
         current_skmodel = None
         if (model.model_type == 'regression'):
             current_skmodel = BaggingModel

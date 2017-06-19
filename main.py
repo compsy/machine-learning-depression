@@ -42,7 +42,7 @@ def main(argv):
 if __name__ == '__main__':
     params = main(sys.argv[1:])
     print(params)
-    d= Driver(verbosity=0,
+    d = Driver(verbosity=0,
             polynomial_features=params['use_polynomial'],
             normalize=False,
             scale=True,

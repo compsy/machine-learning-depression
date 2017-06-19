@@ -9,18 +9,10 @@ class SingleOutputFrameCreator:
         dataFrame = collections.namedtuple('DataFrame', ['data', 'header'])
         rows = len(participants)
 
-        header = ['pident']
+        header = self.create_header(questionnaires, add_pident = True)
+        cols = len(header)
 
-        # The number of columns is 1 since we add the pident
-        self.cols = len(header)
-
-        # Determine the number of columns in the eventual dataframe
-        for questionnaire in questionnaires:
-            self.cols += questionnaire.number_of_variables()
-            header.extend(questionnaire.get_header())
-
-        header = np.array(header)
-        result = np.empty(rows * self.cols).reshape(rows, self.cols)
+        result = np.empty(rows * cols).reshape(rows, cols)
 
         # TODO: This is quite slow and inefficient, should be refactored
         for index, participant_key in enumerate(participants):
@@ -28,7 +20,7 @@ class SingleOutputFrameCreator:
             participant = participants[participant_key]
 
             # initialize an empty array
-            participant_array = [None] * self.cols
+            participant_array = [None] * cols
 
             # First add the pident to the array
             participant_array[0] = participant.pident
@@ -45,3 +37,14 @@ class SingleOutputFrameCreator:
 
         return pd.DataFrame(result, columns=header)
 
+    def create_header(self, questionnaires, add_pident = True):
+        """docstring for create_header"""
+        header = []
+        if add_pident: header = ['pident']
+
+        # Determine the number of columns in the eventual dataframe
+        for questionnaire in questionnaires:
+            header.extend(questionnaire.get_header())
+
+        header = np.array(header)
+        return(header)

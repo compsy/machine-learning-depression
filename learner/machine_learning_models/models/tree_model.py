@@ -5,7 +5,6 @@ from sklearn.externals.six import StringIO
 import pydotplus
 
 from learner.machine_learning_models.machine_learning_model import MachineLearningModel
-from sklearn.cross_validation import cross_val_predict
 from sklearn.tree import DecisionTreeRegressor
 import numpy as np
 

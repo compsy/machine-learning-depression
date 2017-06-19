@@ -155,5 +155,8 @@ class SupportVectorClassificationModel(SupportVectorModel):
         if grid_search:
             self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
 
+    def predict_for_roc(self, x_data):
+        return self.skmodel.decision_function(x_data)
+
     def variable_to_validate(self):
         return 'degree'

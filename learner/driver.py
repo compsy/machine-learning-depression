@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import normalize, scale
+from sklearn.preprocessing import normalize, scale, OneHotEncoder
 import matplotlib.pyplot as plt
 import os
 
@@ -127,35 +127,37 @@ class Driver:
     def run_setcreator(self, test_set_portion = 0.2):
         test_set_id = 1
         participants = self.create_participants()
+
         data = self.get_file_data(
             'cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
 
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
+
+
         #### Classification ####
         # Perform feature selection algorithm
         CsvExporter.export('exports/merged_all_dataframe.csv', data)
 
+        L.info('We are using %s as input.' % self.x_names)
+        x_data, y_data, used_data, selected_header = self.get_usable_data(data, self.x_names, self.classification_y_names)
+
         coefficients = None
-        if (self.FEATURE_SELECTION):
-            coefficients = self.perform_feature_selection(
-                data, self.x_names, self.classification_y_names, model_type='classification')
+        if  self.FEATURE_SELECTION:
+            coefficients = self.perform_feature_selection(x_data, y_data,
+                    self.x_names, self.classification_y_names, model_type='classification')
+
+            # Update the x_names according to the found coefficients (this performs the actual feature selection)
             self.x_names = coefficients[0:, 0]
 
-        L.info('We are using %s as input.' % self.x_names)
-        x_data, y_data, used_data, selected_header = self.get_usable_data(
-                data, self.x_names, self.classification_y_names)
 
-
-        n = x_data.shape[0]
-        split_set =  np.random.binomial(test_set_id, test_set_portion, n)
+        nobs = x_data.shape[0]
+        split_set =  np.random.binomial(test_set_id, test_set_portion, nobs)
         x_data['test'] = split_set
         y_data['test'] = split_set
 
         DescriptivesTableCreator.generate_coefficient_descriptives_table(
             x_data, coefficients, name='classification_descriptives')
-
-        self.variable_transformer = VariableTransformer(self.x_names)
 
         # Create test and training set
         training_data = {
@@ -203,19 +205,86 @@ class Driver:
         # TODO: ??? SHOULD WE STILL DO THIS? Train all models, the fitted parameters will be saved inside the models
         model_runner.run_calculations(fabricated_models=classification_fabricated_models)
 
-    def perform_feature_selection(self, data, x_names, y_names, model_type):
+    def perform_feature_selection(self, x_data, y_data, x_names, y_names, model_type):
         temp_pol_features = self.POLYNOMIAL_FEATURES
         self.POLYNOMIAL_FEATURES = False
-        usable_x_data, usable_y_data, used_data, selected_header = self.get_usable_data(data, x_names, y_names)
+
         L.info('Performing feature selection for ' + model_type)
 
         feature_selection_model = StochasticGradientDescentClassificationModel(
-            np.copy(usable_x_data), np.copy(usable_y_data), x_names, y_names, grid_search=False, verbosity=0
+            np.copy(x_data), np.copy(y_data), x_names, y_names, grid_search=False, verbosity=0
             )
         feature_selection_model.train(cache_result=False)
         coefficients = self.feature_selector.determine_best_variables(feature_selection_model)
         self.POLYNOMIAL_FEATURES = temp_pol_features
         return coefficients
+
+    @staticmethod
+    def perform_categorical_feature_transformation(data, limit, split_binary = False):
+        """docstring for perform_categorical_feature_transformation"""
+
+        # First we fit the encoder to determine the number of options in each variable
+        enc = OneHotEncoder()
+        enc.fit(data)
+        correct_column_locations = enc.n_values_ < limit if split_binary else np.logical_and(enc.n_values_ < 10,  enc.n_values_ > 2)
+
+        updated_indices = np.where(correct_column_locations)[0]
+        normal_indices = np.where(np.invert(correct_column_locations))[0]
+
+        old_names = data.columns[normal_indices]
+        updated_names = data.columns[updated_indices]
+
+        # Then we refit it only on the updated_indices that are considered categorical.
+        enc = OneHotEncoder(categorical_features=updated_indices, sparse=False)
+        enc.fit(data)
+        new_data = enc.transform(data)
+
+        new_names = []
+
+        for i in range(len(updated_indices)):
+            start = enc.feature_indices_[i]
+            end = enc.feature_indices_[i + 1]
+
+            current_indices = range(start, end)
+            used_indices = set(current_indices).intersection(enc.active_features_)
+            current_column = updated_names[i]
+            for j in range(0, len(used_indices)):
+                new_names.append(current_column + str(j + 1))
+
+        # The old features are added to the right of the matrix
+        new_names.extend(old_names)
+
+        assert len(new_names) == np.shape(new_data)[1]
+        new_data = pd.DataFrame(new_data, columns=new_names)
+        return new_data
+
+
+        # 262
+
+        # THIS IS NOT POSSIBLE! We have to use the indices in feature indices etc.
+        # for i in range(len(updated_names)):
+            # current = n_values[i]
+            # print(current)
+            # for j in range(0, current):
+                # print('>' + str(j))
+                # new_names.append(updated_names[i] + str(j))
+        # print(len(new_names) + len(old_names) - np.shape(new_data)[1])
+        # for i in len(enc.feature_indices_) - 1:
+            # start = feature_indices[i]
+            # end   = feature_indices[i+1]
+
+            # current_indices = range(start,end)
+
+            # # Remask the set of updated_indices here.
+            # used_indices = set(current_indices).intersection(active_features)
+            # current_column = data.columns[min(used_indices)]
+
+            # while all_columns_index < min(used_indices):
+                # new_names.append(data.columns[all_columns_index])
+                # all_columns_index += 1
+
+            # for j in used_indices:
+               # new_names.append(current_column + str(j))
 
     def load_data(self, filename):
         training_data = self.cacher.read_cache(filename)
@@ -237,8 +306,6 @@ class Driver:
         used_data = data[selected_header]
 
         # Determine which of this set are not complete
-        # import pdb
-        # pdb.set_trace()
         incorrect_rows = self.output_data_cleaner.find_incomplete_rows(used_data, selected_header)
 
         L.info('From the loaded data %d rows are incomplete and will be removed!' % len(incorrect_rows))
@@ -267,6 +334,10 @@ class Driver:
         # Save the names (they will be removed by scikitlearn)
         names = list(x_data)
 
+        self.CATEGORICAL_FEATURES_LIMIT = 10
+        if self.CATEGORICAL_FEATURES_LIMIT > 0 :
+            self.perform_categorical_feature_transformation(x_data, limit = self.CATEGORICAL_FEATURES_LIMIT)
+
         if self.NORMALIZE:
             L.info('We are also normalizing the features')
             x_data = normalize(x_data, norm='l2', axis=1)
@@ -283,7 +354,8 @@ class Driver:
             x_data = self.data_preprocessor_polynomial.process(x_data)
 
         # Logtransform the data
-        # self.variable_transformer.log_transform(x_data, 'aids-somScore')
+        # variable_transformer = VariableTransformer(self.x_names)
+        # variable_transformer.log_transform(x_data, 'aids-somScore')
         return x_data
 
     def create_participants(self, participant_file="N1_A100R.sav"):
@@ -302,7 +374,7 @@ class Driver:
         L.br()
 
     def get_file_data(self, file_name, participants, force_to_not_use_cache=False):
-        header, data = (None, None)
+        data = None
         data_file_name = file_name + '_data.pkl'
         L.info('Converting data to single dataframe...')
         if not force_to_not_use_cache and self.cacher.file_available(data_file_name):

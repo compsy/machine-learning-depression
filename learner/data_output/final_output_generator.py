@@ -35,7 +35,7 @@ class OutputGenerator():
             skmodel = None
             for filename in files:
                 cached_params = self.cacher.read_cache(filename)
-                if cached_params['skmodel'] is None:
+                if 'skmodel' not in cached_params or cached_params['skmodel'] is None:
                     continue
                 if cached_params['score'] > best_score:
                     best_score = cached_params['score']
@@ -58,7 +58,7 @@ class OutputGenerator():
             self.roc_curve_plotter.plot(models, output_type=output_type)
 
         # Export all used data to a CSV file
-        CsvExporter.export('exports/merged_' + model_type + '_' + output_type +'_dataframe.csv', used_data, selected_header)
+        CsvExporter.export('exports/merged_' + model_type + '_' + output_type +'_dataframe.csv', used_data)
 
         # for model in models:
             # learning_curve_plotter.plot(model)
@@ -69,7 +69,7 @@ class OutputGenerator():
             y_test_pred = model.skmodel.predict(model.x)
 
             if model_type == 'classification':
-                self.confusion_matrix_plotter.plot(model, model.y, y_pred, output_type=output_type)
+                self.confusion_matrix_plotter.plot(model, model.y, y_test_pred, output_type=output_type)
             else:
                 self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train,
                                                             y_train_pred)

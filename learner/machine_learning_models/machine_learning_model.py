@@ -1,8 +1,7 @@
-from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn.grid_search import GridSearchCV, RandomizedSearchCV
 from sklearn.preprocessing import Imputer
-from sklearn.cross_validation import train_test_split
 import numpy as np
+import time
 
 from learner.caching.object_cacher import ObjectCacher
 from learner.caching.s3_cacher import S3Cacher
@@ -19,13 +18,14 @@ from learner.machine_learning_models.model_runner import ModelRunner
 import uuid
 
 class MachineLearningModel:
-    def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', verbosity=0, n_iter=100):
+    def __init__(self, x, y, x_names, y_names, hyperparameters, model_type='models', bagged = False, verbosity=0, n_iter=100):
         self.x = x
         self.y = np.ravel(y) #convert the 1d matrix to a vector
         self.x_names = x_names
         self.y_names = y_names
         self.skmodel = None
         self.cv = 10
+        self.bagged = bagged
         self.model_type = model_type
         self.was_trained = False
         self.evaluations = [
@@ -41,10 +41,10 @@ class MachineLearningModel:
         self.cacher = S3Cacher(directory=self.cache_directory())
 
         self.grid_search_type = 'random'
+        self.calculation_time = -1
 
         # Initialize the hyperparameters from cache, if available
-        self.hyperparameters = self.hot_start(hyperparameters)
-
+        (self.hyperparameters, self.hot_started) = self.hot_start(hyperparameters)
         self.n_iter = n_iter
 
     @staticmethod
@@ -74,6 +74,7 @@ class MachineLearningModel:
                 evaluator.print_evaluation(self, self.y, prediction)
 
         L.info(self.skmodel.get_params())
+        L.info('It took ' + self.get_calculation_time + ' to calculate this model')
         L.info('---------------------------------------------------------')
 
     def inject_trained_model(self, skmodel):
@@ -87,6 +88,7 @@ class MachineLearningModel:
         if (self.skmodel is None):
             raise NotImplementedError('Skmodel is none!')
 
+        tic = time.time()
         L.info('Training ' + self.given_name + ' with data (%d, %d)' % np.shape(self.x))
         result = self.skmodel.fit(X=self.x, y=self.y)
 
@@ -102,6 +104,8 @@ class MachineLearningModel:
         if cache_result: self.cache_model(model_name=model_name)
 
         L.info('Fitted ' + self.given_name)
+        toc = time.time()
+        self.calculation_time = toc - tic
         return result
 
     def cache_model(self, model_name=None):
@@ -110,6 +114,7 @@ class MachineLearningModel:
             'score': self.skmodel.score(self.x, self.y),
             'hyperparameters': self.skmodel.get_params(),
             'skmodel': self.skmodel,
+            'calculation_time': self.get_calculation_time
         }
         rand_id = uuid.uuid4()
         cache_name = model_name +'_' + str(rand_id) + '.pkl'
@@ -126,6 +131,13 @@ class MachineLearningModel:
     def variable_to_validate(self):
         return 'max_iter'
 
+    def is_valid_cache(self, cache):
+        """Function to determine whether the loaded cache is valid"""
+        keys = ['score', 'hyperparameters', 'skmodel', 'calculation_time']
+        valid_cache = all(key in cache for key in keys)
+        if not valid_cache: L.warn('Skipping model because it is corrupt..')
+        return valid_cache
+
     def hot_start(self, hyperparameters):
         """
         Function to load the hyperparameters from cache. If no hyperparameter cache exists, it returns the defaults.
@@ -139,25 +151,41 @@ class MachineLearningModel:
         # Only use the hyperparameters of the for the present model
         files = list(filter(lambda x: cache_name in x, files))
 
+        was_hot_started = False
         best_score = 0
         for filename in files:
             cached_params = self.cacher.read_cache(filename)
-            if cached_params['score'] > best_score:
-                best_score = cached_params['score']
-                hyperparameters = cached_params['hyperparameters']
+            if self.is_valid_cache(cached_params):
+                if not (self.is_bagged ^ ('base_estimator' in cached_params['hyperparameters'])):
+                    if cached_params['score'] > best_score:
+                        was_hot_started = True
+                        best_score = cached_params['score']
+                        hyperparameters = cached_params['hyperparameters']
 
-        # If base_estimator is in the hyperparameters, this means we are dealing with a bagged model. 
+        # If base_estimator is in the hyperparameters, this means we are dealing with a bagged model.
         # Bag it again here.
         if 'base_estimator' in hyperparameters:
             prefix = 'base_estimator__'
             keys = filter(None.__ne__, map(lambda key: (None if(not key.startswith(prefix)) else key), hyperparameters.keys()))
             hyperparameters =  {key[len(prefix):]: hyperparameters[key] for key in keys}
 
-        return hyperparameters
+        if 'calculation_time' in cached_params: self.calculation_time = cached_params['calculation_time']
+
+
+        return (hyperparameters, was_hot_started)
+
+    @property
+    def is_hot_started(self):
+        return self.hot_started
+
+    @property
+    def is_bagged(self):
+        return self.bagged
 
     @property
     def given_name(self):
-        return type(self).__name__ + " Type: " + type(self.skmodel).__name__
+        bagging_string = '(bagged)' if self.is_bagged else ''
+        return type(self).__name__ + " Type: " + type(self.skmodel).__name__ + bagging_string
 
     @property
     def short_name(self):
@@ -166,6 +194,11 @@ class MachineLearningModel:
     @property
     def model_cache_name(self):
         return self.short_name
+
+    @property
+    def get_calculation_time(self):
+        """Returns the time it took to train the algorithm (-1 if it has not been trained yet)"""
+        return self.calculation_time
 
     def grid_search(self, exhaustive_grid, random_grid):
         if (self.grid_search_type == 'random'):
@@ -183,3 +216,4 @@ class MachineLearningModel:
     ## Override
     def predict_for_roc(self, x_data):
         return self.skmodel.predict_proba(x_data)[:, 1]
+

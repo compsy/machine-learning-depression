@@ -53,7 +53,7 @@ class Driver:
     feature_selection : perform feature selection using elasticnet
     """
 
-    def __init__(self, verbosity, polynomial_features, normalize, scale, force_no_caching, feature_selection):
+    def __init__(self, verbosity, polynomial_features, normalize, scale, force_no_caching, feature_selection, categorical_features_limit=10):
         # Set a seed for reproducability
         # random.seed(42)
 
@@ -63,7 +63,7 @@ class Driver:
             L.warn('No AWS config location set! using the default!!!')
 
         # Define global variables
-        self.CATEGORICAL_FEATURES_LIMIT = 10
+        self.CATEGORICAL_FEATURES_LIMIT = categorical_features_limit
         self.VERBOSITY = verbosity
         self.POLYNOMIAL_FEATURES = polynomial_features
         self.NORMALIZE = normalize
@@ -74,7 +74,6 @@ class Driver:
         # create several objects to do data processing
         self.spss_reader = SpssReader()
         self.single_output_frame_creator = SingleOutputFrameCreator()
-        self.output_data_cleaner = OutputDataCleaner()
         self.output_data_splitter = OutputDataSplitter()
         self.cacher = ObjectCacher(directory='cache/')
 
@@ -327,12 +326,12 @@ class Driver:
         used_data = data[selected_header]
 
         # Determine which of this set are not complete
-        incorrect_rows = self.output_data_cleaner.find_incomplete_rows(used_data, selected_header)
+        incorrect_rows = OutputDataCleaner.find_incomplete_rows(used_data, selected_header)
 
         L.info('From the loaded data %d rows are incomplete and will be removed!' % len(incorrect_rows))
 
         # Remove the incorrect cases
-        used_data = self.output_data_cleaner.clean(used_data, incorrect_rows)
+        used_data = OutputDataCleaner.clean(used_data, incorrect_rows)
 
         # Split the dataframe into a x and y dataset.
         x_data = used_data[x_names]

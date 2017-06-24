@@ -134,7 +134,7 @@ class MachineLearningModel:
         """
         model_name = MachineLearningModel.short_name if model_name is None else model_name
         data = {
-            'score': self.skmodel.score(self.x, self.y),
+            'score': self.skmodel.score(self.get_x, self.get_y),
             'hyperparameters': self.skmodel.get_params(),
             'skmodel': self.skmodel,
             'calculation_time': self.get_calculation_time,

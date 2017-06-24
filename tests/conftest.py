@@ -2,7 +2,7 @@
 from unittest.mock import MagicMock, Mock
 import pytest
 import pandas as pd
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 from learner.models.participant import Participant
 import numpy as np
 
@@ -28,10 +28,27 @@ def mock_skmodel(monkeypatch):
     def fake_get_params(deep=True):
         return {'a': 1}
 
+    def fake_get_calculation_time(self):
+        return 123
+
+    def fake_score(x, y):
+        """docstring for fake_score"""
+        return 321
+
+    def fake_get_x():
+        """docstring for fake_score"""
+        return 1
+    def fake_get_y():
+        """docstring for fake_score"""
+        return 2
+        
+
     file_data = 'running fitting'
     mock_fitted_skmodel = Mock()
     mock_fitted_skmodel.fitted = file_data
     monkeypatch.setattr(mock_fitted_skmodel, 'get_params', fake_get_params)
+    monkeypatch.setattr(mock_fitted_skmodel, 'get_calculation_time', fake_get_params)
+    monkeypatch.setattr(mock_fitted_skmodel, 'score', fake_score)
 
     def fake_fit(X, y):
         return mock_fitted_skmodel
@@ -47,7 +64,7 @@ def mock_gridsearch_skmodel(monkeypatch, mock_skmodel):
     mock_fitted_bestmodel_skmodel.fitted = 'best_estimator!'
 
     mock_fitted_gridsearch_skmodel = GridSearchCV('estimator', {'a': [1, 2], 'b': [3, 4]})
-    mock_gridsearch_skmodel = GridSearchCV('estimator', {'a':[1,2],'b':[3,4]})
+    my_mock_gridsearch_skmodel = GridSearchCV('estimator', {'a':[1,2],'b':[3,4]})
 
     def fake_get_params(deep=True):
         return {'a': 1}
@@ -61,8 +78,8 @@ def mock_gridsearch_skmodel(monkeypatch, mock_skmodel):
     def fake_fit(X, y):
         return mock_fitted_gridsearch_skmodel
 
-    monkeypatch.setattr(mock_gridsearch_skmodel, 'fit', fake_fit)
-    return mock_gridsearch_skmodel
+    monkeypatch.setattr(my_mock_gridsearch_skmodel, 'fit', fake_fit)
+    return my_mock_gridsearch_skmodel
 
 
 @pytest.fixture()

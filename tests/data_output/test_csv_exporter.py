@@ -1,5 +1,5 @@
 import numpy as np
-import pandas
+import pandas as pd
 import inspect
 from learner.data_output.csv_exporter import CsvExporter
 from rpy2.robjects import pandas2ri
@@ -13,13 +13,16 @@ class TestCsvExporter():
 
     def test_export_filename(self):
         filename = 'tests/data_examples/test.csv'
-        data = [[1,2,3,4],[5,6,7,8]]
         header = ['c','a','b','c']
-        CsvExporter.export(filename, data, header)
+        data = pd.DataFrame([[1,2,3,4],[5,6,7,8]], columns = header)
+        CsvExporter.export(filename, data)
 
         # Get the results
         my_file = open(filename)
         result = my_file.read()
-        expected = '# c,a,b,c\n1,2,3,4\n5,6,7,8\n'
+        # The missing 1st attribute is for the index
+        expected = ',c,a,b,c\n0,1,2,3,4\n1,5,6,7,8\n'
+        print(result)
+        print(expected)
         assert result == expected
 

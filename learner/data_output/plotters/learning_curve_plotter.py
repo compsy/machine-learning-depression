@@ -4,7 +4,7 @@ from learner.data_output.plotters.plotter import Plotter
 
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.learning_curve import learning_curve
+from sklearn.model_selection import learning_curve
 from learner.data_output.std_logger import L
 
 

@@ -11,46 +11,44 @@ class TestDriver():
     @pytest.fixture()
     def subject(self):
         verbosity = 0
-        hpc = False
         polynomial_features = True
         normalize = True
         scale = False
         force_no_caching = True
         feature_selection = True
+        categorical_features_limit = 0
         subject = Driver(
             verbosity,
-            hpc,
             polynomial_features,
             normalize,
             scale,
             force_no_caching,
-            feature_selection
+            feature_selection,
+            categorical_features_limit
         );
         return subject
 
     # transform_variables
     def test_transform_variables_should_do_nothing_if_all_settings_are_blocked(self, subject):
-        x_data = np.array([[1,2,3],[5,6,7],[8,9,10]])
-        x_data_orig = np.array([[1, 2, 3], [5, 6, 7], [8, 9, 10]])
-        x_names = ['a','b','c']
+        x_data = pd.DataFrame([[1,2,3],[5,6,7],[8,9,10]])
+        x_data_orig = pd.DataFrame([[1, 2, 3], [5, 6, 7], [8, 9, 10]])
 
         subject.NORMALIZE = False
         subject.SCALE = False
         subject.POLYNOMIAL_FEATURES = False
 
-        result = subject.transform_variables(x_data, x_names)
+        result = subject.transform_variables(x_data)
         assert np.array_equal(result, x_data_orig)
 
     def test_transform_variables_normalizes_the_data(self, subject):
-        x_data = np.array([[1, 2, 3], [5, 6, 7], [8, 9, 10]])
-        x_data_orig = np.array([[1, 2, 3], [5, 6, 7], [8, 9, 10]])
-        x_names = ['a', 'b', 'c']
+        x_data = pd.DataFrame([[1,2,3],[5,6,7],[8,9,10]])
+        x_data_orig = pd.DataFrame([[1, 2, 3], [5, 6, 7], [8, 9, 10]])
 
         subject.NORMALIZE = True
         subject.SCALE = False
         subject.POLYNOMIAL_FEATURES = False
 
-        result = subject.transform_variables(x_data, x_names)
+        result = subject.transform_variables(x_data)
 
         # Something must have changed
         assert not np.array_equal(result, x_data_orig)

@@ -5,7 +5,6 @@ from sklearn.externals.six import StringIO
 import pydotplus
 
 from learner.machine_learning_models.machine_learning_model import MachineLearningModel
-from sklearn.cross_validation import cross_val_predict
 from sklearn.tree import DecisionTreeRegressor
 import numpy as np
 
@@ -15,9 +14,9 @@ from scipy.stats import expon
 
 class RegressionTreeModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'max_depth': 5}
-        super().__init__(x, y, x_names, y_names, hyperparameters=hyperparameters, model_type='regression', **kwargs)
+        super().__init__(x, y, y_names, hyperparameters=hyperparameters, model_type='regression', **kwargs)
 
         self.skmodel = DecisionTreeRegressor(**self.hyperparameters)
 
@@ -26,16 +25,13 @@ class RegressionTreeModel(MachineLearningModel):
                 'max_depth': np.logspace(0, 3, 15),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
-            random_parameter_grid = {
-                'max_depth': halflogistic(scale=100),
-                'max_features': ['auto', 'sqrt', 'log2', None]
-            }
+            random_parameter_grid = {'max_depth': logser(p=.99).rvs(), 'max_features': ['auto', 'sqrt', 'log2', None]}
             self.grid_search([parameter_grid], [random_parameter_grid])
 
 
 class ClassificationTreeModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {
             'min_samples_split': 2,
             'max_features': 'auto',
@@ -50,14 +46,7 @@ class ClassificationTreeModel(MachineLearningModel):
             'max_leaf_nodes': None
         }
         super().__init__(
-            x,
-            y,
-            x_names,
-            y_names,
-            hyperparameters=hyperparameters,
-            model_type='classification',
-            verbosity=verbosity,
-            **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, model_type='classification', verbosity=verbosity, **kwargs)
 
         self.skmodel = DecisionTreeClassifier(**self.hyperparameters)
 

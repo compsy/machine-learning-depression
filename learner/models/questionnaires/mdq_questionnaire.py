@@ -10,8 +10,10 @@ class MdqQuestionnaire(Questionnaire):
         # -1 = "Too many missings"
         # 0 = a valid score.
         function_mapping = {
-            'MdqTotalScore': self.mdq_total_score,
-            'MdqHirschfeldCriteriaBipolarSpectrumDisorder': self.mdq_hirschfeld_criteria_bipolar_spectrum_disorder,
+            'MdqTotalScore':
+            self.mdq_total_score,
+            'MdqHirschfeldCriteriaBipolarSpectrumDisorder':
+            self.mdq_hirschfeld_criteria_bipolar_spectrum_disorder,
             'MdqHirschfeldCriteriaBipolarSpectrumDisorderAdaptedCriteria':
             self.mdq_hirschfeld_criteria_bipolar_spectrum_disorder_adapted_criteria
         }

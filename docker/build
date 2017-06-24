@@ -4,18 +4,32 @@
 #rm -r learner data requirements.txt install-packages.R test-requirements.txt
 #cp -r ../learner .
 #cp -r ../tests .
+cd ..
+python main.py -t createset -f -p -n
+cd -
 
 mkdir data
 cp -r ../data/* data/
 cp -r ../requirements.txt .
 cp -r ../test-requirements.txt .
 cp -r ../install-packages.R .
+
+mkdir app
+cp -r ../main.py app
+cp -r ../learner app/learner
+
+mkdir cache
+cp -r ../cache/* cache
 #cp -r ../setup.py .
 #cp -r ../setup.cfg .
 #cp -r ../driver.py .
 #docker-compose build
 
 docker build -t frbl/icpe-machine-learning .
-#docker push frbl/icpe-machine-learning
+docker push frbl/icpe-machine-learning
 
-rm -r learner data requirements.txt install-packages.R test-requirements.txt .
+rm -r data requirements.txt install-packages.R test-requirements.txt app cache
+docker run --rm -it \
+  -e "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"\
+  -e "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"\
+  --name ml frbl/icpe-machine-learning

@@ -8,7 +8,7 @@ from learner.data_output.std_logger import L
 
 class ConfusionMatrixPlotter(Plotter):
 
-    def plot(self, model, actual, predicted):
+    def plot(self, model, actual, predicted, output_type):
         if predicted is None or actual is None:
             return False
 
@@ -24,7 +24,7 @@ class ConfusionMatrixPlotter(Plotter):
         plt.setp(ax, xticks=tick_marks, xticklabels=['yes', 'no'], yticks=tick_marks, yticklabels=['yes', 'no'])
 
         plot_name = model.given_name
-        plot_name = 'confusion_matrix_' + plot_name.replace(" ", "_")
+        plot_name = 'confusion_matrix_' + output_type + '_' + plot_name.replace(" ", "_")
 
         cm = confusion_matrix(actual, predicted)
 

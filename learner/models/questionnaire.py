@@ -1,12 +1,16 @@
 import inspect
 import numpy as np
 
-from sklearn.decomposition import PCA
-
 
 class Questionnaire:
+    """
+    Superclass of each questionnaire entity
+    """
 
     def __init__(self, name, filename, measurement_moment, reader, function_mapping, other_available_variables=[]):
+        """
+        Initialize
+        """
         self.name = name
         self.filename = filename
         self.measurement_moment = measurement_moment
@@ -23,7 +27,8 @@ class Questionnaire:
         #pca.fit(x_data)
         #print(pca.explained_variance_ratio_)
 
-    def create_raw_value_function_mapping(self, other_available_variables):
+    @staticmethod
+    def create_raw_value_function_mapping(other_available_variables):
         """
         Creates the value function mappings for the raw parameters
 

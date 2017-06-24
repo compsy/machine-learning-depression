@@ -1,0 +1,2 @@
+- Make train / test very explicitly different.
+- Make one dataframe for the data, instead of separating the names from the data.

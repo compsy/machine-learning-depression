@@ -16,5 +16,5 @@ class VarianceEvaluation(Evaluation):
 
     def print_evaluation(self, model, y_true, y_pred):
         true_variance, predicted_variance = self.evaluate(y_true, y_pred)
-        L.info("\t -> %s of %s: true data: %0.2f, predicted data: %0.2f" %
-               (self.name, model.given_name, true_variance, predicted_variance))
+        L.info("\t -> %s of %s: true data: %0.2f, predicted data: %0.2f" % (self.name, model.given_name, true_variance,
+                                                                            predicted_variance))

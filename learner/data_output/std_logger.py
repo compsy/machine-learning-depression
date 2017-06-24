@@ -1,7 +1,6 @@
 import logging
 import warnings
 import time
-from mpi4py import MPI
 
 
 class L:

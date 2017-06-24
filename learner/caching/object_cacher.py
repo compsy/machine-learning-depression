@@ -1,11 +1,16 @@
 import os
 import pickle
+from learner.caching.cacher import Cacher
 
 
 class ObjectCacher():
 
     def __init__(self, directory='cache/'):
         self.directory = directory
+
+        # Create the directory if it does not yet exist
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
     def get_dirred_file(self, cache_name):
         return self.directory + cache_name
@@ -27,3 +32,6 @@ class ObjectCacher():
     def file_available(self, cache_name, add_dir=True):
         if add_dir: cache_name = self.get_dirred_file(cache_name)
         return os.path.isfile(cache_name)
+
+    def files_in_dir(self):
+        return os.listdir(self.directory)

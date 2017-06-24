@@ -3,6 +3,7 @@ import numpy as np
 
 
 class FeatureSelector():
+
     def determine_best_variables(self, mlmodel, top=25):
         if mlmodel.was_trained:
             coef_ = mlmodel.skmodel.coef_[0]

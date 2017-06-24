@@ -6,6 +6,7 @@ from sklearn.model_selection import GridSearchCV
 
 from learner.caching.cacher import Cacher
 from learner.caching.s3_cacher import S3Cacher
+from learner.caching.object_cacher import ObjectCacher
 from learner.machine_learning_evaluation.accuracy_evaluation import AccuracyEvaluation
 from learner.machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
 from learner.machine_learning_evaluation.f1_evaluation import F1Evaluation
@@ -20,7 +21,7 @@ class MachineLearningModel:
     Superclass for each machine learning model
     """
 
-    def __init__(self, x, y, y_names, hyperparameters, model_type='models', bagged=False, verbosity=0, n_iter=100):
+    def __init__(self, x, y, y_names, hyperparameters, model_type='models', bagged=False, verbosity=0, n_iter=100, store_on_s3=True):
         self.x = x
         self.y = np.ravel(y)  #convert the 1d matrix to a vector
         self.x_names = x.columns
@@ -42,7 +43,10 @@ class MachineLearningModel:
         ]
 
         # Setup the cacher
-        self.cacher = S3Cacher(directory=self.cache_directory())
+        if store_on_s3:
+            self.cacher = S3Cacher(directory=self.cache_directory())
+        else:
+            self.cacher = ObjectCacher(directory=self.cache_directory())
 
         self.grid_search_type = 'random'
         self.calculation_time = -1

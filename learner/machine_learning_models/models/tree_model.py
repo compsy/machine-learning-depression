@@ -14,9 +14,9 @@ from scipy.stats import expon
 
 class RegressionTreeModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'max_depth': 5}
-        super().__init__(x, y, x_names, y_names, hyperparameters=hyperparameters, model_type='regression', **kwargs)
+        super().__init__(x, y, y_names, hyperparameters=hyperparameters, model_type='regression', **kwargs)
 
         self.skmodel = DecisionTreeRegressor(**self.hyperparameters)
 
@@ -34,7 +34,7 @@ class RegressionTreeModel(MachineLearningModel):
 
 class ClassificationTreeModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {
             'min_samples_split': 2,
             'max_features': 'auto',
@@ -51,7 +51,6 @@ class ClassificationTreeModel(MachineLearningModel):
         super().__init__(
             x,
             y,
-            x_names,
             y_names,
             hyperparameters=hyperparameters,
             model_type='classification',

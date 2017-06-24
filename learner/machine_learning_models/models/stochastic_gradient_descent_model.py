@@ -6,7 +6,7 @@ from learner.machine_learning_models.machine_learning_model import MachineLearni
 
 class StochasticGradientDescentClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {
             'alpha': 0.5,
             'average': False,
@@ -24,7 +24,6 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
         super().__init__(
             x,
             y,
-            x_names,
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,

@@ -5,6 +5,9 @@ import boto3
 
 
 class S3Cacher():
+    """
+    Pickles and caches files to an S3 backend
+    """
 
     def __init__(self, directory='cache/', bucket_name = 'icpe-machine-learning-cache', bucket_location = 'EU'):
         self.object_cacher = ObjectCacher(directory)

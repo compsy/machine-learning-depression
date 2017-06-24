@@ -1,5 +1,6 @@
 import os
 import pickle
+from learner.caching.cacher import Cacher
 
 
 class ObjectCacher():

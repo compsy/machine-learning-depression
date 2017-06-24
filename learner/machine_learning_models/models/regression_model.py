@@ -8,12 +8,11 @@ import numpy as np
 
 class ElasticNetModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search, **kwargs):
+    def __init__(self, x, y, y_names, verbosity, grid_search, **kwargs):
         hyperparameters = {'alpha': 0.1, 'l1_ratio': 0.5, 'max_iter': 10000}
         super().__init__(
             x,
             y,
-            x_names,
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,
@@ -34,7 +33,7 @@ class ElasticNetModel(MachineLearningModel):
 
 class LogisticRegressionModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, grid_search, **kwargs):
+    def __init__(self, x, y, y_names, verbosity, grid_search, **kwargs):
         hyperparameters = {
             'penalty': 'l2',
             'C': 0.1,
@@ -46,7 +45,6 @@ class LogisticRegressionModel(MachineLearningModel):
         super().__init__(
             x,
             y,
-            x_names,
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,

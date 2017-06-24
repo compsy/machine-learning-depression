@@ -5,12 +5,11 @@ from sklearn.dummy import DummyClassifier
 
 class DummyClassifierModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'strategy': 'constant', 'constant': 0}
         super().__init__(
             x,
             y,
-            x_names,
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,
@@ -21,12 +20,11 @@ class DummyClassifierModel(MachineLearningModel):
 
 class DummyRandomClassifierModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'strategy': 'uniform'}
         super().__init__(
             x,
             y,
-            x_names,
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,

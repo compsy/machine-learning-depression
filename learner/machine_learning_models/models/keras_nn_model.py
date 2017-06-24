@@ -20,8 +20,8 @@ class KerasWrapper(MachineLearningModel):
 
 class KerasNnModel(KerasWrapper):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
-        super().__init__(x, y, x_names, y_names, model_type='regression', **kwargs)
+    def __init__(self, x, y, y_names, verbosity, **kwargs):
+        super().__init__(x, y, y_names, model_type='regression', **kwargs)
 
         # Wrap the model in a scikit api
         self.skmodel = KerasRegressor(build_fn=self.baseline_model, nb_epoch=self.n_iter, batch_size=32, verbose=1)
@@ -70,8 +70,8 @@ class KerasNnModel(KerasWrapper):
 
 class KerasNnClassificationModel(KerasWrapper):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
-        super().__init__(x, y, x_names, y_names, model_type='classification', **kwargs)
+    def __init__(self, x, y, y_names, verbosity, **kwargs):
+        super().__init__(x, y, y_names, model_type='classification', **kwargs)
 
         # Wrap the model in a scikit api
         self.skmodel = KerasClassifier(build_fn=self.baseline_model, nb_epoch=5000, batch_size=64, verbose=1)

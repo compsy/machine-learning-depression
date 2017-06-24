@@ -6,7 +6,7 @@ import numpy as np
 
 class BoostingModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
 
         hyperparameters = {
             'n_estimators': 20,
@@ -20,8 +20,7 @@ class BoostingModel(MachineLearningModel):
 
         super().__init__(
             x,
-            y,
-            x_names,
+            y, 
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,
@@ -52,13 +51,12 @@ class BoostingModel(MachineLearningModel):
 
 class BoostingClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'n_estimators': 1000, 'max_depth': 5, 'verbose': verbosity}
 
         super().__init__(
             x,
-            y,
-            x_names,
+            y, 
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,

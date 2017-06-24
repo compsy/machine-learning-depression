@@ -6,19 +6,18 @@ from scipy.stats import expon, halflogistic
 
 class SupportVectorModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, verbosity, **kwargs):
-        super().__init__(x, y, x_names, y_names, **kwargs)
+    def __init__(self, x, y, y_names, verbosity, **kwargs):
+        super().__init__(x, y, y_names, **kwargs)
 
 
 class SupportVectorRegressionModel(SupportVectorModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'kernel': 'rbf', 'C': 1, 'epsilon': 0.1, 'gamma': 0.1, 'verbose': verbosity}
 
         super().__init__(
             x,
             y,
-            x_names,
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,
@@ -84,12 +83,11 @@ class SupportVectorRegressionModel(SupportVectorModel):
 
 class SupportVectorClassificationModel(SupportVectorModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'kernel': 'poly', 'degree': 2, 'C': 3, 'coef0': 1, 'verbose': verbosity}
         super().__init__(
             x,
             y,
-            x_names,
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,

@@ -1,4 +1,4 @@
-from sklearn.grid_search import BaseSearchCV
+from sklearn.model_selection import BaseSearchCV
 
 
 class GridSearchMine(BaseSearchCV):

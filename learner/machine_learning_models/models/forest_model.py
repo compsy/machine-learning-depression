@@ -7,7 +7,7 @@ import numpy as np
 
 class RandomForestClassificationModel(MachineLearningModel):
 
-    def __init__(self, x, y, x_names, y_names, grid_search, verbosity, **kwargs):
+    def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {
             'n_estimators': 5,
             'max_depth': 10,
@@ -16,7 +16,6 @@ class RandomForestClassificationModel(MachineLearningModel):
         super().__init__(
             x,
             y,
-            x_names,
             y_names,
             hyperparameters=hyperparameters,
             verbosity=verbosity,

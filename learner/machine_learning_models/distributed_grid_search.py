@@ -1,4 +1,4 @@
-from sklearn.grid_search import GridSearchCV, ParameterGrid
+from sklearn.model_selection import GridSearchCV, ParameterGrid
 import os.path
 from queue import Queue
 from learner.data_output.std_logger import L

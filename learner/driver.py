@@ -94,26 +94,27 @@ class Driver:
         self.classification_models = []
         # self.classification_models.append(KerasNnClassificationModel)
         self.classification_models.append({'model': ClassificationTreeModel, 'options': ['grid-search']})
-        self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
-        self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
-        self.classification_models.append({'model': DummyClassifierModel, 'options': []})
-        self.classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
-        self.classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
-        self.classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
-        self.classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
-        self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
 
-        self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': DummyClassifierModel, 'options': []})
+        # self.classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        # self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
+
+        # self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
         self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
-        self.classification_models.append({'model': DummyClassifierModel, 'options': ['bagging']})
-        self.classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
-        self.classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
-        self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
-        self.classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
-        self.classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
-        self.classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
-        self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': DummyClassifierModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
 
         # regression_models = []
         # regressionmodels.append(KerasNnModel)
@@ -173,51 +174,69 @@ class Driver:
         test_data = {
             'x_data': x_data.loc[x_data['test'] == test_set_id].drop('test', 1),
             'y_data': y_data.loc[y_data['test'] == test_set_id].drop('test', 1),
-            'all_data': pd.concat([x_data, y_data], axis=1)
+            'all_data': pd.concat([x_data.drop('test',1), y_data.drop('test',1)], axis=1)
         }
 
         self.cacher.write_cache(training_data, 'training_data.pkl')
         self.cacher.write_cache(test_data, 'test_data.pkl')
 
     def run_evaluator(self):
+        """
+        Main method to run the evaluation on all the machine learning algorithms fitted earlier
+        """
         x_data, y_data, all_data = self.load_data(filename = 'test_data.pkl')
         L.info('Running evaluation on data set of size (%d, %d)' % np.shape(x_data))
         L.info('The headers in this file are: %s' % x_data.columns)
 
         # Calculate the actual models
         model_runner = SyncModelRunner(self.classification_models)
-        classification_fabricated_models = model_runner.fabricate_models(x_data, y_data, self.x_names, self.classification_y_names, verbosity=self.VERBOSITY)
+        fabricate_models = model_runner.fabricate_models(
+            x_data, y_data, self.classification_y_names, verbosity=self.VERBOSITY
+        )
 
         self.final_output_generator.create_output(
-            classification_fabricated_models,
-            x_data,
-            y_data,
-            all_data,
-            output_type = 'test',
-            model_type='classification')
+            fabricate_models=fabricate_models,
+            x_data=x_data,
+            y_data=y_data,
+            output_type='test',
+            model_type='classification'
+        )
+
+        # Export all used data to a CSV file
+        CsvExporter.export('exports/merged_full_dataframe.csv', all_data)
+
 
     def run_trainer(self):
+        """
+        Main method to train all the machine learning algorithms
+        """
         if not self.cacher.file_available('training_data.pkl', add_dir=True):
             raise FileNotFoundError('Training data not found!')
+
+        # Retrieve the data from the cache
         x_data, y_data = self.load_data(filename='training_data.pkl')
 
         # Calculate the actual models
         model_runner = SyncModelRunner(self.classification_models)
 
-        classification_fabricated_models = model_runner.fabricate_models(x_data, y_data, self.x_names, self.classification_y_names, verbosity=self.VERBOSITY)
+        fabricated_models = model_runner.fabricate_models(
+            x_data, y_data, self.classification_y_names, verbosity=self.VERBOSITY
+        )
 
-        # TODO: ??? SHOULD WE STILL DO THIS? Train all models, the fitted parameters will be saved inside the models
-        model_runner.run_calculations(fabricated_models=classification_fabricated_models)
+        model_runner.run_calculations(fabricated_models=fabricated_models)
 
     def perform_feature_selection(self, x_data, y_data, y_names, model_type):
+        """
+        Performs feature selection based on the elasticnet
+        """
         temp_pol_features = self.POLYNOMIAL_FEATURES
         self.POLYNOMIAL_FEATURES = False
 
         L.info('Performing feature selection for ' + model_type)
 
         feature_selection_model = StochasticGradientDescentClassificationModel(
-            np.copy(x_data), np.copy(y_data), x_data.columns, y_names, grid_search=False, verbosity=0
-            )
+            x_data, y_data, y_names, grid_search=False, verbosity=0
+        )
 
         feature_selection_model.train(cache_result=False)
         coefficients = self.feature_selector.determine_best_variables(feature_selection_model)
@@ -292,12 +311,17 @@ class Driver:
                # new_names.append(current_column + str(j))
 
     def load_data(self, filename):
-        training_data = self.cacher.read_cache(filename)
+        """
+        Loads the training or testing data from a file provided to it
+        """
+        data = self.cacher.read_cache(filename)
 
-        x_data = training_data['x_data']
-        y_data = training_data['y_data']
-        used_data = training_data['used_data']
-        return(x_data, y_data, used_data)
+        x_data = data['x_data']
+        y_data = data['y_data']
+        if 'all_data' in data:
+            all_data = data['all_data']
+            return(x_data, y_data, all_data)
+        return(x_data, y_data)
 
 
     def get_usable_data(self, data, x_names, y_names):

@@ -28,6 +28,7 @@ from learner.models import participant
 from learner.output_file_creators.descriptives_table_creator import DescriptivesTableCreator
 from learner.output_file_creators.single_output_frame_creator import SingleOutputFrameCreator
 
+
 class Driver:
     """ The main class that runs the application
     Parameters
@@ -58,7 +59,7 @@ class Driver:
 
         # setup logging
         L.setup(False)
-        if(os.environ.get('AWS_CONFIG_FILE') == None):
+        if (os.environ.get('AWS_CONFIG_FILE') == None):
             L.warn('No AWS config location set! using the default!!!')
 
         # Define global variables
@@ -88,7 +89,6 @@ class Driver:
         # Output columns
         # self.classification_y_names = np.array(['ccidi-depression-followup-majorDepressionPastSixMonths'])
         self.classification_y_names = np.array(['cids-followup-twice_depression'])
-
 
         ##### Define the models we should run
         self.classification_models = []
@@ -134,8 +134,7 @@ class Driver:
         test_set_id = 1
         participants = self.create_participants()
 
-        data = self.get_file_data(
-            'cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
+        data = self.get_file_data('cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
 
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
@@ -147,10 +146,9 @@ class Driver:
         x_data, y_data = self.get_usable_data(data, self.x_names, self.classification_y_names)
 
         coefficients = None
-        if  self.FEATURE_SELECTION:
+        if self.FEATURE_SELECTION:
             coefficients = self.perform_feature_selection(
-                x_data, y_data, self.classification_y_names, model_type='classification'
-            )
+                x_data, y_data, self.classification_y_names, model_type='classification')
 
             # Update the x_names according to the found coefficients (this performs the actual feature selection)
             self.x_names = coefficients[0:, 0]
@@ -174,7 +172,7 @@ class Driver:
         test_data = {
             'x_data': x_data.loc[x_data['test'] == test_set_id].drop('test', 1),
             'y_data': y_data.loc[y_data['test'] == test_set_id].drop('test', 1),
-            'all_data': pd.concat([x_data.drop('test',1), y_data.drop('test',1)], axis=1)
+            'all_data': pd.concat([x_data.drop('test', 1), y_data.drop('test', 1)], axis=1)
         }
 
         self.cacher.write_cache(training_data, 'training_data.pkl')
@@ -184,27 +182,24 @@ class Driver:
         """
         Main method to run the evaluation on all the machine learning algorithms fitted earlier
         """
-        x_data, y_data, all_data = self.load_data(filename = 'test_data.pkl')
+        x_data, y_data, all_data = self.load_data(filename='test_data.pkl')
         L.info('Running evaluation on data set of size (%d, %d)' % np.shape(x_data))
         L.info('The headers in this file are: %s' % x_data.columns)
 
         # Calculate the actual models
         model_runner = SyncModelRunner(self.classification_models)
         fabricate_models = model_runner.fabricate_models(
-            x_data, y_data, self.classification_y_names, verbosity=self.VERBOSITY
-        )
+            x_data, y_data, self.classification_y_names, verbosity=self.VERBOSITY)
 
         self.final_output_generator.create_output(
             fabricate_models=fabricate_models,
             x_data=x_data,
             y_data=y_data,
             output_type='test',
-            model_type='classification'
-        )
+            model_type='classification')
 
         # Export all used data to a CSV file
         CsvExporter.export('exports/merged_full_dataframe.csv', all_data)
-
 
     def run_trainer(self):
         """
@@ -220,8 +215,7 @@ class Driver:
         model_runner = SyncModelRunner(self.classification_models)
 
         fabricated_models = model_runner.fabricate_models(
-            x_data, y_data, self.classification_y_names, verbosity=self.VERBOSITY
-        )
+            x_data, y_data, self.classification_y_names, verbosity=self.VERBOSITY)
 
         model_runner.run_calculations(fabricated_models=fabricated_models)
 
@@ -235,8 +229,7 @@ class Driver:
         L.info('Performing feature selection for ' + model_type)
 
         feature_selection_model = StochasticGradientDescentClassificationModel(
-            x_data, y_data, y_names, grid_search=False, verbosity=0
-        )
+            x_data, y_data, y_names, grid_search=False, verbosity=0)
 
         feature_selection_model.train(cache_result=False)
         coefficients = self.feature_selector.determine_best_variables(feature_selection_model)
@@ -244,13 +237,14 @@ class Driver:
         return coefficients
 
     @staticmethod
-    def perform_categorical_feature_transformation(data, limit, split_binary = False):
+    def perform_categorical_feature_transformation(data, limit, split_binary=False):
         """docstring for perform_categorical_feature_transformation"""
 
         # First we fit the encoder to determine the number of options in each variable
         enc = OneHotEncoder()
         enc.fit(data)
-        correct_column_locations = enc.n_values_ < limit if split_binary else np.logical_and(enc.n_values_ < 10,  enc.n_values_ > 2)
+        correct_column_locations = enc.n_values_ < limit if split_binary else np.logical_and(
+            enc.n_values_ < 10, enc.n_values_ > 2)
 
         updated_indices = np.where(correct_column_locations)[0]
         normal_indices = np.where(np.invert(correct_column_locations))[0]
@@ -282,33 +276,33 @@ class Driver:
         new_data = pd.DataFrame(new_data, columns=new_names)
         return new_data
 
-
         # 262
 
         # THIS IS NOT POSSIBLE! We have to use the indices in feature indices etc.
         # for i in range(len(updated_names)):
-            # current = n_values[i]
-            # print(current)
-            # for j in range(0, current):
-                # print('>' + str(j))
-                # new_names.append(updated_names[i] + str(j))
-        # print(len(new_names) + len(old_names) - np.shape(new_data)[1])
-        # for i in len(enc.feature_indices_) - 1:
-            # start = feature_indices[i]
-            # end   = feature_indices[i+1]
 
-            # current_indices = range(start,end)
+    # current = n_values[i]
+    # print(current)
+    # for j in range(0, current):
+    # print('>' + str(j))
+    # new_names.append(updated_names[i] + str(j))
+    # print(len(new_names) + len(old_names) - np.shape(new_data)[1])
+    # for i in len(enc.feature_indices_) - 1:
+    # start = feature_indices[i]
+    # end   = feature_indices[i+1]
 
-            # # Remask the set of updated_indices here.
-            # used_indices = set(current_indices).intersection(active_features)
-            # current_column = data.columns[min(used_indices)]
+    # current_indices = range(start,end)
 
-            # while all_columns_index < min(used_indices):
-                # new_names.append(data.columns[all_columns_index])
-                # all_columns_index += 1
+    # # Remask the set of updated_indices here.
+    # used_indices = set(current_indices).intersection(active_features)
+    # current_column = data.columns[min(used_indices)]
 
-            # for j in used_indices:
-               # new_names.append(current_column + str(j))
+    # while all_columns_index < min(used_indices):
+    # new_names.append(data.columns[all_columns_index])
+    # all_columns_index += 1
+
+    # for j in used_indices:
+    # new_names.append(current_column + str(j))
 
     def load_data(self, filename):
         """
@@ -320,9 +314,8 @@ class Driver:
         y_data = data['y_data']
         if 'all_data' in data:
             all_data = data['all_data']
-            return(x_data, y_data, all_data)
-        return(x_data, y_data)
-
+            return (x_data, y_data, all_data)
+        return (x_data, y_data)
 
     def get_usable_data(self, data, x_names, y_names):
         L.info('Loaded data with %d rows and %d columns' % np.shape(data))
@@ -384,7 +377,6 @@ class Driver:
             L.info('We are also adding polynomial features')
             # We don't have to poor the data into a dataframe here, as the processor does it for us
             x_data = DataPreprocessorPolynomial.process(x_data)
-
 
         # Logtransform the data
         # variable_transformer = VariableTransformer(self.x_names)

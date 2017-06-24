@@ -132,7 +132,8 @@ class DistributedGridSearch:
             grid = [self.param_grid[y] for y in task]
             print('\t\tSlave %d: Received job: %s' % (self.rank, task))
             model = GridSearchMine(
-                estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv).fit(X=my_X, y=my_y)
+                estimator=self.skmodel, param_grid=grid, n_jobs=-1, verbose=0, cv=self.cv).fit(
+                    X=my_X, y=my_y)
             models.append((model.best_score_, model.best_estimator_))
             last_run_time = MPI.Wtime() - start
             print('\t\tSlave %d: finished calculation in %0.1f seconds' % (self.rank, last_run_time))

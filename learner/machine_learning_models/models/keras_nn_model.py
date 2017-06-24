@@ -80,8 +80,7 @@ class KerasNnClassificationModel(KerasWrapper):
         # Create the model
         keras_model = Sequential()
         keras_model.add(
-            Dense(
-                output_dim=32, input_dim=np.shape(self.x_train)[1], init='lecun_uniform', activation='sigmoid'))
+            Dense(output_dim=32, input_dim=np.shape(self.x_train)[1], init='lecun_uniform', activation='sigmoid'))
         keras_model.add(Dropout(0.5))
         keras_model.add(Dense(output_dim=32, input_dim=32, init='lecun_uniform', activation='sigmoid'))
         keras_model.add(Dropout(0.5))

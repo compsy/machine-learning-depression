@@ -23,7 +23,6 @@ class DescriptivesTableCreator():
         # header.append('Mean')
         x_names = list(x_data)
 
-
         ranks = list(range(1, 26))
         types = []
         for column in x_data.columns:

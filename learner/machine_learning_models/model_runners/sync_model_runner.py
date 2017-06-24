@@ -1,6 +1,7 @@
 from learner.data_output.std_logger import L
 from learner.machine_learning_models.model_runner import ModelRunner
 
+
 class SyncModelRunner(ModelRunner):
     """ The syncmodelrunner calculates / fits a machine learning model for each of the machine
     learning algorithms defined.

@@ -1,5 +1,6 @@
 from sklearn.ensemble.bagging import BaggingRegressor, BaggingClassifier
 
+
 class BaggingModel:
 
     @staticmethod

@@ -25,10 +25,7 @@ class RegressionTreeModel(MachineLearningModel):
                 'max_depth': np.logspace(0, 3, 15),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
-            random_parameter_grid = {
-                'max_depth': logser(p=.99).rvs(),
-                'max_features': ['auto', 'sqrt', 'log2', None]
-            }
+            random_parameter_grid = {'max_depth': logser(p=.99).rvs(), 'max_features': ['auto', 'sqrt', 'log2', None]}
             self.grid_search([parameter_grid], [random_parameter_grid])
 
 
@@ -49,13 +46,7 @@ class ClassificationTreeModel(MachineLearningModel):
             'max_leaf_nodes': None
         }
         super().__init__(
-            x,
-            y,
-            y_names,
-            hyperparameters=hyperparameters,
-            model_type='classification',
-            verbosity=verbosity,
-            **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, model_type='classification', verbosity=verbosity, **kwargs)
 
         self.skmodel = DecisionTreeClassifier(**self.hyperparameters)
 

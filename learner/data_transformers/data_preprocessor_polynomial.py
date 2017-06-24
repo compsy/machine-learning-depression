@@ -19,7 +19,7 @@ class DataPreprocessorPolynomial(DataTransformer):
         """
 
         poly = PolynomialFeatures(degree=degree)
-        fit  = poly.fit_transform(x_data)
+        fit = poly.fit_transform(x_data)
         names = poly.get_feature_names(list(x_data))
 
-        return pd.DataFrame(fit, columns = names)
+        return pd.DataFrame(fit, columns=names)

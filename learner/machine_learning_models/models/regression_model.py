@@ -11,13 +11,7 @@ class ElasticNetModel(MachineLearningModel):
     def __init__(self, x, y, y_names, verbosity, grid_search, **kwargs):
         hyperparameters = {'alpha': 0.1, 'l1_ratio': 0.5, 'max_iter': 10000}
         super().__init__(
-            x,
-            y,
-            y_names,
-            hyperparameters=hyperparameters,
-            verbosity=verbosity,
-            model_type='classification',
-            **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='classification', **kwargs)
         # TODO: Change to elasticnet CV
         self.skmodel = ElasticNet(**self.hyperparameters)
 
@@ -31,6 +25,7 @@ class ElasticNetModel(MachineLearningModel):
             }
             self.grid_search([parameter_grid], [random_parameter_grid])
 
+
 class LogisticRegressionModel(MachineLearningModel):
 
     def __init__(self, x, y, y_names, verbosity, grid_search, **kwargs):
@@ -43,13 +38,7 @@ class LogisticRegressionModel(MachineLearningModel):
             'tol': 0.0001,
         }
         super().__init__(
-            x,
-            y,
-            y_names,
-            hyperparameters=hyperparameters,
-            verbosity=verbosity,
-            model_type='classification',
-            **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = LogisticRegression(**self.hyperparameters)
 
         if grid_search:

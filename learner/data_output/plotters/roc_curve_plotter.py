@@ -4,6 +4,7 @@ from learner.data_output.plotters.plotter import Plotter
 from learner.data_output.std_logger import L
 from sklearn.metrics import auc, roc_curve
 
+
 class RocCurvePlotter(Plotter):
 
     def plot(self, models, output_type, cv=6):

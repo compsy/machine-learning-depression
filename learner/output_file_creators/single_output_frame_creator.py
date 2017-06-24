@@ -9,7 +9,7 @@ class SingleOutputFrameCreator:
         dataFrame = collections.namedtuple('DataFrame', ['data', 'header'])
         rows = len(participants)
 
-        header = self.create_header(questionnaires, add_pident = True)
+        header = self.create_header(questionnaires, add_pident=True)
         cols = len(header)
 
         result = np.empty(rows * cols).reshape(rows, cols)
@@ -37,7 +37,7 @@ class SingleOutputFrameCreator:
 
         return pd.DataFrame(result, columns=header)
 
-    def create_header(self, questionnaires, add_pident = True):
+    def create_header(self, questionnaires, add_pident=True):
         """docstring for create_header"""
         header = []
         if add_pident: header = ['pident']
@@ -47,4 +47,4 @@ class SingleOutputFrameCreator:
             header.extend(questionnaire.get_header())
 
         header = np.array(header)
-        return(header)
+        return (header)

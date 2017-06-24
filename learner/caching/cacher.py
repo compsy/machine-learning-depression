@@ -1,5 +1,6 @@
 from learner.data_output.std_logger import L
 
+
 class Cacher:
     """
     Super class for all cahcers
@@ -14,4 +15,3 @@ class Cacher:
         if not valid_cache:
             L.warn('Skipping model because it is corrupt..')
         return valid_cache
-

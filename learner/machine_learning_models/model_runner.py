@@ -47,12 +47,7 @@ class ModelRunner:
 
             # Fabricate the internal model
             current_model = algorithm(
-                x=x_data,
-                y=y_data,
-                y_names=y_names,
-                bagged=is_bagged,
-                verbosity=verbosity,
-                grid_search=has_grid_search)
+                x=x_data, y=y_data, y_names=y_names, bagged=is_bagged, verbosity=verbosity, grid_search=has_grid_search)
 
             # Hier een check maken om te kijken of het algorithm daadwerkelijk geupdate is met
             # nieuwe hyperparameters?

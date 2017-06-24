@@ -73,10 +73,8 @@ class OutputGenerator():
             y_test_pred = algorithm.skmodel.predict(x_data)
 
             # if model_type == 'classification':
-            self.confusion_matrix_plotter.plot(
-                algorithm, y_data, y_test_pred, output_type=output_type
-            )
+            self.confusion_matrix_plotter.plot(algorithm, y_data, y_test_pred, output_type=output_type)
             # else:
-                # self.actual_vs_prediction_plotter.plot_both(
-                    # algorithm, algorithm.y_test, y_test_pred, algorithm.y_train, y_train_pred
-                # )
+        # self.actual_vs_prediction_plotter.plot_both(
+        # algorithm, algorithm.y_test, y_test_pred, algorithm.y_train, y_train_pred
+        # )

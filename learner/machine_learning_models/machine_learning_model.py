@@ -14,13 +14,15 @@ from learner.data_output.std_logger import L
 from learner.machine_learning_evaluation.variance_evaluation import VarianceEvaluation
 from learner.machine_learning_models.randomized_search_mine import RandomizedSearchMine
 
+
 class MachineLearningModel:
     """
     Superclass for each machine learning model
     """
-    def __init__(self, x, y, y_names, hyperparameters, model_type='models', bagged = False, verbosity=0, n_iter=100):
+
+    def __init__(self, x, y, y_names, hyperparameters, model_type='models', bagged=False, verbosity=0, n_iter=100):
         self.x = x
-        self.y = np.ravel(y) #convert the 1d matrix to a vector
+        self.y = np.ravel(y)  #convert the 1d matrix to a vector
         self.x_names = x.columns
         self.y_names = y_names
         self.skmodel = None
@@ -141,7 +143,7 @@ class MachineLearningModel:
 
         # We add a randid to the end so we can store the same model multiple times
         rand_id = uuid.uuid4()
-        cache_name = model_name +'_' + str(rand_id) + '.pkl'
+        cache_name = model_name + '_' + str(rand_id) + '.pkl'
         self.cacher.write_cache(data=data, cache_name=cache_name)
 
     def variable_to_validate(self):
@@ -232,7 +234,7 @@ class MachineLearningModel:
         Short name representing the current model
         """
         bagging_string = '_bagged' if self.is_bagged else ''
-        return type(self).__name__+ bagging_string# + type(self.skmodel).__name__
+        return type(self).__name__ + bagging_string  # + type(self.skmodel).__name__
 
     @property
     def get_calculation_time(self):
@@ -247,14 +249,12 @@ class MachineLearningModel:
         """
         if self.grid_search_type == 'random':
             self.skmodel = RandomizedSearchMine(
-                estimator=self.skmodel, param_distributions=random_grid, n_jobs=-1, cv=self.cv, n_iter=self.n_iter
-            )
+                estimator=self.skmodel, param_distributions=random_grid, n_jobs=-1, cv=self.cv, n_iter=self.n_iter)
             return self.skmodel
 
         elif self.grid_search_type == 'exhaustive':
             self.skmodel = GridSearchCV(
-                estimator=self.skmodel, param_grid=exhaustive_grid, n_jobs=-1, verbose=1, cv=self.cv
-            )
+                estimator=self.skmodel, param_grid=exhaustive_grid, n_jobs=-1, verbose=1, cv=self.cv)
             return self.skmodel
 
         raise NotImplementedError('Gridsearch type: ' + self.grid_search_type + ' not implemented')
@@ -266,4 +266,3 @@ class MachineLearningModel:
         in an estimator, override it in the subclass.
         """
         return self.skmodel.predict_proba(x_data)[:, 1]
-

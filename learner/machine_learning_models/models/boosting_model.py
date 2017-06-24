@@ -19,13 +19,7 @@ class BoostingModel(MachineLearningModel):
         }
 
         super().__init__(
-            x,
-            y, 
-            y_names,
-            hyperparameters=hyperparameters,
-            verbosity=verbosity,
-            model_type='regression',
-            **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='regression', **kwargs)
         self.skmodel = GradientBoostingRegressor(**self.hyperparameters)
 
         if grid_search:
@@ -55,13 +49,7 @@ class BoostingClassificationModel(MachineLearningModel):
         hyperparameters = {'n_estimators': 1000, 'max_depth': 5, 'verbose': verbosity}
 
         super().__init__(
-            x,
-            y, 
-            y_names,
-            hyperparameters=hyperparameters,
-            verbosity=verbosity,
-            model_type='classification',
-            **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = GradientBoostingClassifier(**self.hyperparameters)
 
         if grid_search:

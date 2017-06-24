@@ -22,18 +22,12 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
         }
 
         super().__init__(
-            x,
-            y,
-            y_names,
-            hyperparameters=hyperparameters,
-            verbosity=verbosity,
-            model_type='classification',
-            **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = SGDClassifier(**self.hyperparameters)
 
         # Radial basis function grid
         grid = {
-            'loss':['log'],
+            'loss': ['log'],
             'alpha': np.logspace(-10, 3, 100),
             'average': [True, False],
             'class_weight': ['balanced', None],
@@ -43,7 +37,7 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
         }
 
         random_parameter_grid = {
-            'loss':['log'],
+            'loss': ['log'],
             'alpha': halflogistic(scale=.1),
             'average': [True, False],
             'class_weight': ['balanced', None],

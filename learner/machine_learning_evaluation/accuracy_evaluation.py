@@ -11,4 +11,4 @@ class AccuracyEvaluation(Evaluation):
         """
         Prints the accuracy of a model using crossvalidation on the test set
         """
-        return accuracy_score(y_true= y_true, y_pred=y_pred)
+        return accuracy_score(y_true=y_true, y_pred=y_pred)

@@ -39,7 +39,7 @@ class DistributedRandomGridSearch:
 
         # Actual calculation
         my_data = []
-        my_iterations = max(1,iterations) #round(iterations / len(self.param_grid))
+        my_iterations = max(1, iterations)  #round(iterations / len(self.param_grid))
         for param_grid in self.param_grid:
             model = self.fit_single_model(my_X, my_y, param_grid, my_iterations)
             my_data.append((model.best_score_, model.best_estimator_))
@@ -72,16 +72,10 @@ class DistributedRandomGridSearch:
         :return: the fitted model.
         """
         model = RandomizedSearchCV(
-            estimator=self.skmodel,
-            param_distributions=param_grid,
-            n_jobs=-1,
-            verbose=1,
-            cv=self.cv,
-            n_iter=iterations)
+            estimator=self.skmodel, param_distributions=param_grid, n_jobs=-1, verbose=1, cv=self.cv, n_iter=iterations)
         L.info('Here we go, node %d starts calculating %s' % (self.rank, self.ml_model.given_name), force=True)
         model = model.fit(X=X, y=y)
         return model
-
 
     def get_best_model(self, models):
         best_model = None

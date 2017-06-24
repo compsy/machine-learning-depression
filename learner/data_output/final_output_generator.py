@@ -22,7 +22,7 @@ class OutputGenerator():
         self.data_density_plotter = DataDensityPlotter()
         self.cacher = ObjectCacher(MachineLearningModel.cache_directory())
 
-    def create_output(self, classification_fabricated_models, y_data, used_data, selected_header, output_type,  model_type='classification'):
+    def create_output(self, classification_fabricated_models, x_data, y_data, used_data, output_type,  model_type='classification'):
         models = []
         for model in classification_fabricated_models:
             cache_name = model.model_cache_name
@@ -43,6 +43,8 @@ class OutputGenerator():
 
             if skmodel is not None:
                 model.inject_trained_model(skmodel=skmodel)
+                model.x = x_data
+                model.y = y_data
                 models.append(model)
             else:
                 L.info('File %s has none' % cache_name)
@@ -51,8 +53,8 @@ class OutputGenerator():
             raise ValueError('There are no methods for printing the evaluation of. Something went wrong...')
 
         if model_type == 'classification':
-            outcome = models[0].y.mean()
-            L.info('In the %s set, %d participants (%0.2f percent) is true' % (output_type, (len(models[0].y)), outcome))
+            outcome = y_data.mean()
+            L.info('In the %s set, %d participants (%0.2f percent) is true' % (output_type, (len(y_data)), outcome))
 
             # Generate roc curve plots
             self.roc_curve_plotter.plot(models, output_type=output_type)
@@ -66,10 +68,10 @@ class OutputGenerator():
 
         for model in models:
             model.print_evaluation()
-            y_test_pred = model.skmodel.predict(model.x)
+            y_test_pred = model.skmodel.predict(x_data)
 
             if model_type == 'classification':
-                self.confusion_matrix_plotter.plot(model, model.y, y_test_pred, output_type=output_type)
+                self.confusion_matrix_plotter.plot(model, y_data, y_test_pred, output_type=output_type)
             else:
                 self.actual_vs_prediction_plotter.plot_both(model, model.y_test, y_test_pred, model.y_train,
                                                             y_train_pred)

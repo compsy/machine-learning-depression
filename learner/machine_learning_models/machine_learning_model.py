@@ -74,7 +74,7 @@ class MachineLearningModel:
                 evaluator.print_evaluation(self, self.y, prediction)
 
         L.info(self.skmodel.get_params())
-        L.info('It took ' + self.get_calculation_time + ' to calculate this model')
+        L.info('It took ' + str(self.get_calculation_time) + ' to calculate this model')
         L.info('---------------------------------------------------------')
 
     def inject_trained_model(self, skmodel):
@@ -150,6 +150,7 @@ class MachineLearningModel:
 
         # Only use the hyperparameters of the for the present model
         files = list(filter(lambda x: cache_name in x, files))
+        cached_params = None
 
         was_hot_started = False
         best_score = 0
@@ -169,8 +170,7 @@ class MachineLearningModel:
             keys = filter(None.__ne__, map(lambda key: (None if(not key.startswith(prefix)) else key), hyperparameters.keys()))
             hyperparameters =  {key[len(prefix):]: hyperparameters[key] for key in keys}
 
-        if 'calculation_time' in cached_params: self.calculation_time = cached_params['calculation_time']
-
+        if cached_params and 'calculation_time' in cached_params: self.calculation_time = cached_params['calculation_time']
 
         return (hyperparameters, was_hot_started)
 

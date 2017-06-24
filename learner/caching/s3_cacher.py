@@ -34,7 +34,7 @@ class S3Cacher():
 
             L.info('Downloading file: %s ' % key)
             self.client.download_file(Bucket= bucket_name, Key=key, Filename=self.get_dirred_file(key))
-        True
+        return True
 
     def find_or_create_bucket(self, bucket_name):
         if(bucket_name in map(lambda w: w['Name'], self.client.list_buckets()['Buckets'])):

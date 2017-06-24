@@ -7,7 +7,7 @@ from learner.data_output.std_logger import L
 class DescriptivesTableCreator():
 
     @staticmethod
-    def generate_coefficient_descriptives_table(x_data, coefficients, name):
+    def generate_coefficient_descriptives_table(x_data, coefficients, name, categorical_limit=10):
         """
         Creates a latex table of the coefficients as provided in the function. Usually these coefficients are generated
         using elastic net of some sort.
@@ -19,32 +19,35 @@ class DescriptivesTableCreator():
         header = []
         header.append('#')
         header.append('Feature')
-        header.append('SD')
-        header.append('Mean')
+        # header.append('SD')
+        # header.append('Mean')
         x_names = list(x_data)
 
 
         ranks = list(range(1, 26))
         types = []
-        for column in x_data.T:
-            unique_items = len(np.unique(column))
+        for column in x_data.columns:
+            current = x_data[column]
+            unique_items = len(current.unique())
             if unique_items <= 2:
                 types.append('Dichotomous')
-            elif unique_items <= 10:
+            elif unique_items <= categorical_limit:
                 types.append('Categorical')
             else:
                 types.append('Discrete')
 
         if coefficients is not None:
             header.append('Elastic net Coefficient')
-            data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), coefficients[0:, 1], types))
+            # data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), coefficients[0:, 1], types))
+            data = list(zip(ranks, x_names, coefficients[0:, 1], types))
         else:
-            data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), types))
+            # data = list(zip(ranks, x_names, x_data.std(0), x_data.mean(0), types))
+            data = list(zip(ranks, x_names, types))
         header.append('Type')
         LatexTableExporter.export('exports/' + name + '.tex', data, header)
 
     @staticmethod
-    def create_data_descriptive_plots(participants, x_data, x_names):
+    def create_data_descriptive_plots(data_density_plotter, participants, x_data, x_names):
         ages = []
         genders = []
         for index, participant_key in enumerate(participants):
@@ -62,4 +65,4 @@ class DescriptivesTableCreator():
 
         L.info('The participants (%d) have an average age of %0.2f, median %0.2f, sd %0.2f, range %d-%d' % ages_output)
         L.info('The participants are %0.2f percent male (%0.2f percent female)' % gender_output)
-        self.data_density_plotter.plot(x_data, x_names)
+        data_density_plotter.plot(x_data, x_names)

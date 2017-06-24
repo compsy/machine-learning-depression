@@ -1,8 +1,8 @@
+import os
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import normalize, scale, OneHotEncoder
-import matplotlib.pyplot as plt
-import os
 
 from learner.caching.object_cacher import ObjectCacher
 from learner.data_input.spss_reader import SpssReader
@@ -12,7 +12,6 @@ from learner.data_output.std_logger import L
 from learner.data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
 from learner.data_transformers.output_data_cleaner import OutputDataCleaner
 from learner.data_transformers.output_data_splitter import OutputDataSplitter
-from learner.data_transformers.variable_transformer import VariableTransformer
 from learner.factories.questionnaire_factory import QuestionnaireFactory
 from learner.machine_learning_models.feature_selector import FeatureSelector
 from learner.machine_learning_models.model_runners.sync_model_runner import SyncModelRunner
@@ -63,6 +62,7 @@ class Driver:
             L.warn('No AWS config location set! using the default!!!')
 
         # Define global variables
+        self.CATEGORICAL_FEATURES_LIMIT = 10
         self.VERBOSITY = verbosity
         self.POLYNOMIAL_FEATURES = polynomial_features
         self.NORMALIZE = normalize
@@ -75,7 +75,6 @@ class Driver:
         self.single_output_frame_creator = SingleOutputFrameCreator()
         self.output_data_cleaner = OutputDataCleaner()
         self.output_data_splitter = OutputDataSplitter()
-        self.data_preprocessor_polynomial = DataPreprocessorPolynomial()
         self.cacher = ObjectCacher(directory='cache/')
 
         self.final_output_generator = OutputGenerator()
@@ -124,7 +123,13 @@ class Driver:
         # regression_models.append(BoostingModel)
         # regression_models.append(BaggingModel)
 
-    def run_setcreator(self, test_set_portion = 0.2):
+    def run_setcreator(self, test_set_portion=0.2):
+        """
+        The main function that is called when creating the sets
+        Parameters
+        ----------
+        test_set_portion : double, default=0.2 the portion of the data that should be used for testing
+        """
         test_set_id = 1
         participants = self.create_participants()
 
@@ -133,26 +138,26 @@ class Driver:
 
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
-
-
         #### Classification ####
         # Perform feature selection algorithm
         CsvExporter.export('exports/merged_all_dataframe.csv', data)
 
         L.info('We are using %s as input.' % self.x_names)
-        x_data, y_data, used_data, selected_header = self.get_usable_data(data, self.x_names, self.classification_y_names)
+        x_data, y_data = self.get_usable_data(data, self.x_names, self.classification_y_names)
 
         coefficients = None
         if  self.FEATURE_SELECTION:
-            coefficients = self.perform_feature_selection(x_data, y_data,
-                    self.x_names, self.classification_y_names, model_type='classification')
+            coefficients = self.perform_feature_selection(
+                x_data, y_data, self.classification_y_names, model_type='classification'
+            )
 
             # Update the x_names according to the found coefficients (this performs the actual feature selection)
             self.x_names = coefficients[0:, 0]
-
+            x_data = x_data[self.x_names]
 
         nobs = x_data.shape[0]
-        split_set =  np.random.binomial(test_set_id, test_set_portion, nobs)
+        split_set = np.random.binomial(test_set_id, test_set_portion, nobs)
+
         x_data['test'] = split_set
         y_data['test'] = split_set
 
@@ -162,23 +167,22 @@ class Driver:
         # Create test and training set
         training_data = {
             'x_data': x_data.loc[x_data['test'] != test_set_id].drop('test', 1),
-            'y_data': y_data.loc[y_data['test'] != test_set_id].drop('test', 1),
-            'used_data': used_data,
-            'selected_header': selected_header
+            'y_data': y_data.loc[y_data['test'] != test_set_id].drop('test', 1)
         }
 
         test_data = {
             'x_data': x_data.loc[x_data['test'] == test_set_id].drop('test', 1),
             'y_data': y_data.loc[y_data['test'] == test_set_id].drop('test', 1),
-            'used_data': used_data,
-            'selected_header': selected_header
+            'all_data': pd.concat([x_data, y_data], axis=1)
         }
 
         self.cacher.write_cache(training_data, 'training_data.pkl')
         self.cacher.write_cache(test_data, 'test_data.pkl')
 
     def run_evaluator(self):
-        x_data, y_data, used_data, selected_header = self.load_data(filename = 'test_data.pkl')
+        x_data, y_data, all_data = self.load_data(filename = 'test_data.pkl')
+        L.info('Running evaluation on data set of size (%d, %d)' % np.shape(x_data))
+        L.info('The headers in this file are: %s' % x_data.columns)
 
         # Calculate the actual models
         model_runner = SyncModelRunner(self.classification_models)
@@ -186,16 +190,16 @@ class Driver:
 
         self.final_output_generator.create_output(
             classification_fabricated_models,
+            x_data,
             y_data,
-            used_data,
-            selected_header,
+            all_data,
             output_type = 'test',
             model_type='classification')
 
     def run_trainer(self):
         if not self.cacher.file_available('training_data.pkl', add_dir=True):
             raise FileNotFoundError('Training data not found!')
-        x_data, y_data, used_data, selected_header = self.load_data(filename = 'training_data.pkl')
+        x_data, y_data = self.load_data(filename='training_data.pkl')
 
         # Calculate the actual models
         model_runner = SyncModelRunner(self.classification_models)
@@ -205,15 +209,16 @@ class Driver:
         # TODO: ??? SHOULD WE STILL DO THIS? Train all models, the fitted parameters will be saved inside the models
         model_runner.run_calculations(fabricated_models=classification_fabricated_models)
 
-    def perform_feature_selection(self, x_data, y_data, x_names, y_names, model_type):
+    def perform_feature_selection(self, x_data, y_data, y_names, model_type):
         temp_pol_features = self.POLYNOMIAL_FEATURES
         self.POLYNOMIAL_FEATURES = False
 
         L.info('Performing feature selection for ' + model_type)
 
         feature_selection_model = StochasticGradientDescentClassificationModel(
-            np.copy(x_data), np.copy(y_data), x_names, y_names, grid_search=False, verbosity=0
+            np.copy(x_data), np.copy(y_data), x_data.columns, y_names, grid_search=False, verbosity=0
             )
+
         feature_selection_model.train(cache_result=False)
         coefficients = self.feature_selector.determine_best_variables(feature_selection_model)
         self.POLYNOMIAL_FEATURES = temp_pol_features
@@ -292,8 +297,7 @@ class Driver:
         x_data = training_data['x_data']
         y_data = training_data['y_data']
         used_data = training_data['used_data']
-        selected_header = training_data['selected_header']
-        return(x_data, y_data, used_data, selected_header)
+        return(x_data, y_data, used_data)
 
 
     def get_usable_data(self, data, x_names, y_names):
@@ -328,30 +332,35 @@ class Driver:
         L.info("The values to predict have the shape: %s %s" % np.shape(y_data))
 
         # Convert ydata 2d matrix (x * 1) to 1d array (x). Needed for the classifcation things
-        return (x_data, y_data, used_data, selected_header)
+        return (x_data, y_data)
 
     def transform_variables(self, x_data):
-        # Save the names (they will be removed by scikitlearn)
-        names = list(x_data)
+        """
+        Transforms variables to include different features
+        """
 
-        self.CATEGORICAL_FEATURES_LIMIT = 10
-        if self.CATEGORICAL_FEATURES_LIMIT > 0 :
-            self.perform_categorical_feature_transformation(x_data, limit = self.CATEGORICAL_FEATURES_LIMIT)
+        # Save the names (they will be removed by scikitlearn)
+        names = x_data.columns
+
+        if self.CATEGORICAL_FEATURES_LIMIT > 0:
+            x_data = self.perform_categorical_feature_transformation(x_data, limit=self.CATEGORICAL_FEATURES_LIMIT)
+            names = x_data.columns
 
         if self.NORMALIZE:
             L.info('We are also normalizing the features')
-            x_data = normalize(x_data, norm='l2', axis=1)
-            x_data = pd.DataFrame(x_data, columns=names)
-
+            np_x_data = normalize(x_data, norm='l2', axis=1)
+            x_data = pd.DataFrame(np_x_data, columns=names)
 
         if self.SCALE:
             L.info('We are also scaling the features')
-            x_data = scale(x_data)
+            np_x_data = scale(x_data)
             x_data = pd.DataFrame(x_data, columns=names)
 
         if self.POLYNOMIAL_FEATURES:
             L.info('We are also adding polynomial features')
-            x_data = self.data_preprocessor_polynomial.process(x_data)
+            # We don't have to poor the data into a dataframe here, as the processor does it for us
+            x_data = DataPreprocessorPolynomial.process(x_data)
+
 
         # Logtransform the data
         # variable_transformer = VariableTransformer(self.x_names)

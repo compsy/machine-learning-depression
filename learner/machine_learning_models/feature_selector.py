@@ -1,10 +1,11 @@
-from learner.data_output.std_logger import L
 import numpy as np
-
+from learner.data_output.std_logger import L
+from learner.data_output.datatool_output import DatatoolOutput
 
 class FeatureSelector():
 
     def determine_best_variables(self, mlmodel, top=25):
+        DatatoolOutput.export('number-covariates-from-feature-selection', top)
         if mlmodel.was_trained:
             coef_ = mlmodel.skmodel.coef_[0]
             assert len(coef_) == len(mlmodel.x_names)

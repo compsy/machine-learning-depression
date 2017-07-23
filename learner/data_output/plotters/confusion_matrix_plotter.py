@@ -2,59 +2,58 @@ from learner.data_output.plotters.plotter import Plotter
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
+from sklearn.metrics import recall_score, precision_score
+
 import numpy as np
 from learner.data_output.std_logger import L
 
 
 class ConfusionMatrixPlotter(Plotter):
 
-    def plot(self, model, actual, predicted, output_type):
-        if predicted is None or actual is None:
-            return False
+    def plot(self, models, output_type, estimator_names):
 
-        cmap = plt.cm.Blues
-        cmap = plt.cm.afmhot
-        cmap = plt.cm.rainbow
-        np.set_printoptions(precision=2)
+        estimators = [estimator[0] for estimator in estimator_names]
+        for i, model in enumerate(models):
+            # Get the true and predicted data
+            y_pred = model.skmodel.predict(model.get_x)
+            y_true = model.get_y
 
-        fig, ax = plt.subplots(1, 2, figsize=(15, 15), dpi=72)
+            name = estimators[i]
+            cmap = plt.cm.Blues
+            # cmap = plt.cm.afmhot
+            # cmap = plt.cm.rainbow
 
-        tick_marks = np.arange(2)
+            np.set_printoptions(precision=2)
 
-        plt.setp(ax, xticks=tick_marks, xticklabels=['yes', 'no'], yticks=tick_marks, yticklabels=['yes', 'no'])
+            plt.figure(figsize=(15, 15), dpi=172)
+            fig = plt.figure()
+            # [left, bottom, width, height] 
+            ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
 
-        plot_name = model.given_name
-        plot_name = 'confusion_matrix_' + output_type + '_' + plot_name.replace(" ", "_")
+            tick_marks = np.arange(2)
 
-        cm = confusion_matrix(actual, predicted)
+            plt.setp(ax, xticks=tick_marks, xticklabels=['Yes', 'No'], yticks=tick_marks, yticklabels=['Yes', 'No'])
 
-        L.info('Plotting ' + plot_name)
-        L.info('(True Positives: %d, True Negatives: %d, False Positives: %d, False Negatives: %d)' %
-               (cm[0, 0], cm[1, 1], cm[1, 0], cm[0, 1]))
+            plot_name = model.given_name
+            plot_name = 'z_confusion_matrix_' + output_type + '_' + str(i)
 
-        precision = float(cm[0, 0]) / float(cm[0, 0] + cm[1, 0])
-        recall = float(cm[0, 0]) / float(cm[0, 0] + cm[0, 1])
+            confusion_matrix_calculated = confusion_matrix(y_true, y_pred)
 
-        # f1 = 2.0 * ((precision * recall) / (precision + recall))
-        # L.info(f1)
+            # im = ax[0].imshow(confusion_matrix_calculated, interpolation='nearest', cmap=cmap)
 
-        im = ax[0].imshow(cm, interpolation='nearest', cmap=cmap)
+            # ax[0].set_title('CFM:' + model.given_name)
+            # ax[0].set_ylabel('True label')
+            # ax[0].set_xlabel('y_pred label')
+            # fig.colorbar(im)
 
-        ax[0].set_title('CFM:' + model.given_name)
-        ax[0].set_ylabel('True label')
-        ax[0].set_xlabel('Predicted label')
-        fig.colorbar(im)
+            cm_normalized = confusion_matrix_calculated.astype('float') / confusion_matrix_calculated.sum(axis=1)[:, np.newaxis]
 
-        cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        L.info('Plotting normalized ' + plot_name)
-        L.info('(True Positives: %0.2f, True Negatives: %0.2f, False Positives: %0.2f, False Negatives: %0.2f)' %
-               (cm_normalized[0, 0], cm_normalized[1, 1], cm_normalized[1, 0], cm_normalized[0, 1]))
-        im = ax[1].imshow(cm_normalized, interpolation='nearest', cmap=cmap)
-        ax[1].set_title('NCFM: ' + model.given_name)
-        ax[1].set_ylabel('True label')
-        ax[1].set_xlabel('Predicted label')
+            im = ax.imshow(cm_normalized, interpolation='nearest', cmap=cmap)
+            ax.set_title('')
+            ax.set_ylabel('True label')
+            ax.set_xlabel('Predicted label')
 
-        fig.colorbar(im)
-        fig.tight_layout()
+            fig.colorbar(im)
+            # fig.tight_layout()
 
-        return self.return_file(plt, plot_name)
+            self.return_file(plt, plot_name)

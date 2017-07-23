@@ -14,7 +14,7 @@ class RandomForestClassificationModel(MachineLearningModel):
             'max_features': 'auto',
         }
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='classification', **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, pretty_name = 'Random Forest',verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = RandomForestClassifier(**self.hyperparameters)
 
         if grid_search:

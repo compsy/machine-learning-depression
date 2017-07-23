@@ -16,7 +16,7 @@ class RegressionTreeModel(MachineLearningModel):
 
     def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'max_depth': 5}
-        super().__init__(x, y, y_names, hyperparameters=hyperparameters, model_type='regression', **kwargs)
+        super().__init__(x, y, y_names, hyperparameters=hyperparameters, pretty_name = 'Regression Tree', model_type='regression', **kwargs)
 
         self.skmodel = DecisionTreeRegressor(**self.hyperparameters)
 
@@ -46,7 +46,7 @@ class ClassificationTreeModel(MachineLearningModel):
             'max_leaf_nodes': None
         }
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, model_type='classification', verbosity=verbosity, **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, pretty_name = 'Decision Tree', model_type='classification', verbosity=verbosity, **kwargs)
 
         self.skmodel = DecisionTreeClassifier(**self.hyperparameters)
 

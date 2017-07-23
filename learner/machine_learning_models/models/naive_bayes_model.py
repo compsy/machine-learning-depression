@@ -17,7 +17,7 @@ class GaussianNaiveBayesModel(NaiveBayesModel):
     def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'verbosity': verbosity}
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='classification', **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, pretty_name = 'Gaussian Naive Bayes',  model_type='regression', **kwargs)
         self.skmodel = GaussianNB()
 
 
@@ -26,7 +26,7 @@ class BernoulliNaiveBayesModel(NaiveBayesModel):
     def __init__(self, x, y, y_names, verbosity, grid_search, **kwargs):
         hyperparameters = {'alpha': 0.1, 'binarize': 0.5, 'fit_prior': True}
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='classification', **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, pretty_name = 'Bernoulli Naive Bayes', model_type='classification', **kwargs)
 
         self.skmodel = BernoulliNB(**self.hyperparameters)
 

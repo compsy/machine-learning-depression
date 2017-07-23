@@ -10,6 +10,7 @@ from learner.caching.object_cacher import ObjectCacher
 from learner.machine_learning_evaluation.accuracy_evaluation import AccuracyEvaluation
 from learner.machine_learning_evaluation.explained_variance_evaluation import ExplainedVarianceEvaluation
 from learner.machine_learning_evaluation.f1_evaluation import F1Evaluation
+from learner.machine_learning_evaluation.geometric_mean_evaluation import GeometricMeanEvaluation
 from learner.machine_learning_evaluation.mse_evaluation import MseEvaluation, RootMseEvaluation
 from learner.data_output.std_logger import L
 from learner.machine_learning_evaluation.variance_evaluation import VarianceEvaluation
@@ -21,7 +22,7 @@ class MachineLearningModel:
     Superclass for each machine learning model
     """
 
-    def __init__(self, x, y, y_names, hyperparameters, model_type='models', bagged=False, verbosity=0, n_iter=100, store_on_s3=True):
+    def __init__(self, x, y, y_names, hyperparameters, model_type='models', bagged=False, verbosity=0, n_iter=100, store_on_s3=True, pretty_name='default'):
         self.x = x
         self.y = np.ravel(y)  #convert the 1d matrix to a vector
         self.x_names = x.columns
@@ -31,6 +32,7 @@ class MachineLearningModel:
         self.bagged = bagged
         self.model_type = model_type
         self.was_trained = False
+        self.pretty_name = pretty_name
 
         # The methods to use for evaluating
         self.evaluations = [
@@ -39,7 +41,8 @@ class MachineLearningModel:
             MseEvaluation(),
             ExplainedVarianceEvaluation(),
             RootMseEvaluation(),
-            AccuracyEvaluation()
+            AccuracyEvaluation(),
+            GeometricMeanEvaluation()
         ]
 
         # Setup the cacher
@@ -76,6 +79,10 @@ class MachineLearningModel:
         L.br()
         L.info('SCORES OF MODEL: ' + self.given_name)
         L.info('---------------------------------------------------------')
+        # if(self.given_name == 'Random Dummy'):
+            # import pdb
+            # pdb.set_trace()
+
         prediction = self.skmodel.predict(self.x)
         L.info('Performance on (%d,%d)' % np.shape(self.x))
         for evaluator in self.evaluations:
@@ -113,6 +120,7 @@ class MachineLearningModel:
 
         # Fit the actual model
         L.info('Training ' + self.given_name + ' with data (%d, %d)' % np.shape(self.x))
+
         self.inject_trained_model(skmodel=self.skmodel.fit(X=self.x, y=self.y))
 
         # We have to store the model name before we actually set the best estimator
@@ -177,10 +185,15 @@ class MachineLearningModel:
 
         self.hot_started = False
         best_score = 0
+
+        # if(self.given_name == 'Random Dummy'):
+            # import pdb
+            # pdb.set_trace()
+
         for filename in files:
             cached_params = self.cacher.read_cache(filename)
             if Cacher.is_valid_cache(cached_params, needed_fields_in_cache):
-                if not (self.is_bagged ^ cached_params['is_bagged']):
+                if (not self.is_bagged) ^ cached_params['is_bagged']:
                     if cached_params['score'] > best_score:
                         self.hot_started = True
                         self.calculation_time = cached_params['calculation_time']
@@ -230,7 +243,7 @@ class MachineLearningModel:
         Longer name representing the current object
         """
         bagging_string = '(bagged)' if self.is_bagged else ''
-        return type(self).__name__ + " Type: " + type(self.skmodel).__name__ + bagging_string
+        return (self.pretty_name + " " + bagging_string).strip()
 
     @property
     def short_name(self):
@@ -262,6 +275,9 @@ class MachineLearningModel:
             return self.skmodel
 
         raise NotImplementedError('Gridsearch type: ' + self.grid_search_type + ' not implemented')
+
+    def predict(self, x_data):
+        return(self.skmodel.predict(x_data))
 
     def predict_for_roc(self, x_data):
         """

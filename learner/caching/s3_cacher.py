@@ -9,15 +9,17 @@ class S3Cacher():
     Pickles and caches files to an S3 backend
     """
 
-    def __init__(self, directory='cache/', bucket_name='icpe-machine-learning-cache', bucket_location='EU'):
+    def __init__(self, directory='cache/', bucket_name='icpe-machine-learning-cache', bucket_location='EU', preload = True):
         self.object_cacher = ObjectCacher(directory)
         self.client = boto3.client('s3')
         self.bucket_location = bucket_location
-
-        # Download all files available in the bucket
+        self.resource = boto3.resource('s3')
         self.bucket_name = bucket_name
         self.bucket = self.find_or_create_bucket(bucket_name)
-        self.download_bucket()
+
+        # Download all files available in the bucket
+        if preload:
+            self.download_bucket()
 
     def download_bucket(self, bucket_name=None):
         if bucket_name is None:
@@ -63,3 +65,15 @@ class S3Cacher():
 
     def files_in_dir(self):
         return self.object_cacher.files_in_dir()
+
+    def delete_all(self, bucket_name=None):
+        if bucket_name is None:
+            bucket_name = self.bucket_name
+        bucket_content_list = self.client.list_objects(Bucket=bucket_name)
+        if 'Contents' in bucket_content_list:
+            for entry in bucket_content_list['Contents']:
+                key = entry['Key']
+                L.info('Deleting from S3: ' + key)
+                self.resource.Object(bucket_name, key).delete()
+
+

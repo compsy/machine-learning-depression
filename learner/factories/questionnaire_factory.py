@@ -185,6 +185,8 @@ class QuestionnaireFactory:
         """
         return np.array([  # 'pident',
             # N1_x100    DOB, age, gender, nationality and education of respondents
+            'ademo-gender',
+            'ademo-age',
             'ademo-frame01',
             'ademo-frame02',
             'ademo-area',
@@ -347,7 +349,7 @@ class QuestionnaireFactory:
             'acidi-anxiety-generalAnxietyDisorderPastYear',
             'acidi-anxiety-generalAnxietyDisorderInLifetime',
             'acidi-anxiety-numberOfCurrentAnxietyDiagnoses',
-            'acidi-anxiety-lifetimeAnxietyDiagnosesPresent',
+            'acidi-anxiety-lifetimeAnxietyDiagnosesPresent'
 
             # N1_x261    CIDI - bipolar (raw scores + diagnoses)
             # N1_x262    CIDI- bipolar (derived diagnoses variables)
@@ -360,7 +362,4 @@ class QuestionnaireFactory:
             # N1_x408    TNF-a
             # N1_x490    Saliva - measurement info
             # N1_x491    Saliva - markers (cortisol)
-
-            'ademo-gender',
-            'ademo-age'
         ])

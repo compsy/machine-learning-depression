@@ -2,14 +2,20 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
 from sklearn.preprocessing import normalize, scale, OneHotEncoder
+from imblearn.combine import SMOTEENN
 
 from learner.caching.object_cacher import ObjectCacher
+from learner.caching.cacher import Cacher
+from learner.caching.s3_cacher import S3Cacher
 from learner.data_input.spss_reader import SpssReader
 from learner.data_output.csv_exporter import CsvExporter
+from learner.data_output.datatool_output import DatatoolOutput
 from learner.data_output.final_output_generator import OutputGenerator
 from learner.data_output.std_logger import L
 from learner.data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
+from learner.data_transformers.data_resampler import DataResampler
 from learner.data_transformers.output_data_cleaner import OutputDataCleaner
 from learner.data_transformers.output_data_splitter import OutputDataSplitter
 from learner.factories.questionnaire_factory import QuestionnaireFactory
@@ -93,26 +99,23 @@ class Driver:
         self.classification_models = []
         # self.classification_models.append(KerasNnClassificationModel)
         self.classification_models.append({'model': ClassificationTreeModel, 'options': ['grid-search']})
-
-        # self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
-        # self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
-        # self.classification_models.append({'model': DummyClassifierModel, 'options': []})
-        # self.classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
+        self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
+        self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
+        self.classification_models.append({'model': DummyClassifierModel, 'options': []})
+        self.classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
         # self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
-        # self.classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
-        # self.classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
-        # self.classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['grid-search']})
-        # self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
+        self.classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
+        self.classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
+        self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
 
         # self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
-        self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
+        # self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
         # self.classification_models.append({'model': DummyClassifierModel, 'options': ['bagging']})
         # self.classification_models.append({'model': DummyRandomClassifierModel, 'options': ['bagging']})
         # self.classification_models.append({'model': ClassificationTreeModel, 'options': ['bagging']})
-        # self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
+        # # self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['bagging']})
         # self.classification_models.append({'model': BoostingClassificationModel, 'options': ['bagging']})
         # self.classification_models.append({'model': LogisticRegressionModel, 'options': ['bagging']})
-        # self.classification_models.append({'model': GaussianNaiveBayesModel, 'options': ['bagging']})
         # self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
 
         # regression_models = []
@@ -130,10 +133,17 @@ class Driver:
         ----------
         test_set_portion : double, default=0.2 the portion of the data that should be used for testing
         """
+        # Delete all cached models
+        S3Cacher(directory='cache', preload=False).delete_all()
+        Cacher.clean_cache('cache/mlmodels/')
+        DatatoolOutput.clear()
+
         test_set_id = 1
         participants = self.create_participants()
+        DatatoolOutput.export('total-number-of-participants', len(participants))
 
         data = self.get_file_data('cache', participants=participants, force_to_not_use_cache=self.FORCE_NO_CACHING)
+
 
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
@@ -145,6 +155,7 @@ class Driver:
         x_data, y_data = self.get_usable_data(data, self.x_names, self.classification_y_names)
 
         coefficients = None
+        DatatoolOutput.export('total-number-of-features', len(self.x_names))
         if self.FEATURE_SELECTION:
             coefficients = self.perform_feature_selection(
                 x_data, y_data, self.classification_y_names, model_type='classification')
@@ -153,29 +164,53 @@ class Driver:
             self.x_names = coefficients[0:, 0]
             x_data = x_data[self.x_names]
 
+
         nobs = x_data.shape[0]
         split_set = np.random.binomial(test_set_id, test_set_portion, nobs)
+
+        x_data = x_data.reset_index(drop=True)
+        y_data = y_data.reset_index(drop=True)
+        DatatoolOutput.export('outcome-is-one-percentage', 100 * (pd.DataFrame.sum(y_data)[0]/len(y_data)))
+        DatatoolOutput.export('total-size-row', np.shape(x_data)[0])
 
         x_data['test'] = split_set
         y_data['test'] = split_set
 
         DescriptivesTableCreator.generate_coefficient_descriptives_table(
-            x_data, coefficients, name='classification_descriptives')
+            x_data, coefficients, name='z_classification_descriptives')
 
         # Create test and training set
+        x_data_train = x_data.loc[x_data['test'] != test_set_id].drop('test', 1).reset_index(drop=True)
+        y_data_train = y_data.loc[y_data['test'] != test_set_id].drop('test', 1).reset_index(drop=True)
+        DatatoolOutput.export('train-size-row', np.shape(x_data_train)[0])
+        DatatoolOutput.export('outcome-is-one-percentage-train', 100 * (pd.DataFrame.sum(y_data_train)[0]/len(y_data_train)))
+
+        # resampling is needed because the higlhy unbalanced datasets
+        x_data_train, y_data_train = DataResampler.process(x_data = x_data_train, y_data = y_data_train)
+        DatatoolOutput.export('train-size-row-after-resampling', np.shape(x_data_train)[0])
+        DatatoolOutput.export('outcome-is-one-percentage-train-after-resampling', 100 * (pd.DataFrame.sum(y_data_train)[0]/len(y_data_train)))
+
         training_data = {
-            'x_data': x_data.loc[x_data['test'] != test_set_id].drop('test', 1),
-            'y_data': y_data.loc[y_data['test'] != test_set_id].drop('test', 1)
+            'x_data': x_data_train,
+            'y_data': y_data_train
         }
+        self.cacher.write_cache(training_data, 'training_data.pkl')
+        CsvExporter.export('exports/merged_train_dataframe.csv', pd.concat([x_data_train, y_data_train], axis = 1))
+
+        x_data_test = x_data.loc[x_data['test'] == test_set_id].drop('test', 1).reset_index(drop=True)
+        y_data_test = y_data.loc[y_data['test'] == test_set_id].drop('test', 1).reset_index(drop=True)
+        DatatoolOutput.export('test-size-row', np.shape(x_data_test)[0])
+        DatatoolOutput.export('outcome-is-one-percentage-test', 100 * (pd.DataFrame.sum(y_data_test)[0]/len(y_data_test)))
 
         test_data = {
-            'x_data': x_data.loc[x_data['test'] == test_set_id].drop('test', 1),
-            'y_data': y_data.loc[y_data['test'] == test_set_id].drop('test', 1),
-            'all_data': pd.concat([x_data.drop('test', 1), y_data.drop('test', 1)], axis=1)
+            'x_data': x_data_test,
+            'y_data': y_data_test,
+            'all_data': pd.concat([x_data, y_data], axis=1)
         }
-
-        self.cacher.write_cache(training_data, 'training_data.pkl')
         self.cacher.write_cache(test_data, 'test_data.pkl')
+        CsvExporter.export('exports/merged_test_dataframe.csv', pd.concat([x_data_test, y_data_test], axis = 1))
+        CsvExporter.export('exports/merged_full_pre_dataframe.csv', pd.concat([x_data, y_data], axis = 1))
+
 
     def run_evaluator(self):
         """
@@ -210,6 +245,7 @@ class Driver:
         # Retrieve the data from the cache
         x_data, y_data = self.load_data(filename='training_data.pkl')
 
+        DatatoolOutput.export('number-of-ml-algorithms', len(self.classification_models))
         # Calculate the actual models
         model_runner = SyncModelRunner(self.classification_models)
 
@@ -231,7 +267,8 @@ class Driver:
             x_data, y_data, y_names, grid_search=False, verbosity=0)
 
         feature_selection_model.train(cache_result=False)
-        coefficients = self.feature_selector.determine_best_variables(feature_selection_model)
+
+        coefficients = self.feature_selector.determine_best_variables(feature_selection_model, top = 30)
         self.POLYNOMIAL_FEATURES = temp_pol_features
         return coefficients
 

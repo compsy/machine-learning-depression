@@ -1,4 +1,5 @@
 from learner.data_output.std_logger import L
+import os
 
 
 class Cacher:
@@ -15,3 +16,11 @@ class Cacher:
         if not valid_cache:
             L.warn('Skipping model because it is corrupt..')
         return valid_cache
+
+    @staticmethod
+    def clean_cache(thedir='cache/mlmodels/'):
+        thedir = thedir if thedir.endswith('/') else thedir + '/'
+        filelist = [ f for f in os.listdir(thedir) if f.endswith(".pkl") ]
+        for f in filelist:
+            os.remove(thedir + f)
+

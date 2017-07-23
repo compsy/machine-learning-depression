@@ -16,7 +16,7 @@ class SupportVectorRegressionModel(SupportVectorModel):
         hyperparameters = {'kernel': 'rbf', 'C': 1, 'epsilon': 0.1, 'gamma': 0.1, 'verbose': verbosity}
 
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='regression', **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, pretty_name = 'Support Vector Machine', model_type='regression', **kwargs)
         self.skmodel = svm.SVR(**self.hyperparameters)
         # Radial basis function grid
         rbf_grid = {
@@ -50,27 +50,31 @@ class SupportVectorRegressionModel(SupportVectorModel):
 
         random_rbf_grid = {
             'kernel': ['rbf'],
-            'C': halflogistic(scale=100),
+            'C': halflogistic(scale=.1),
             'gamma': halflogistic(scale=.1),
             'epsilon': halflogistic(scale=.1)
         }
 
         random_poly_grid = {
             'kernel': ['poly'],
-            'C': halflogistic(scale=100),
+            'C': halflogistic(scale=.1),
             'degree': [2, 3, 4, 5],
             'gamma': halflogistic(scale=.1),
             'coef0': halflogistic(scale=.1)
         }
 
         random_sigmoid_grid = {
-            'kernel': ['sigmoid'],
-            'C': halflogistic(scale=100),
-            'gamma': halflogistic(scale=.1),
-            'coef0': halflogistic(scale=.1)
+            'kernel': ['sigmoid']#,
+            # 'C': halflogistic(scale=.1),
+            # 'gamma': halflogistic(scale=.1),
+            # 'coef0': halflogistic(scale=.1)
         }
 
-        self.random_param_grid = [random_rbf_grid, random_poly_grid, random_sigmoid_grid]
+        self.random_param_grid = [
+                # random_rbf_grid,
+                # random_poly_grid, 
+                random_sigmoid_grid
+                ]
         if grid_search:
             self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
 
@@ -80,7 +84,7 @@ class SupportVectorClassificationModel(SupportVectorModel):
     def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {'kernel': 'poly', 'degree': 2, 'C': 3, 'coef0': 1, 'verbose': verbosity}
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='classification', **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, pretty_name = 'Support Vector Machine' , model_type='classification', **kwargs)
         self.skmodel = svm.SVC(**self.hyperparameters)
 
         # Radial basis function grid

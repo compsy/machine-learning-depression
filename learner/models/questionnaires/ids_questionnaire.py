@@ -30,7 +30,8 @@ class IDSQuestionnaire(Questionnaire):
 
     def twice_depression(self, participant):
         result = np.NaN
-        threshold = 0
+        # Threhold of 2 is used to comply with VanBorkulo2015
+        threshold = 2
         if self.previous_questionnaire is not None:
             if self.severity(participant) > threshold and self.previous_questionnaire.severity(participant) > threshold:
                 result = 1

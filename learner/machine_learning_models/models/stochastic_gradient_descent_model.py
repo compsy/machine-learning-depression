@@ -22,7 +22,7 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
         }
 
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, model_type='classification', **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, pretty_name = 'Stochastic Gradient Descent Estimator', verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = SGDClassifier(**self.hyperparameters)
 
         # Radial basis function grid

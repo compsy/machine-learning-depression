@@ -20,7 +20,7 @@ Your terminal should now show that you are using the `venv` virtual environment.
 pip install -r requirements.txt
 ```
 
-### 2. Initializeing the data and cache
+### 2. Initializing the data and cache
 The data used for the present project is provided by NESDA. The easiest method to get the data in the project is by simlinking to the location where the data is stored. In case of Compsy development machines the following lines suffice:
 
 ```

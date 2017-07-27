@@ -10,7 +10,7 @@ The procedure to run the software is as follows. There exists a `setup.sh` file,
 First the dependencies used by the application need to be installed. Open a terminal, clone the project, and `cd` to the cloned directory. Make sure you have python 3.5 installed. Then, depending on your preferences, create a virtual environment to save the dependencies in. Note that this is a Python 3.5 project, and we need to use a Python 3.x virtual environment.
 
 ```
-python3 -m venv venv
+python3.6 -m venv venv
 source venv/bin/activate
 ```
 

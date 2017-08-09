@@ -46,7 +46,7 @@ AWS_SECRET_ACCESS_KEY=CHANGEMEINTHECORRECTTOKEN
 To test whether everything works, we can now run the application. Because the design of the application is built in such a way that it can potentially be distributed over a number of machines, there are a number of different configurations one could use to start the analysis. The first step is to split the data in a test and training set. The test set is only used for evaluating the algorithm after it was trained on the training set. This training set is internally used as a cross-validation set. Creating the set can be done as follows:
 
 ```
-python main.py -t createset -f -p -n
+python3.6 main.py -t createset -f -p -n
 ```
 
 In this case, `-t` specifies the part of the application to run, `-f` specifies the use of feature selection, `-p` allows the use of polynomial features, and `-n` removes previous cached files.
@@ -54,13 +54,13 @@ In this case, `-t` specifies the part of the application to run, `-f` specifies 
 The next step is to actually train the algorithms on these created datasets. This can be done using the following command:
 
 ```
-python main.py -t train
+python3.6 main.py -t train
 ```
 
 What this steps does is run all of the models specified in `driver.py` and upload the fitted models to S3. After this step has completed, we can retrieve the results from S3 using the following command:
 
 ```
-python main.py -t evaluate
+python3.6 main.py -t evaluate
 ```
 
 Which exports the output of the project.

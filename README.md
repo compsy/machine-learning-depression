@@ -1,3 +1,4 @@
+
 # Learning Emotions
 [![CircleCI](https://circleci.com/gh/compsy/ICPE_machine_learning_workgroup.svg?style=svg&circle-token=4e926b5d1a43abc4e98c0aa227695a50340848a3)](https://circleci.com/gh/compsy/ICPE_machine_learning_workgroup)
 
@@ -7,10 +8,10 @@ This is the repository for the ICPE machine learning workgroup. In this readme w
 The procedure to run the software is as follows. There exists a `setup.sh` file, but that's still in development, and following the next steps probably gives a better result
 
 ### 1. Install the dependencies
-First the dependencies used by the application need to be installed. Open a terminal, clone the project, and `cd` to the cloned directory. Make sure you have python 3.5 installed. Then, depending on your preferences, create a virtual environment to save the dependencies in. Note that this is a Python 3.5 project, and we need to use a Python 3.x virtual environment.
+First the dependencies used by the application need to be installed. Open a terminal, clone the project, and `cd` to the cloned directory. Make sure you have python 3.6 installed. Then, depending on your preferences, create a virtual environment to save the dependencies in. Note that this is a Python 3.6 project, and we need to use a Python 3.6 virtual environment.
 
 ```
-python3 -m venv venv
+python3.6 -m venv venv
 source venv/bin/activate
 ```
 
@@ -20,7 +21,7 @@ Your terminal should now show that you are using the `venv` virtual environment.
 pip install -r requirements.txt
 ```
 
-### 2. Initializeing the data and cache
+### 2. Initializing the data and cache
 The data used for the present project is provided by NESDA. The easiest method to get the data in the project is by simlinking to the location where the data is stored. In case of Compsy development machines the following lines suffice:
 
 ```
@@ -75,12 +76,3 @@ docker run --rm -it \
 ```
 
 The docker image can be updated by changing the code, and running the `build` script.
-
-
-
-
-
-
-
-
-

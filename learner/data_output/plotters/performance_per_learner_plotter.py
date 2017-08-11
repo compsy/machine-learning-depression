@@ -50,7 +50,6 @@ class PerformancePerLearnerPlotter(Plotter):
         kappa_scores = itemgetter(*sorted_indices)(kappa_scores)
         estimators = itemgetter(*sorted_indices)(estimators)
 
-
         width = 0.15
         ind = np.arange(N)
 

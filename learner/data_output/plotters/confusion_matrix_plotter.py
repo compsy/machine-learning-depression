@@ -48,7 +48,7 @@ class ConfusionMatrixPlotter(Plotter):
 
             cm_normalized = confusion_matrix_calculated.astype('float') / confusion_matrix_calculated.sum(axis=1)[:, np.newaxis]
 
-            im = ax.imshow(cm_normalized, interpolation='nearest', cmap=cmap)
+            im = ax.imshow(cm_normalized, interpolation='nearest', cmap=cmap, vmin=0, vmax=1)
             ax.set_title('')
             ax.set_ylabel('True label')
             ax.set_xlabel('Predicted label')

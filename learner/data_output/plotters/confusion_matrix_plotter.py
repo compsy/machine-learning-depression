@@ -13,12 +13,12 @@ class ConfusionMatrixPlotter(Plotter):
     def plot(self, models, output_type, estimator_names):
 
         estimators = [estimator[0] for estimator in estimator_names]
-        for i, model in enumerate(models):
+        for estimator, model in zip(estimator_names, models):
             # Get the true and predicted data
             y_pred = model.skmodel.predict(model.get_x)
             y_true = model.get_y
 
-            name = estimators[i]
+            name = estimator[0]
             cmap = plt.cm.Blues
             # cmap = plt.cm.afmhot
             # cmap = plt.cm.rainbow
@@ -35,7 +35,7 @@ class ConfusionMatrixPlotter(Plotter):
             plt.setp(ax, xticks=tick_marks, xticklabels=['Yes', 'No'], yticks=tick_marks, yticklabels=['Yes', 'No'])
 
             plot_name = model.given_name
-            plot_name = 'z_confusion_matrix_' + output_type + '_' + str(i)
+            plot_name = 'z_confusion_matrix_' + output_type + '_' + estimator[0]
 
             confusion_matrix_calculated = confusion_matrix(y_true, y_pred)
 

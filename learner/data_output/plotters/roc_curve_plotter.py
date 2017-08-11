@@ -20,6 +20,7 @@ class RocCurvePlotter(Plotter):
         fig = plt.figure()
         ax = fig.add_axes([0.1, 0.2, 0.8, 0.7])
         plt.title('Receiver Operator Curves')
+
         if invert:
             plt.xlabel('False Negative Rate')
             plt.ylabel('True Negative Rate')

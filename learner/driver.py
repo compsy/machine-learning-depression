@@ -202,6 +202,7 @@ class Driver:
         DatatoolOutput.export('test-size-row', np.shape(x_data_test)[0])
         DatatoolOutput.export('outcome-is-one-percentage-test', 100 * (pd.DataFrame.sum(y_data_test)[0]/len(y_data_test)))
 
+        # x_data_test, y_data_test = DataResampler.process(x_data = x_data_test, y_data = y_data_test)
         test_data = {
             'x_data': x_data_test,
             'y_data': y_data_test,
@@ -268,7 +269,9 @@ class Driver:
 
         feature_selection_model.train(cache_result=False)
 
-        coefficients = self.feature_selector.determine_best_variables(feature_selection_model, top = 30)
+        top = 25
+        DatatoolOutput.export('number-of-features', top)
+        coefficients = self.feature_selector.determine_best_variables(feature_selection_model, top = top)
         self.POLYNOMIAL_FEATURES = temp_pol_features
         return coefficients
 
@@ -404,15 +407,16 @@ class Driver:
             np_x_data = normalize(x_data, norm='l2', axis=1)
             x_data = pd.DataFrame(np_x_data, columns=names)
 
-        if self.SCALE:
-            L.info('We are also scaling the features')
-            np_x_data = scale(x_data)
-            x_data = pd.DataFrame(x_data, columns=names)
-
         if self.POLYNOMIAL_FEATURES:
             L.info('We are also adding polynomial features')
             # We don't have to poor the data into a dataframe here, as the processor does it for us
             x_data = DataPreprocessorPolynomial.process(x_data)
+            names = x_data.columns
+
+        if self.SCALE:
+            L.info('We are also scaling the features')
+            np_x_data = scale(x_data)
+            x_data = pd.DataFrame(np_x_data, columns=names)
 
         # Logtransform the data
         # variable_transformer = VariableTransformer(self.x_names)

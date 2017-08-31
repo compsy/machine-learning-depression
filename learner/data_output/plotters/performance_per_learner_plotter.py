@@ -42,6 +42,7 @@ class PerformancePerLearnerPlotter(Plotter):
 
         sort_by = accuracy_scores
         sorted_indices = list(reversed(sorted(range(N), key=lambda k: sort_by[k])))
+        sorted_indices = range(N)
 
         accuracy_scores = itemgetter(*sorted_indices)(accuracy_scores)
         f1_scores =  itemgetter(*sorted_indices)(f1_scores)
@@ -49,7 +50,6 @@ class PerformancePerLearnerPlotter(Plotter):
         gmean_scores = itemgetter(*sorted_indices)(gmean_scores)
         kappa_scores = itemgetter(*sorted_indices)(kappa_scores)
         estimators = itemgetter(*sorted_indices)(estimators)
-
 
         width = 0.15
         ind = np.arange(N)

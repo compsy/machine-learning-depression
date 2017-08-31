@@ -79,13 +79,15 @@ class OutputGenerator():
             DatatoolOutput.export('ml-models', ", ".join(sentence[:-1]) +", and "+sentence[-1])
 
             # Generate roc curve plots
-            self.roc_curve_plotter.plot(algorithms, output_type=output_type, estimator_names=estimator_names)
+            self.roc_curve_plotter.plot(algorithms, output_type=output_type + '1', estimator_names=estimator_names, invert=False)
+            self.roc_curve_plotter.plot(algorithms, output_type=output_type + '0', estimator_names=estimator_names, invert=True)
+
             self.performance_per_learner_plotter.plot(algorithms, output_type=output_type, estimator_names=estimator_names)
             self.confusion_matrix_plotter.plot(algorithms, output_type=output_type, estimator_names=estimator_names)
 
-        for i, algorithm in enumerate(algorithms):
+        for code, name in estimator_names:
             algorithm.print_evaluation()
-            DatatoolOutput.export('algorithm-' + str(i), algorithm.given_name)
+            DatatoolOutput.export('algorithm-' + code, name)
 
             # if model_type == 'classification':
             # else:

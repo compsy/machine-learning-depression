@@ -1,3 +1,4 @@
+
 # Learning Emotions
 [![CircleCI](https://circleci.com/gh/compsy/ICPE_machine_learning_workgroup.svg?style=svg&circle-token=4e926b5d1a43abc4e98c0aa227695a50340848a3)](https://circleci.com/gh/compsy/ICPE_machine_learning_workgroup)
 
@@ -7,10 +8,10 @@ This is the repository for the ICPE machine learning workgroup. In this readme w
 The procedure to run the software is as follows. There exists a `setup.sh` file, but that's still in development, and following the next steps probably gives a better result
 
 ### 1. Install the dependencies
-First the dependencies used by the application need to be installed. Open a terminal, clone the project, and `cd` to the cloned directory. Make sure you have python 3.5 installed. Then, depending on your preferences, create a virtual environment to save the dependencies in. Note that this is a Python 3.5 project, and we need to use a Python 3.x virtual environment.
+First the dependencies used by the application need to be installed. Open a terminal, clone the project, and `cd` to the cloned directory. Make sure you have python 3.6 installed. Then, depending on your preferences, create a virtual environment to save the dependencies in. Note that this is a Python 3.6 project, and we need to use a Python 3.6 virtual environment.
 
 ```
-python3 -m venv venv
+python3.6 -m venv venv
 source venv/bin/activate
 ```
 
@@ -20,7 +21,7 @@ Your terminal should now show that you are using the `venv` virtual environment.
 pip install -r requirements.txt
 ```
 
-### 2. Initializeing the data and cache
+### 2. Initializing the data and cache
 The data used for the present project is provided by NESDA. The easiest method to get the data in the project is by simlinking to the location where the data is stored. In case of Compsy development machines the following lines suffice:
 
 ```
@@ -46,7 +47,7 @@ AWS_SECRET_ACCESS_KEY=CHANGEMEINTHECORRECTTOKEN
 To test whether everything works, we can now run the application. Because the design of the application is built in such a way that it can potentially be distributed over a number of machines, there are a number of different configurations one could use to start the analysis. The first step is to split the data in a test and training set. The test set is only used for evaluating the algorithm after it was trained on the training set. This training set is internally used as a cross-validation set. Creating the set can be done as follows:
 
 ```
-python main.py -t createset -f -p -n
+python3.6 main.py -t createset -f -p -n
 ```
 
 In this case, `-t` specifies the part of the application to run, `-f` specifies the use of feature selection, `-p` allows the use of polynomial features, and `-n` removes previous cached files.
@@ -54,13 +55,13 @@ In this case, `-t` specifies the part of the application to run, `-f` specifies 
 The next step is to actually train the algorithms on these created datasets. This can be done using the following command:
 
 ```
-python main.py -t train
+python3.6 main.py -t train
 ```
 
 What this steps does is run all of the models specified in `driver.py` and upload the fitted models to S3. After this step has completed, we can retrieve the results from S3 using the following command:
 
 ```
-python main.py -t evaluate
+python3.6 main.py -t evaluate
 ```
 
 Which exports the output of the project.
@@ -75,12 +76,3 @@ docker run --rm -it \
 ```
 
 The docker image can be updated by changing the code, and running the `build` script.
-
-
-
-
-
-
-
-
-

@@ -58,6 +58,7 @@ class OutputGenerator():
                 algorithm.y = y_data
                 assert all(algorithm.get_y == y_data)
                 algorithms.append(algorithm)
+                algorithm.print_evaluation()
             else:
                 L.info('File %s has no skmodel (not calculated)' % cache_name)
 
@@ -76,6 +77,8 @@ class OutputGenerator():
 
             sentence = ['('+estimator[0]+') for ' + estimator[1] for estimator in estimator_names]
             DatatoolOutput.export('codes-for-ml-models', ", ".join(sentence[:-1]) +", and "+sentence[-1])
+
+            sentence = ['('+estimator[0]+') ' + estimator[1] for estimator in estimator_names]
             DatatoolOutput.export('ml-models', ", ".join(sentence[:-1]) +", and "+sentence[-1])
 
             # Generate roc curve plots
@@ -86,7 +89,6 @@ class OutputGenerator():
             self.confusion_matrix_plotter.plot(algorithms, output_type=output_type, estimator_names=estimator_names)
 
         for code, name in estimator_names:
-            algorithm.print_evaluation()
             DatatoolOutput.export('algorithm-' + code, name)
 
             # if model_type == 'classification':

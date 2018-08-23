@@ -1,4 +1,4 @@
-from scipy.stats import halflogistic
+from scipy.stats import halflogistic, randint, uniform
 from sklearn import tree
 from sklearn.tree.tree import DecisionTreeClassifier
 from sklearn.externals.six import StringIO
@@ -52,20 +52,23 @@ class ClassificationTreeModel(MachineLearningModel):
 
         if grid_search:
             parameter_grid = {
+                'n_estimators': randint(1, 10),
                 'max_depth': np.logspace(0, 2, 20),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
             random_parameter_grid = {
-                'max_depth': halflogistic(scale=100),
-                'max_features': ['auto', 'sqrt', 'log2', None]
+                # The minimum number of samples required to split an internal node. When used as float, it is considered a percentage ceil(min_samples_split * n_samples)
+                'min_samples_split': uniform(0.01, 0.4),
+                # The minimum number of samples required to be at a leaf node. If int, then consider min_samples_leaf as the minimum number.
+                'min_samples_leaf': randint(1, 100),
+                # The maximum depth of the tree.
+                'max_depth': randint(1, 400),
+                # The minimum weighted fraction of the sum total of weights (of all the input samples) required to be at a leaf node. Samples have equal weight when sample_weight is not provided.
+                'min_weight_fraction_leaf': uniform(0,0.5),
+                # The number of features to consider when looking for the best split
+                'max_features': ['auto', 'sqrt', 'log2', None],
+                # The function to measure the quality of a split. Supported criteria are “gini” for the Gini impurity and “entropy” for the information gain.
+                'criterion': ['gini', 'entropy']
+
             }
             self.grid_search([parameter_grid], [random_parameter_grid])
-
-    # def train(self):
-    #     super(ClassificationTreeModel, self).train()
-    #
-    #     # Plot the tree
-    #     dot_data = StringIO()
-    #     tree.export_graphviz(self.skmodel, out_file=dot_data)
-    #     graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
-    #     graph.write_pdf("exports/classification_tree.pdf")

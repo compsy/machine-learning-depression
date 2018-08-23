@@ -36,6 +36,7 @@ class RandomizedSearchMine(BaseSearchCV):
 
     def fit(self, X, y=None):
         fitted_models = []
+
         for param_set in self.param_distributions:
             sampled_params = list(ParameterSampler(param_set, self.n_iter, random_state=self.random_state))
             L.info('Running on a param_set with %d iterations' % self.n_iter)

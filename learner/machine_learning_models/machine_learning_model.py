@@ -15,7 +15,7 @@ from learner.machine_learning_evaluation.mse_evaluation import MseEvaluation, Ro
 from learner.data_output.std_logger import L
 from learner.machine_learning_evaluation.variance_evaluation import VarianceEvaluation
 from learner.machine_learning_models.randomized_search_mine import RandomizedSearchMine
-
+from learner.data_output.datatool_output import DatatoolOutput
 
 class MachineLearningModel:
     """
@@ -29,6 +29,7 @@ class MachineLearningModel:
         self.y_names = y_names
         self.skmodel = None
         self.cv = 10
+        DatatoolOutput.export('k-fold-cv', self.cv)
         self.bagged = bagged
         self.model_type = model_type
         self.was_trained = False
@@ -57,6 +58,7 @@ class MachineLearningModel:
         # Initialize the hyperparameters from cache, if available
         self.hyperparameters = self.hot_start(hyperparameters)
         self.n_iter = n_iter
+        DatatoolOutput.export('number-of-iterations-per-instance', self.n_iter)
 
     @staticmethod
     def cache_directory():

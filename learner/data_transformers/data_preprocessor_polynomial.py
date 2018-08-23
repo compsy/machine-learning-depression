@@ -3,7 +3,6 @@ from .data_transformer import DataTransformer
 import numpy as np
 import pandas as pd
 
-
 class DataPreprocessorPolynomial(DataTransformer):
     """
     Converts data to have polynomial interaction terms

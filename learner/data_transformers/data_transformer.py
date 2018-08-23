@@ -2,7 +2,6 @@ import warnings
 
 import numpy as np
 
-
 class DataTransformer:
 
     def get_variable_indices(self, all_names, selected_names):

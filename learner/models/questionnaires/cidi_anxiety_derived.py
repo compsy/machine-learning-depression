@@ -70,12 +70,12 @@ class CIDIAnxietyDerived(Questionnaire):
         return val if val is not None and val >= 0 else np.nan
 
     # Panic without AgoraFobia
-    def panic_without_agora_fobia_past_six_months(self, participant):
-        val = self.get_field(participant, 'anxy08')
-        return val if val is not None and val >= 0 else np.nan
-
     def panic_without_agora_fobia_past_month(self, participant):
         val = self.get_field(participant, 'anxy03')
+        return val if val is not None and val >= 0 else np.nan
+
+    def panic_without_agora_fobia_past_six_months(self, participant):
+        val = self.get_field(participant, 'anxy08')
         return val if val is not None and val >= 0 else np.nan
 
     def panic_without_agora_fobia_past_year(self, participant):

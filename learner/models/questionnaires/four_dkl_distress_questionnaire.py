@@ -6,7 +6,7 @@ from learner.data_output.std_logger import L
 class FourDKLQuestionnaire(Questionnaire):
 
     def __init__(self, name, filename, measurement_moment, reader):
-        function_mapping = {'somatizationScore': self.somatization_score, 'severity': self.severity}
+        function_mapping = {'totalDistressScore': self.total_distress_score, 'severity': self.severity}
 
         other_available_variables = [
             '4dkld01', '4dkld02', '4dkld03', '4dkld04', '4dkld05', '4dkld06', '4dkld07', '4dkld08', '4dkld09',
@@ -20,7 +20,7 @@ class FourDKLQuestionnaire(Questionnaire):
             '4dkld10', '4dkld11', '4dkld12', '4dkld13', '4dkld14', '4dkld15', '4dkld16'
         ]
 
-    def somatization_score(self, participant):
+    def total_distress_score(self, participant):
         # http://webapps.hag-intranet.nl/rooster/bijlagen/Wetenschap%204DKL.pdf
         # https://www.telepsy.nl/sites/default/files/Vierdimensionale%20Klachtenlijst.pdf
 

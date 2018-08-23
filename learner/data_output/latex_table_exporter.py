@@ -9,5 +9,5 @@ class LatexTableExporter:
     def export(filename, data, header):
         L.info('Exporting LaTex data to: ' + filename)
         f = open(filename, 'w')
-        f.write(tabulate(data, header, tablefmt="latex"))
+        f.write(tabulate(data, header, tablefmt="latex_booktabs"))
         f.close()

@@ -19,7 +19,7 @@ class BoostingModel(MachineLearningModel):
         }
 
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, pretty_name = 'Boosting', model_type='regression', **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, pretty_name = 'Gradient Boosting', model_type='regression', **kwargs)
         self.skmodel = GradientBoostingRegressor(**self.hyperparameters)
 
         if grid_search:
@@ -49,7 +49,7 @@ class BoostingClassificationModel(MachineLearningModel):
         hyperparameters = {'n_estimators': 1000, 'max_depth': 5, 'verbose': verbosity}
 
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, pretty_name = 'Boosting', model_type='classification', **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, verbosity=verbosity, pretty_name = 'Gradient Boosting', model_type='classification', **kwargs)
         self.skmodel = GradientBoostingClassifier(**self.hyperparameters)
 
         if grid_search:
@@ -57,7 +57,7 @@ class BoostingClassificationModel(MachineLearningModel):
                 'n_estimators': np.unique(np.round(np.logspace(0, 2, 20))),
                 'max_depth': np.unique(np.round(np.logspace(0, 2, 20))),
                 'learning_rate': np.logspace(-2, 1, 10),
-                'min_samples_split': np.unique(np.round(np.logspace(0, 1, 10))),
+                'min_samples_split': np.unique(np.round(np.logspace(0, 2, 10))),
                 'min_samples_leaf': np.unique(np.round(np.logspace(0, 1, 10))),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }
@@ -66,7 +66,7 @@ class BoostingClassificationModel(MachineLearningModel):
                 'n_estimators': randint(1, 1000),
                 'max_depth': randint(1, 1000),
                 'learning_rate': halflogistic(),
-                'min_samples_split': randint(1, 1000),
+                'min_samples_split': randint(2, 1000),
                 'min_samples_leaf': randint(1, 1000),
                 'max_features': ['auto', 'sqrt', 'log2', None],
             }

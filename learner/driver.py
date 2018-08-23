@@ -1,9 +1,11 @@
 import os
+import math
+import time
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from sklearn.preprocessing import normalize, scale, OneHotEncoder
+from sklearn.preprocessing import normalize
 from imblearn.combine import SMOTEENN
 
 from learner.caching.object_cacher import ObjectCacher
@@ -16,6 +18,8 @@ from learner.data_output.final_output_generator import OutputGenerator
 from learner.data_output.std_logger import L
 from learner.data_transformers.data_preprocessor_polynomial import DataPreprocessorPolynomial
 from learner.data_transformers.data_resampler import DataResampler
+from learner.data_transformers.one_hot_encoder import OneHotEncoderTransformer
+from learner.data_transformers.data_scaler import ScalingTransformer
 from learner.data_transformers.output_data_cleaner import OutputDataCleaner
 from learner.data_transformers.output_data_splitter import OutputDataSplitter
 from learner.factories.questionnaire_factory import QuestionnaireFactory
@@ -24,6 +28,7 @@ from learner.machine_learning_models.model_runners.sync_model_runner import Sync
 from learner.machine_learning_models.models.boosting_model import BoostingClassificationModel
 from learner.machine_learning_models.models.dummy_model import DummyClassifierModel, DummyRandomClassifierModel
 from learner.machine_learning_models.models.forest_model import RandomForestClassificationModel
+from learner.machine_learning_models.models.neural_network_model import NeuralNetworkModel
 from learner.machine_learning_models.models.naive_bayes_model import GaussianNaiveBayesModel, BernoulliNaiveBayesModel
 from learner.machine_learning_models.models.regression_model import LogisticRegressionModel
 from learner.machine_learning_models.models.stochastic_gradient_descent_model import \
@@ -76,6 +81,7 @@ class Driver:
         self.SCALE = scale
         self.FORCE_NO_CACHING = force_no_caching
         self.FEATURE_SELECTION = feature_selection
+        self.TOP = 20
 
         # create several objects to do data processing
         self.spss_reader = SpssReader()
@@ -97,16 +103,16 @@ class Driver:
 
         ##### Define the models we should run
         self.classification_models = []
-        # self.classification_models.append(KerasNnClassificationModel)
         self.classification_models.append({'model': ClassificationTreeModel, 'options': ['grid-search']})
         self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['grid-search']})
         self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['grid-search']})
         self.classification_models.append({'model': DummyClassifierModel, 'options': []})
         self.classification_models.append({'model': DummyRandomClassifierModel, 'options': []})
-        # self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
+        self.classification_models.append({'model': SupportVectorClassificationModel, 'options': ['grid-search']})
         self.classification_models.append({'model': BoostingClassificationModel, 'options': ['grid-search']})
         self.classification_models.append({'model': LogisticRegressionModel, 'options': ['grid-search']})
         self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['grid-search']})
+        # self.classification_models.append({'model': NeuralNetworkModel, 'options': ['grid-search']})
 
         # self.classification_models.append({'model': StochasticGradientDescentClassificationModel, 'options': ['bagging']})
         # self.classification_models.append({'model': RandomForestClassificationModel, 'options': ['bagging']})
@@ -119,7 +125,6 @@ class Driver:
         # self.classification_models.append({'model': BernoulliNaiveBayesModel, 'options': ['bagging']})
 
         # regression_models = []
-        # regressionmodels.append(KerasNnModel)
         # regression_models.append({'model': ElasticNetModel, 'options':[]})
         # regression_models.append({'model': SupportVectorRegressionModel, 'options':[]})
         # regression_models.append({'model': RegressionTreeModel, 'options': []})
@@ -133,6 +138,7 @@ class Driver:
         ----------
         test_set_portion : double, default=0.2 the portion of the data that should be used for testing
         """
+        start_time = time.monotonic()
         # Delete all cached models
         S3Cacher(directory='cache', preload=False).delete_all()
         Cacher.clean_cache('cache/mlmodels/')
@@ -148,14 +154,28 @@ class Driver:
         # L.info('We have %d participants in the inital dataset' % len(participants.keys()))
 
         #### Classification ####
-        # Perform feature selection algorithm
         CsvExporter.export('exports/merged_all_dataframe.csv', data)
 
         L.info('We are using %s as input.' % self.x_names)
+
+        DatatoolOutput.export('total-percentage-female', round(sum([p.gender for k, p in participants.items()]) / len(participants) * 100, 3))
+
+        # We use the last column to get an impression of this number. According to the ducmentation it should be 2596
+        n_followup_participants = np.shape(data)[0] - np.sum(np.isnan(data[data.columns[-1]]))
+        if(n_followup_participants != 2596):
+            throw('The number of follow up participants is incorrect!')
+
+        DatatoolOutput.export('total-number-of-participants-followup', n_followup_participants)
+        DatatoolOutput.export('total-number-of-participants-followup-percentage', round((n_followup_participants / len(participants)) * 100, 3))
+
+        # Clean the data, remove the incomplete cases
         x_data, y_data = self.get_usable_data(data, self.x_names, self.classification_y_names)
 
         coefficients = None
         DatatoolOutput.export('total-number-of-features', len(self.x_names))
+        DatatoolOutput.export('total-number-of-used-participants-followup-percentage', round((len(self.x_names) / n_followup_participants) * 100, 3))
+
+        # Perform feature selection algorithm
         if self.FEATURE_SELECTION:
             coefficients = self.perform_feature_selection(
                 x_data, y_data, self.classification_y_names, model_type='classification')
@@ -170,7 +190,8 @@ class Driver:
 
         x_data = x_data.reset_index(drop=True)
         y_data = y_data.reset_index(drop=True)
-        DatatoolOutput.export('outcome-is-one-percentage', 100 * (pd.DataFrame.sum(y_data)[0]/len(y_data)))
+        DatatoolOutput.export('outcome-is-one-percentage', round(100 * (pd.DataFrame.sum(y_data)[0]/len(y_data)), 3))
+        DatatoolOutput.export('outcome-is-one-percentage-rounded', math.ceil(100 * (pd.DataFrame.sum(y_data)[0]/len(y_data))))
         DatatoolOutput.export('total-size-row', np.shape(x_data)[0])
 
         x_data['test'] = split_set
@@ -183,12 +204,12 @@ class Driver:
         x_data_train = x_data.loc[x_data['test'] != test_set_id].drop('test', 1).reset_index(drop=True)
         y_data_train = y_data.loc[y_data['test'] != test_set_id].drop('test', 1).reset_index(drop=True)
         DatatoolOutput.export('train-size-row', np.shape(x_data_train)[0])
-        DatatoolOutput.export('outcome-is-one-percentage-train', 100 * (pd.DataFrame.sum(y_data_train)[0]/len(y_data_train)))
+        DatatoolOutput.export('outcome-is-one-percentage-train', round(100 * (pd.DataFrame.sum(y_data_train)[0]/len(y_data_train)), 3))
 
         # resampling is needed because the higlhy unbalanced datasets
         x_data_train, y_data_train = DataResampler.process(x_data = x_data_train, y_data = y_data_train)
         DatatoolOutput.export('train-size-row-after-resampling', np.shape(x_data_train)[0])
-        DatatoolOutput.export('outcome-is-one-percentage-train-after-resampling', 100 * (pd.DataFrame.sum(y_data_train)[0]/len(y_data_train)))
+        DatatoolOutput.export('outcome-is-one-percentage-train-after-resampling', round(100 * (pd.DataFrame.sum(y_data_train)[0]/len(y_data_train)), 3))
 
         training_data = {
             'x_data': x_data_train,
@@ -200,7 +221,7 @@ class Driver:
         x_data_test = x_data.loc[x_data['test'] == test_set_id].drop('test', 1).reset_index(drop=True)
         y_data_test = y_data.loc[y_data['test'] == test_set_id].drop('test', 1).reset_index(drop=True)
         DatatoolOutput.export('test-size-row', np.shape(x_data_test)[0])
-        DatatoolOutput.export('outcome-is-one-percentage-test', 100 * (pd.DataFrame.sum(y_data_test)[0]/len(y_data_test)))
+        DatatoolOutput.export('outcome-is-one-percentage-test', round(100 * (pd.DataFrame.sum(y_data_test)[0]/len(y_data_test)), 3))
 
         # x_data_test, y_data_test = DataResampler.process(x_data = x_data_test, y_data = y_data_test)
         test_data = {
@@ -211,12 +232,15 @@ class Driver:
         self.cacher.write_cache(test_data, 'test_data.pkl')
         CsvExporter.export('exports/merged_test_dataframe.csv', pd.concat([x_data_test, y_data_test], axis = 1))
         CsvExporter.export('exports/merged_full_pre_dataframe.csv', pd.concat([x_data, y_data], axis = 1))
+        end_time = time.monotonic()
+        self.export_time('evaluation', start = start_time, end = end_time)
 
 
     def run_evaluator(self):
         """
         Main method to run the evaluation on all the machine learning algorithms fitted earlier
         """
+        start_time = time.monotonic()
         x_data, y_data, all_data = self.load_data(filename='test_data.pkl')
         L.info('Running evaluation on data set of size (%d, %d)' % np.shape(x_data))
         L.info('The headers in this file are: %s' % x_data.columns)
@@ -235,18 +259,21 @@ class Driver:
 
         # Export all used data to a CSV file
         CsvExporter.export('exports/merged_full_dataframe.csv', all_data)
+        end_time = time.monotonic()
+        self.export_time('evaluation', start = start_time, end = end_time)
 
     def run_trainer(self):
         """
         Main method to train all the machine learning algorithms
         """
+        start_time = time.monotonic()
         if not self.cacher.file_available('training_data.pkl', add_dir=True):
             raise FileNotFoundError('Training data not found!')
 
         # Retrieve the data from the cache
         x_data, y_data = self.load_data(filename='training_data.pkl')
 
-        DatatoolOutput.export('number-of-ml-algorithms', len(self.classification_models))
+        DatatoolOutput.export('number-of-ml-algorithms', DatatoolOutput.number_to_string(len(self.classification_models)))
         # Calculate the actual models
         model_runner = SyncModelRunner(self.classification_models)
 
@@ -254,6 +281,9 @@ class Driver:
             x_data, y_data, self.classification_y_names, verbosity=self.VERBOSITY)
 
         model_runner.run_calculations(fabricated_models=fabricated_models)
+        end_time = time.monotonic()
+        self.export_time('training', start = start_time, end = end_time)
+
 
     def perform_feature_selection(self, x_data, y_data, y_names, model_type):
         """
@@ -269,79 +299,17 @@ class Driver:
 
         feature_selection_model.train(cache_result=False)
 
-        top = 25
-        DatatoolOutput.export('number-of-features', top)
-        coefficients = self.feature_selector.determine_best_variables(feature_selection_model, top = top)
+        DatatoolOutput.export('number-of-features', self.TOP)
+        coefficients = self.feature_selector.determine_best_variables(feature_selection_model, top = self.TOP)
         self.POLYNOMIAL_FEATURES = temp_pol_features
         return coefficients
 
-    @staticmethod
-    def perform_categorical_feature_transformation(data, limit, split_binary=False):
-        """docstring for perform_categorical_feature_transformation"""
+    def export_time(self, key, start, end):
+        delta = end - start
+        DatatoolOutput.export(key+'-time-seconds', round(delta, 3))
+        DatatoolOutput.export(key+'-time-minutes', round(delta / 60, 3))
+        DatatoolOutput.export(key+'-time-hours', round(delta / 60 / 60, 3))
 
-        # First we fit the encoder to determine the number of options in each variable
-        enc = OneHotEncoder()
-        enc.fit(data)
-        correct_column_locations = enc.n_values_ < limit if split_binary else np.logical_and(
-            enc.n_values_ < 10, enc.n_values_ > 2)
-
-        updated_indices = np.where(correct_column_locations)[0]
-        normal_indices = np.where(np.invert(correct_column_locations))[0]
-
-        old_names = data.columns[normal_indices]
-        updated_names = data.columns[updated_indices]
-
-        # Then we refit it only on the updated_indices that are considered categorical.
-        enc = OneHotEncoder(categorical_features=updated_indices, sparse=False)
-        enc.fit(data)
-        new_data = enc.transform(data)
-
-        new_names = []
-
-        for i in range(len(updated_indices)):
-            start = enc.feature_indices_[i]
-            end = enc.feature_indices_[i + 1]
-
-            current_indices = range(start, end)
-            used_indices = set(current_indices).intersection(enc.active_features_)
-            current_column = updated_names[i]
-            for j in range(0, len(used_indices)):
-                new_names.append(current_column + str(j + 1))
-
-        # The old features are added to the right of the matrix
-        new_names.extend(old_names)
-
-        assert len(new_names) == np.shape(new_data)[1]
-        new_data = pd.DataFrame(new_data, columns=new_names)
-        return new_data
-
-        # 262
-
-        # THIS IS NOT POSSIBLE! We have to use the indices in feature indices etc.
-        # for i in range(len(updated_names)):
-
-    # current = n_values[i]
-    # print(current)
-    # for j in range(0, current):
-    # print('>' + str(j))
-    # new_names.append(updated_names[i] + str(j))
-    # print(len(new_names) + len(old_names) - np.shape(new_data)[1])
-    # for i in len(enc.feature_indices_) - 1:
-    # start = feature_indices[i]
-    # end   = feature_indices[i+1]
-
-    # current_indices = range(start,end)
-
-    # # Remask the set of updated_indices here.
-    # used_indices = set(current_indices).intersection(active_features)
-    # current_column = data.columns[min(used_indices)]
-
-    # while all_columns_index < min(used_indices):
-    # new_names.append(data.columns[all_columns_index])
-    # all_columns_index += 1
-
-    # for j in used_indices:
-    # new_names.append(current_column + str(j))
 
     def load_data(self, filename):
         """
@@ -399,7 +367,7 @@ class Driver:
         names = x_data.columns
 
         if self.CATEGORICAL_FEATURES_LIMIT > 0:
-            x_data = self.perform_categorical_feature_transformation(x_data, limit=self.CATEGORICAL_FEATURES_LIMIT)
+            x_data = OneHotEncoderTransformer.perform_encoding(x_data, limit=self.CATEGORICAL_FEATURES_LIMIT)
             names = x_data.columns
 
         if self.NORMALIZE:
@@ -415,8 +383,7 @@ class Driver:
 
         if self.SCALE:
             L.info('We are also scaling the features')
-            np_x_data = scale(x_data)
-            x_data = pd.DataFrame(np_x_data, columns=names)
+            ScalingTransformer.perform_scaling(x_data, scale_binary=False)
 
         # Logtransform the data
         # variable_transformer = VariableTransformer(self.x_names)

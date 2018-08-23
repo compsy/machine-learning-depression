@@ -8,7 +8,10 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
 
     def __init__(self, x, y, y_names, grid_search, verbosity, **kwargs):
         hyperparameters = {
-            'alpha': 0.5,
+            'tol': 0.0001,
+            'max_iter': 1000,
+            'penalty': 'elasticnet',
+            'alpha': 0.01,
             'average': False,
             'class_weight': None,
             'epsilon': 0.1,
@@ -22,12 +25,15 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
         }
 
         super().__init__(
-            x, y, y_names, hyperparameters=hyperparameters, pretty_name = 'Stochastic Gradient Descent Estimator', verbosity=verbosity, model_type='classification', **kwargs)
+            x, y, y_names, hyperparameters=hyperparameters, pretty_name = 'Stochastic Gradient Descent', verbosity=verbosity, model_type='classification', **kwargs)
         self.skmodel = SGDClassifier(**self.hyperparameters)
 
         # Radial basis function grid
         grid = {
+            'max_iter': [1000],
+            'tol': np.logspace(-10, 3, 100),
             'loss': ['log'],
+            'penalty': ['elasticnet'],
             'alpha': np.logspace(-10, 3, 100),
             'average': [True, False],
             'class_weight': ['balanced', None],
@@ -37,7 +43,10 @@ class StochasticGradientDescentClassificationModel(MachineLearningModel):
         }
 
         random_parameter_grid = {
+            'max_iter': [1000],
+            'tol': np.logspace(-10, 3, 100),
             'loss': ['log'],
+            'penalty': ['elasticnet'],
             'alpha': halflogistic(scale=.1),
             'average': [True, False],
             'class_weight': ['balanced', None],

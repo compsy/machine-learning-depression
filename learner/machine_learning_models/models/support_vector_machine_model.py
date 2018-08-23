@@ -127,7 +127,7 @@ class SupportVectorClassificationModel(SupportVectorModel):
         random_poly_grid = {
             'kernel': ['poly'],
             'C': halflogistic(scale=100),
-            'degree': [2, 3, 4, 5],
+            'degree': [2, 3],
             'gamma': halflogistic(scale=.1),
             'coef0': halflogistic(scale=.1),
             'class_weight': ['balanced', None]
@@ -141,7 +141,7 @@ class SupportVectorClassificationModel(SupportVectorModel):
             'class_weight': ['balanced', None]
         }
 
-        self.random_param_grid = [random_poly_grid, random_sigmoid_grid]
+        self.random_param_grid = [random_rbf_grid, random_poly_grid, random_sigmoid_grid]
         if grid_search:
             self.grid_search(self.exhaustive_param_grid, self.random_param_grid)
 

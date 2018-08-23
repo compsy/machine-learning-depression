@@ -202,9 +202,9 @@ class QuestionnaireFactory:
             'adrug-usage-PolyDrugsUse',
 
             # N1_x202    Audit - Alcohol usage
-            # N1_x203    CIDI - Alcohol diagnosis
             'aalcohol-usage-sumScore',
             'aalcohol-usage-medicalAdvice',
+            # N1_x203    CIDI - Alcohol diagnosis
 
             # N1_x226    MASQ - Mood and Anxiety Scoring Questionnaire
             'amasq-positiveAffectScore',
@@ -217,7 +217,7 @@ class QuestionnaireFactory:
             #'amdq-MdqHirschfeldCriteriaBipolarSpectrumDisorderAdaptedCriteria',
 
             # N1_x232    4DKL (distress)
-            'a4dkl-somatizationScore',
+            'a4dkl-totalDistressScore',
             'a4dkl-severity',
             'a4dkl-4dkld01',
             'a4dkl-4dkld02',

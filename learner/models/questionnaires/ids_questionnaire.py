@@ -32,11 +32,11 @@ class IDSQuestionnaire(Questionnaire):
         result = np.NaN
         # Threhold of 2 is used to comply with VanBorkulo2015
         threshold = 2
-        if self.previous_questionnaire is not None:
-            if self.severity(participant) > threshold and self.previous_questionnaire.severity(participant) > threshold:
-                result = 1
-            else:
-                result = 0
+        # if self.previous_questionnaire is not None:
+        if self.severity(participant) > threshold: #and self.previous_questionnaire.severity(participant) > threshold:
+            result = 1
+        else:
+            result = 0
         return result
 
     def som_score(self, participant):
